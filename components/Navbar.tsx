@@ -22,7 +22,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
   const navLinks = [
     { label: 'Accueil', to: '/' },
     { label: 'Prestations', to: '/#prestations' },
-    { label: 'À propos', to: '/a-propos' },
+    { label: "L'Institut", to: '/a-propos' },
     { label: 'Contact', to: '/#contact' },
   ];
 
@@ -30,7 +30,15 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${isScrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100 py-4' : 'bg-transparent py-8'}`}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
-          <Link to="/" className="group flex flex-col items-center" onClick={() => { setMobileMenuOpen(false); onLinkClick?.(); }}>
+          <Link
+            to="/"
+            className="group flex flex-col items-center"
+            onClick={() => {
+              window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+              setMobileMenuOpen(false);
+              onLinkClick?.();
+            }}
+          >
             <span className={`text-2xl md:text-3xl font-bold tracking-[0.2em] uppercase transition-colors duration-300 serif ${isScrolled ? 'text-dark' : 'text-white'}`}>Bianco</span>
             <span className={`text-[10px] tracking-ultra-wide uppercase transition-colors duration-300 montserrat font-bold -mt-1 ${isScrolled ? 'text-primary' : 'text-primary'}`}>Esthétique</span>
           </Link>
