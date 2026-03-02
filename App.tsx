@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { BUSINESS_INFO, SERVICES, REVIEWS, FAQ_ITEMS, FALLBACK_WELLNESS_TIPS } from './constants';
@@ -31,6 +31,7 @@ const FAQAccordionItem: React.FC<{ question: string; answer: string; isOpen: boo
 };
 
 const App: React.FC = () => {
+  const { hash } = useLocation();
   const [view, setView] = useState<'home' | 'services'>('home');
   const [activeCategory, setActiveCategory] = useState('Regard');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
@@ -38,7 +39,14 @@ const App: React.FC = () => {
   const [loadingTips, setLoadingTips] = useState(true);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (hash === '#prestations') {
+      const el = document.getElementById('prestations');
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [hash]);
+
+  useEffect(() => {
+    if (hash !== '#prestations') window.scrollTo(0, 0);
     const dayToSchema: Record<string, string> = {
       Lundi: 'Mo', Mardi: 'Tu', Mercredi: 'We', Jeudi: 'Th', Vendredi: 'Fr', Samedi: 'Sa', Dimanche: 'Su'
     };
@@ -138,7 +146,7 @@ const App: React.FC = () => {
                   <button 
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${activeCategory === cat ? 'bg-primary text-white shadow-xl' : 'bg-white text-dark/40 hover:text-dark'}`}
+                    className={`px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${activeCategory === cat ? 'bg-primary text-white shadow-xl' : 'bg-white text-dark/70 hover:text-dark'}`}
                   >
                     {cat}
                   </button>
@@ -206,7 +214,7 @@ const App: React.FC = () => {
               <div className="absolute inset-0 bg-dark translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </a>
             <Link 
-              to="/services"
+              to="/#prestations"
               className="w-full sm:w-auto text-center text-white px-10 py-5 rounded-full text-lg font-medium border border-white/50 hover:bg-white hover:text-dark transition-all backdrop-blur-sm inline-block"
             >
               Découvrir nos soins
@@ -221,6 +229,9 @@ const App: React.FC = () => {
       {/* Why Bianco? */}
       <section className="py-20 md:py-32 bg-surface">
         <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl serif">Pourquoi choisir Bianco Esthétique&nbsp;?</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 text-center">
             <div className="group">
               <div className="w-16 h-16 md:w-20 md:h-20 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-6 md:mb-8 transition-transform group-hover:-rotate-12 group-hover:bg-primary group-hover:text-white">
@@ -262,7 +273,7 @@ const App: React.FC = () => {
             <div className="space-y-12 md:space-y-20">
               <div className="group cursor-pointer">
                 <div className="flex gap-6 md:gap-8 items-start">
-                  <span className="text-primary/20 text-4xl md:text-6xl serif font-light">01</span>
+                <span className="text-primary text-4xl md:text-6xl serif font-light">01</span>
                   <div>
                     <h3 className="text-2xl md:text-3xl serif mb-4 group-hover:text-primary transition-colors">Beauté du Regard</h3>
                     <p className="text-gray-500 leading-relaxed mb-6 text-sm md:text-base">Sublimez vos yeux avec nos extensions de cils sur-mesure. Du naturel discret au volume sophistiqué, chaque pose est une création unique.</p>
@@ -272,7 +283,7 @@ const App: React.FC = () => {
 
               <div className="group cursor-pointer">
                 <div className="flex gap-6 md:gap-8 items-start">
-                  <span className="text-primary/20 text-4xl md:text-6xl serif font-light">02</span>
+                <span className="text-primary text-4xl md:text-6xl serif font-light">02</span>
                   <div>
                     <h3 className="text-2xl md:text-3xl serif mb-4 group-hover:text-primary transition-colors">Drainage Lymphatique</h3>
                     <p className="text-gray-500 leading-relaxed mb-6 text-sm md:text-base">Expertise en méthode brésilienne pour un corps plus léger, une peau raffermie et une détoxification profonde de l'organisme.</p>
@@ -349,17 +360,17 @@ const App: React.FC = () => {
             
             <div className="space-y-10 md:space-y-12">
               <div className="group">
-                <h4 className="text-[10px] md:text-xs font-bold uppercase tracking-ultra-wide text-primary mb-4 montserrat">Localisation</h4>
+                <h3 className="text-[10px] md:text-xs font-bold uppercase tracking-ultra-wide text-primary mb-4 montserrat">Localisation</h3>
                 <p className="text-xl md:text-2xl font-light text-dark/80 serif mb-4 leading-relaxed">{BUSINESS_INFO.address}</p>
               </div>
 
               <div className="group">
-                <h4 className="text-[10px] md:text-xs font-bold uppercase tracking-ultra-wide text-primary mb-4 montserrat">Horaires</h4>
+                <h3 className="text-[10px] md:text-xs font-bold uppercase tracking-ultra-wide text-primary mb-4 montserrat">Horaires</h3>
                 <div className="grid grid-cols-2 gap-x-12 gap-y-4 max-w-sm">
                   {Object.entries(BUSINESS_INFO.hours).map(([day, hours]) => (
                     <React.Fragment key={day}>
-                      <span className="text-gray-400 font-light text-sm md:text-base">{day}</span>
-                      <span className={`text-right text-sm md:text-base ${hours === 'Fermé' ? 'text-gray-300 italic' : 'font-medium'}`}>{hours}</span>
+                      <span className="text-gray-500 font-light text-sm md:text-base">{day}</span>
+                      <span className={`text-right text-sm md:text-base ${hours === 'Fermé' ? 'text-gray-400 italic' : 'font-medium'}`}>{hours}</span>
                     </React.Fragment>
                   ))}
                 </div>
@@ -367,19 +378,26 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <div className="rounded-[2.5rem] overflow-hidden shadow-2xl h-[350px] md:h-[500px] border-8 border-white relative">
-            <img 
-              src="https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&q=80&w=1200" 
-              alt="Hyères, vue sur le port et la vieille ville" 
-              className="w-full h-full object-cover grayscale-[0.15]"
-            />
+          <div className="rounded-[2.5rem] overflow-hidden shadow-2xl h-[350px] md:h-[500px] border-8 border-white relative bg-white">
             <a 
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BUSINESS_INFO.address)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg"
+              className="w-full h-full flex items-center justify-center group"
             >
-              Consulter la carte complète
+              <div className="text-center px-8">
+                <div className="mx-auto mb-6 w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-primary flex items-center justify-center bg-surface shadow-xl">
+                  <div>
+                    <p className="text-[10px] tracking-ultra-wide uppercase montserrat text-primary mb-1">Maison</p>
+                    <p className="text-2xl md:text-3xl serif font-bold tracking-[0.25em] text-dark">Bianco</p>
+                    <p className="text-[10px] tracking-ultra-wide uppercase montserrat text-primary mt-1">Esthétique</p>
+                  </div>
+                </div>
+                <p className="text-sm md:text-base text-gray-500 font-light mb-2">Ouvrir la carte Google Maps</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-primary group-hover:underline">
+                  {BUSINESS_INFO.address}
+                </p>
+              </div>
             </a>
           </div>
         </div>

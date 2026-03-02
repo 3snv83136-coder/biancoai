@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import ServicesPage from './ServicesPage';
 import ServiceDetailPage from './ServiceDetailPage';
+import AboutPage from './AboutPage';
 import MobileCta from './components/MobileCta';
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
@@ -42,6 +43,7 @@ root.render(
           <Route path="/" element={<App />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
+          <Route path="/a-propos" element={<AboutPage />} />
         </Routes>
         <MobileCta />
       </BrowserRouter>

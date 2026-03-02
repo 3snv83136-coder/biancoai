@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Bianco Esthétique - Institut de beauté & bien-être à Hyères
+# Ce fichier permet aux moteurs de recherche d'explorer l'ensemble du site.
+

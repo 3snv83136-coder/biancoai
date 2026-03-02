@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { BUSINESS_INFO } from '../constants';
 
 interface NavbarProps {
@@ -9,6 +9,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,39 +20,32 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
   }, []);
 
   const navLinks = [
-    { label: 'Accueil', href: '#', isHome: true },
-    { label: 'Prestations', href: '#prestations' },
-    { label: 'L\'Institut', href: '#a-propos' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Accueil', to: '/' },
+    { label: 'Prestations', to: '/#prestations' },
+    { label: 'À propos', to: '/a-propos' },
+    { label: 'Contact', to: '/#contact' },
   ];
-
-  const handleLogoClick = (e: React.MouseEvent) => {
-    if (onLinkClick) {
-      onLinkClick();
-    }
-  };
 
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${isScrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100 py-4' : 'bg-transparent py-8'}`}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
-          <a href="#" onClick={handleLogoClick} className="group flex flex-col items-center">
+          <Link to="/" className="group flex flex-col items-center" onClick={() => { setMobileMenuOpen(false); onLinkClick?.(); }}>
             <span className={`text-2xl md:text-3xl font-bold tracking-[0.2em] uppercase transition-colors duration-300 serif ${isScrolled ? 'text-dark' : 'text-white'}`}>Bianco</span>
             <span className={`text-[10px] tracking-ultra-wide uppercase transition-colors duration-300 montserrat font-bold -mt-1 ${isScrolled ? 'text-primary' : 'text-primary'}`}>Esthétique</span>
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center space-x-12">
             {navLinks.map((link) => (
-              <a 
+              <Link 
                 key={link.label} 
-                href={link.href} 
-                onClick={() => link.isHome && onLinkClick?.()}
+                to={link.to}
                 className={`text-[11px] font-bold uppercase tracking-widest transition-all montserrat hover:text-primary relative group ${isScrolled ? 'text-dark/70' : 'text-white/80'}`}
               >
                 {link.label}
                 <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-primary transition-all duration-300 group-hover:w-full"></span>
-              </a>
+              </Link>
             ))}
             <a 
               href={BUSINESS_INFO.planityUrl}
@@ -67,6 +61,9 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
           <button 
             className={`lg:hidden p-2 rounded-xl transition-colors ${isScrolled ? 'text-dark bg-gray-50' : 'text-white bg-white/10 backdrop-blur-md'}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {mobileMenuOpen ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -82,21 +79,22 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
       </nav>
 
       {/* Mobile Menu Overlay */}
-      <div className={`fixed inset-0 z-[90] bg-white transition-all duration-500 lg:hidden flex flex-col justify-center items-center text-center px-12 ${mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      <div
+        id="mobile-menu"
+        className={`fixed inset-0 z-[90] bg-white transition-all duration-500 lg:hidden flex flex-col justify-center items-center text-center px-12 ${mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        aria-hidden={!mobileMenuOpen}
+      >
         <div className="space-y-10">
           {navLinks.map((link, i) => (
-            <a 
+            <Link 
               key={link.label} 
-              href={link.href} 
+              to={link.to}
               className={`block text-4xl serif hover:text-primary transition-all transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
               style={{ transitionDelay: `${i * 100}ms` }}
-              onClick={() => {
-                setMobileMenuOpen(false);
-                if (link.isHome) onLinkClick?.();
-              }}
+              onClick={() => { setMobileMenuOpen(false); onLinkClick?.(); }}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
           <div className={`pt-10 transition-all duration-700 delay-500 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <a 
