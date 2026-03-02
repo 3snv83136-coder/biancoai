@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import { BUSINESS_INFO, SERVICES, REVIEWS, FAQ_ITEMS } from './constants';
-import { getWellnessTips, WellnessTip } from './geminiService';
+import { BUSINESS_INFO, SERVICES, REVIEWS, FAQ_ITEMS, FALLBACK_WELLNESS_TIPS } from './constants';
+import type { WellnessTip } from './types';
 
 const FAQAccordionItem: React.FC<{ question: string; answer: string; isOpen: boolean; onClick: () => void }> = ({ question, answer, isOpen, onClick }) => {
   return (
@@ -71,9 +71,15 @@ const App: React.FC = () => {
     document.head.appendChild(script);
 
     const fetchTips = async () => {
-      const tips = await getWellnessTips();
-      setWellnessTips(tips);
-      setLoadingTips(false);
+      try {
+        const { getWellnessTips } = await import('./geminiService');
+        const tips = await getWellnessTips();
+        setWellnessTips(tips);
+      } catch {
+        setWellnessTips(FALLBACK_WELLNESS_TIPS);
+      } finally {
+        setLoadingTips(false);
+      }
     };
     if (view === 'home') fetchTips();
 

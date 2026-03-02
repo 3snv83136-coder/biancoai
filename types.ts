@@ -31,3 +31,8 @@ export interface BusinessInfo {
   instagram: string;
   facebook: string;
 }
+
+export interface WellnessTip {
+  title: string;
+  content: string;
+}

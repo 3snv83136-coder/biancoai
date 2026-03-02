@@ -1,8 +1,18 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { SERVICES } from "./constants";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+let ai: GoogleGenAI | null = null;
+function getAi(): GoogleGenAI | null {
+  if (ai) return ai;
+  try {
+    const key = typeof process !== "undefined" && process.env?.API_KEY ? process.env.API_KEY : (import.meta.env?.VITE_GEMINI_API_KEY ?? "");
+    if (!key) return null;
+    ai = new GoogleGenAI({ apiKey: key });
+    return ai;
+  } catch {
+    return null;
+  }
+}
 
 export const getBeautyAdvice = async (userQuery: string) => {
   try {
@@ -31,9 +41,18 @@ export interface WellnessTip {
   content: string;
 }
 
+const FALLBACK_TIPS: WellnessTip[] = [
+  { title: "Hydratation Profonde", content: "Buvez un verre d'eau citronnée tiède chaque matin pour purifier votre teint de l'intérieur." },
+  { title: "Sommeil Réparateur", content: "Privilégiez une taie d'oreiller en soie pour protéger vos cils et limiter les marques de fatigue." },
+  { title: "Massage Facial", content: "Accordez-vous 2 minutes de massage ascendant lors de votre routine du soir pour stimuler la circulation." },
+  { title: "Rituel Détente", content: "Pratiquez la respiration ventrale 5 minutes avant de dormir pour apaiser votre système nerveux." }
+];
+
 export const getWellnessTips = async (): Promise<WellnessTip[]> => {
+  const client = getAi();
+  if (!client) return FALLBACK_TIPS;
   try {
-    const response = await ai.models.generateContent({
+    const response = await client.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: "Génère 4 conseils de bien-être et beauté courts, précieux et actionnables pour les clientes d'un institut de beauté haut de gamme. Les conseils doivent porter sur l'hydratation, le sommeil, le soin de la peau ou la relaxation. Format JSON uniquement : une liste d'objets avec les clés 'title' (max 5 mots) et 'content' (max 20 mots).",
       config: {

@@ -1,5 +1,11 @@
+import { BusinessInfo, Service, Review, FAQItem, WellnessTip } from './types';
 
-import { BusinessInfo, Service, Review, FAQItem } from './types';
+export const FALLBACK_WELLNESS_TIPS: WellnessTip[] = [
+  { title: "Hydratation Profonde", content: "Buvez un verre d'eau citronnée tiède chaque matin pour purifier votre teint de l'intérieur." },
+  { title: "Sommeil Réparateur", content: "Privilégiez une taie d'oreiller en soie pour protéger vos cils et limiter les marques de fatigue." },
+  { title: "Massage Facial", content: "Accordez-vous 2 minutes de massage ascendant lors de votre routine du soir pour stimuler la circulation." },
+  { title: "Rituel Détente", content: "Pratiquez la respiration ventrale 5 minutes avant de dormir pour apaiser votre système nerveux." }
+];
 
 export const BUSINESS_INFO: BusinessInfo = {
   name: "Bianco Esthétique",
