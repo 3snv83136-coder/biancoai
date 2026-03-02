@@ -6,7 +6,11 @@ import ServicesPage from './ServicesPage';
 import ServiceDetailPage from './ServiceDetailPage';
 import AboutPage from './AboutPage';
 import PricingPage from './PricingPage';
+import LegalPage from './LegalPage';
+import PrivacyPage from './PrivacyPage';
+import CookiesPage from './CookiesPage';
 import MobileCta from './components/MobileCta';
+import CookieBanner from './components/CookieBanner';
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
@@ -46,8 +50,12 @@ root.render(
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/tarifs" element={<PricingPage />} />
+          <Route path="/mentions-legales" element={<LegalPage />} />
+          <Route path="/confidentialite" element={<PrivacyPage />} />
+          <Route path="/cookies" element={<CookiesPage />} />
         </Routes>
         <MobileCta />
+        <CookieBanner />
       </BrowserRouter>
     </ErrorBoundary>
   </React.StrictMode>

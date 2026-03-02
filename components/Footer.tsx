@@ -26,14 +26,26 @@ const Footer: React.FC = () => {
         <div>
           <h3 className="text-lg font-semibold mb-6">Navigation</h3>
           <ul className="space-y-4 text-gray-400">
-            <li><a href="#prestations" className="hover:text-primary transition-colors">Prestations</a></li>
             <li>
-              <Link to="/tarifs" className="hover:text-primary transition-colors">
-                Nos Tarifs
+              <Link to="/services" className="hover:text-primary transition-colors">
+                Nos prestations
               </Link>
             </li>
-            <li><a href="#a-propos" className="hover:text-primary transition-colors">L'Institut</a></li>
-            <li><a href="#contact" className="hover:text-primary transition-colors">Contact & Accès</a></li>
+            <li>
+              <Link to="/tarifs" className="hover:text-primary transition-colors">
+                Nos tarifs
+              </Link>
+            </li>
+            <li>
+              <Link to="/a-propos" className="hover:text-primary transition-colors">
+                L&apos;Institut
+              </Link>
+            </li>
+            <li>
+              <a href="#contact" className="hover:text-primary transition-colors">
+                Contact &amp; Accès
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -42,7 +54,7 @@ const Footer: React.FC = () => {
           <ul className="space-y-4 text-gray-400">
             <li>
               <Link to="/services" className="hover:text-primary transition-colors">
-                Services
+                Tous les services
               </Link>
             </li>
           </ul>
@@ -51,9 +63,21 @@ const Footer: React.FC = () => {
         <div>
           <h3 className="text-lg font-semibold mb-6">Légal</h3>
           <ul className="space-y-4 text-gray-400">
-            <li><a href="#" className="hover:text-primary transition-colors">Mentions Légales</a></li>
-            <li><a href="#" className="hover:text-primary transition-colors">Confidentialité</a></li>
-            <li><a href="#" className="hover:text-primary transition-colors">Cookies</a></li>
+            <li>
+              <Link to="/mentions-legales" className="hover:text-primary transition-colors">
+                Mentions légales
+              </Link>
+            </li>
+            <li>
+              <Link to="/confidentialite" className="hover:text-primary transition-colors">
+                Confidentialité
+              </Link>
+            </li>
+            <li>
+              <Link to="/cookies" className="hover:text-primary transition-colors">
+                Cookies
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
