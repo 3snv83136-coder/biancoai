@@ -22,6 +22,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
   const navLinks = [
     { label: 'Accueil', to: '/' },
     { label: 'Prestations', to: '/#prestations' },
+    { label: 'Tarifs', to: '/tarifs' },
     { label: "L'Institut", to: '/a-propos' },
     { label: 'Contact', to: '/#contact' },
   ];
