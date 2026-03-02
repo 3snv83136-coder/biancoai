@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { BUSINESS_INFO, SERVICES, REVIEWS, FAQ_ITEMS, FALLBACK_WELLNESS_TIPS } from './constants';
@@ -166,7 +167,6 @@ const App: React.FC = () => {
         </section>
         
         <Footer />
-        <Assistant />
       </div>
     );
   }
@@ -205,12 +205,12 @@ const App: React.FC = () => {
               <span className="relative z-10">Réserver en ligne</span>
               <div className="absolute inset-0 bg-dark translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </a>
-            <button 
-              onClick={() => setView('services')}
-              className="w-full sm:w-auto text-white px-10 py-5 rounded-full text-lg font-medium border border-white/50 hover:bg-white hover:text-dark transition-all backdrop-blur-sm"
+            <Link 
+              to="/services"
+              className="w-full sm:w-auto text-center text-white px-10 py-5 rounded-full text-lg font-medium border border-white/50 hover:bg-white hover:text-dark transition-all backdrop-blur-sm inline-block"
             >
               Découvrir nos soins
-            </button>
+            </Link>
           </div>
         </div>
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 animate-bounce opacity-50">
@@ -255,7 +255,7 @@ const App: React.FC = () => {
               <span className="text-primary font-bold tracking-ultra-wide uppercase text-xs montserrat block mb-4">Notre Expertise</span>
               <h2 className="text-4xl md:text-6xl serif leading-tight">L'Art de magnifier <br /><span className="italic">votre éclat naturel</span></h2>
             </div>
-            <button onClick={() => setView('services')} className="text-sm font-bold tracking-widest uppercase border-b-2 border-primary pb-1 hover:text-primary transition-all">Consulter la carte complète</button>
+            <Link to="/services" className="text-sm font-bold tracking-widest uppercase border-b-2 border-primary pb-1 hover:text-primary transition-all">Consulter la carte complète</Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24 items-center">
@@ -367,15 +367,20 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <div className="rounded-[2.5rem] overflow-hidden shadow-2xl h-[350px] md:h-[500px] border-8 border-white">
-            <iframe 
-              src={`https://www.google.com/maps/embed/v1/place?key=${process.env.GOOGLE_MAPS_API_KEY || ''}&q=${encodeURIComponent(BUSINESS_INFO.address)}`}
-              className="w-full h-full grayscale-[0.2]"
-              style={{ border: 0 }}
-              allowFullScreen={true}
-              loading="lazy"
-              title="Carte Hyères"
-            ></iframe>
+          <div className="rounded-[2.5rem] overflow-hidden shadow-2xl h-[350px] md:h-[500px] border-8 border-white relative">
+            <img 
+              src="https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&q=80&w=1200" 
+              alt="Hyères, vue sur le port et la vieille ville" 
+              className="w-full h-full object-cover grayscale-[0.15]"
+            />
+            <a 
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BUSINESS_INFO.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg"
+            >
+              Consulter la carte complète
+            </a>
           </div>
         </div>
       </section>

@@ -11,6 +11,10 @@ const ServiceDetailPage: React.FC = () => {
   const service = services.find((s) => s.id === slug) ?? null;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
+
+  useEffect(() => {
     if (service) {
       document.title = `${service.metaTitle} | Bianco Esthétique`;
       const metaDesc = document.querySelector('meta[name="description"]');
@@ -27,13 +31,22 @@ const ServiceDetailPage: React.FC = () => {
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
+          <div className="flex flex-wrap gap-3 mb-10">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs px-5 py-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-all"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            Accueil
+          </Link>
           <Link
             to="/services"
-            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs mb-10 hover:gap-4 transition-all"
+            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs px-5 py-3 rounded-full border border-primary/30 hover:bg-primary/10 transition-all"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             Retour aux services
           </Link>
+        </div>
 
           {service ? (
             <ServiceContent service={service} />
