@@ -2,13 +2,50 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import { planityPrestations } from './planityPrestations';
-import { BUSINESS_INFO } from './constants';
+import { servicesList } from './servicesList';
+
+const THEMES = [
+  { key: 'head-spa', label: 'Head spa' },
+  { key: 'massage', label: 'Massage & corps' },
+  { key: 'visage', label: 'Soins visage' },
+  { key: 'ongles', label: 'Mains & pieds' },
+  { key: 'maquillage', label: 'Maquillage & regard' },
+];
+
+const getThemeFromId = (id: string): string => {
+  if (id.startsWith('head-spa')) return 'head-spa';
+  if (id.startsWith('massage') || id.startsWith('kobido') || id.startsWith('drainage-lymphatique-visage')) {
+    return id.startsWith('drainage') || id.startsWith('kobido') ? 'visage' : 'massage';
+  }
+  if (id.startsWith('soin-visage') || id.startsWith('drainage')) return 'visage';
+  if (
+    id.includes('ongles') ||
+    id.includes('gel') ||
+    id.includes('vernis') ||
+    id.includes('manucure') ||
+    id.includes('pédicure') ||
+    id.includes('pieds') ||
+    id.includes('nail') ||
+    id.includes('babyboomer') ||
+    id.includes('pose-gel') ||
+    id.includes('beaute-des-pieds') ||
+    id.includes('pedicure')
+  ) {
+    return 'ongles';
+  }
+  return 'maquillage';
+};
 
 const ServicesPage: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const byTheme = THEMES.map(({ key, label }) => ({
+    key,
+    label,
+    items: servicesList.filter((s) => getThemeFromId(s.id) === key),
+  })).filter((t) => t.items.length > 0);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -19,52 +56,34 @@ const ServicesPage: React.FC = () => {
             to="/"
             className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs mb-10 px-5 py-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-all"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
             Retour à l&apos;accueil
           </Link>
-          <h1 className="text-4xl md:text-5xl serif text-dark mb-4">Nos prestations</h1>
-          <p className="text-gray-500 font-light mb-8 max-w-2xl">
-            Retrouvez l&apos;ensemble de nos prestations. Réservez en ligne selon vos disponibilités.
+          <h1 className="text-4xl md:text-5xl serif text-dark mb-4">Nos services</h1>
+          <p className="text-gray-500 font-light mb-12 max-w-2xl">
+            Retrouvez tous nos services par thème. Cliquez sur un service pour découvrir une fiche détaillée avec description complète et
+            informations pratiques.
           </p>
-          <a
-            href={BUSINESS_INFO.planityUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block mb-12 px-8 py-3 rounded-full bg-primary text-white text-sm font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors"
-          >
-            Réserver sur Planity
-          </a>
           <div className="space-y-12">
-            {planityPrestations.map(({ label, items }) => (
-              <section key={label}>
+            {byTheme.map(({ key, label, items }) => (
+              <section key={key} id={key}>
                 <h2 className="text-2xl serif text-dark mb-6">{label}</h2>
                 <ul className="space-y-3">
-                  {items.map((item) => (
-                    <li
-                      key={item.title}
-                      className="flex flex-wrap items-baseline justify-between gap-2 py-2 border-b border-gray-100 last:border-0"
-                    >
-                      <span className="text-dark font-light">{item.title}</span>
-                      <span className="text-sm text-gray-500 shrink-0">
-                        {item.duration}
-                        <span className="mx-2">·</span>
-                        <span className="text-primary font-medium">{item.price}</span>
-                      </span>
+                  {items.map((s) => (
+                    <li key={s.id}>
+                      <Link
+                        to={`/services/${s.id}`}
+                        className="text-dark hover:text-primary transition-colors border-b border-gray-100 hover:border-primary/30 pb-1"
+                      >
+                        {s.title}
+                      </Link>
                     </li>
                   ))}
                 </ul>
               </section>
             ))}
-          </div>
-          <div className="mt-16 pt-8 border-t border-gray-200">
-            <a
-              href={BUSINESS_INFO.planityUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-8 py-3 rounded-full bg-primary text-white text-sm font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors"
-            >
-              Réserver sur Planity
-            </a>
           </div>
         </div>
       </section>

@@ -27,7 +27,11 @@ const Footer: React.FC = () => {
           <h3 className="text-lg font-semibold mb-6">Navigation</h3>
           <ul className="space-y-4 text-gray-400">
             <li><a href="#prestations" className="hover:text-primary transition-colors">Prestations</a></li>
-            <li><a href="#tarifs" className="hover:text-primary transition-colors">Nos Tarifs</a></li>
+            <li>
+              <Link to="/tarifs" className="hover:text-primary transition-colors">
+                Nos Tarifs
+              </Link>
+            </li>
             <li><a href="#a-propos" className="hover:text-primary transition-colors">L'Institut</a></li>
             <li><a href="#contact" className="hover:text-primary transition-colors">Contact & Accès</a></li>
           </ul>

@@ -5,6 +5,7 @@ import App from './App';
 import ServicesPage from './ServicesPage';
 import ServiceDetailPage from './ServiceDetailPage';
 import AboutPage from './AboutPage';
+import PricingPage from './PricingPage';
 import MobileCta from './components/MobileCta';
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
@@ -44,6 +45,7 @@ root.render(
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
           <Route path="/a-propos" element={<AboutPage />} />
+          <Route path="/tarifs" element={<PricingPage />} />
         </Routes>
         <MobileCta />
       </BrowserRouter>
