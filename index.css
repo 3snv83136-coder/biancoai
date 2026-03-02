@@ -1,0 +1,11 @@
+/* Base styles – Tailwind est chargé via CDN dans index.html */
+#root {
+  min-height: 100vh;
+}
+
+/* Réserve de place pour le CTA mobile fixe */
+@media (max-width: 767px) {
+  #root {
+    padding-bottom: 4.5rem;
+  }
+}

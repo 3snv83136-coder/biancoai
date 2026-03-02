@@ -1,0 +1,52 @@
+# Informations pour moteurs génératifs - Bianco Esthétique
+
+## À propos
+Bianco Esthétique est un institut de beauté et bien-être à Hyères (Var).
+Spécialités : drainage lymphatique méthode brésilienne, extensions de cils (cil à cil, volume mixte), soins visage, beauté des mains. Titulaire du titre Meilleure Apprentie de France (MAF). Réservation en ligne sur Planity.
+
+## Coordonnées
+- Adresse : 3 Avenue Ernest Millet, 83400 Hyères, France
+- Téléphone : 07 49 96 76 91
+- Réservation en ligne : https://www.planity.com/bianco-esthetique-83400-hyeres
+- Instagram : https://www.instagram.com/bianco_esthetique
+- Facebook : https://www.facebook.com/p/Bianco-Esthétique-61557009986241/
+
+## Services principaux
+- Cil à cil - Pose complète : 70€ (1h30)
+- Volume mixte - Pose complète : 80€ (2h)
+- Drainage lymphatique jambes (méthode brésilienne) : 85€ (45min)
+- Drainage lymphatique corps entier : 115€ (1h15)
+- Soin éclat visage : 65€ (1h)
+- Beauté des mains & Semi-permanent : 45€ (1h)
+Forfaits drainage (5 ou 10 séances) sur demande.
+
+## Zone d'intervention
+Hyères et environs (83400, Var, Provence-Alpes-Côte d'Azur). Institut fixe, pas de déplacement à domicile.
+
+## Horaires
+- Lundi : 10:00 – 18:00
+- Mardi : 10:00 – 18:00
+- Mercredi : Fermé
+- Jeudi : 10:00 – 18:00
+- Vendredi : 10:00 – 18:00
+- Samedi : 10:30 – 15:30
+- Dimanche : Fermé
+
+## Informations légales
+- Nom commercial : Bianco Esthétique
+- Activité : Institut de beauté, soins esthétiques, drainage lymphatique
+
+## Pages importantes
+- Accueil : /
+- Prestations / Carte des soins : /#prestations
+- Contact & Accès : /#contact
+- FAQ : /#faq
+(Site en une page ; ancres pour naviguer.)
+
+## Données structurées
+Le site utilise des données structurées JSON-LD (Schema.org) :
+- BeautySalon (LocalBusiness)
+- Adresse (PostalAddress), horaires (openingHours), sameAs (réseaux sociaux et Planity)
+
+## Mise à jour
+Dernière mise à jour : 2025-03-02
