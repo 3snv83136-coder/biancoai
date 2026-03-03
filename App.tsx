@@ -39,8 +39,9 @@ const App: React.FC = () => {
   const [loadingTips, setLoadingTips] = useState(true);
 
   useEffect(() => {
-    if (hash === '#prestations') {
-      const el = document.getElementById('prestations');
+    const id = hash?.replace('#', '');
+    if (id) {
+      const el = document.getElementById(id);
       el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [hash]);
@@ -266,7 +267,7 @@ const App: React.FC = () => {
               <span className="text-primary font-bold tracking-ultra-wide uppercase text-xs montserrat block mb-4">Notre Expertise</span>
               <h2 className="text-4xl md:text-6xl serif leading-tight">L'Art de magnifier <br /><span className="italic">votre éclat naturel</span></h2>
             </div>
-            <Link to="/services" className="text-sm font-bold tracking-widest uppercase border-b-2 border-primary pb-1 hover:text-primary transition-all">Consulter la carte complète</Link>
+            <Link to="/tarifs" className="text-sm font-bold tracking-widest uppercase border-b-2 border-primary pb-1 hover:text-primary transition-all">Consulter la carte complète</Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24 items-center">

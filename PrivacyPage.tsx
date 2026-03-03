@@ -7,6 +7,19 @@ const PrivacyPage: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    const prevTitle = document.title;
+    const prevDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
+    document.title = 'Politique de confidentialité | Bianco Esthétique';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', 'Politique de confidentialité et protection des données personnelles. Bianco Esthétique, institut de beauté Hyères.');
+    return () => {
+      document.title = prevTitle;
+      const m = document.querySelector('meta[name="description"]');
+      if (m && prevDesc) m.setAttribute('content', prevDesc);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-surface">
       <Navbar onLinkClick={() => {}} />

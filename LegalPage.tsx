@@ -7,6 +7,19 @@ const LegalPage: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    const prevTitle = document.title;
+    const prevDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
+    document.title = 'Mentions légales | Bianco Esthétique';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', 'Mentions légales du site Bianco Esthétique, institut de beauté à Hyères. Éditeur, hébergement, propriété intellectuelle.');
+    return () => {
+      document.title = prevTitle;
+      const m = document.querySelector('meta[name="description"]');
+      if (m && prevDesc) m.setAttribute('content', prevDesc);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-surface">
       <Navbar onLinkClick={() => {}} />

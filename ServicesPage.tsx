@@ -41,6 +41,19 @@ const ServicesPage: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    const prevTitle = document.title;
+    const prevDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
+    document.title = 'Nos services | Bianco Esthétique – Hyères';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', 'Découvrez tous nos services à Hyères : head spa, massage, soins visage, ongles, maquillage, drainage lymphatique, extensions de cils. Réservation en ligne.');
+    return () => {
+      document.title = prevTitle;
+      const m = document.querySelector('meta[name="description"]');
+      if (m && prevDesc) m.setAttribute('content', prevDesc);
+    };
+  }, []);
+
   const byTheme = THEMES.map(({ key, label }) => ({
     key,
     label,
