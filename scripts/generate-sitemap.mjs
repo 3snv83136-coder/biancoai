@@ -9,7 +9,7 @@ const ROOT = resolve(__dirname, '..');
 const PUBLIC_DIR = resolve(ROOT, 'public');
 const SERVICES_DATA_PATH = resolve(ROOT, 'servicesData.ts');
 
-const BASE_URL = process.env.SITEMAP_BASE_URL || 'https://biancoai.vercel.app';
+const BASE_URL = process.env.SITEMAP_BASE_URL || 'https://www.bianco-esthetique.fr';
 
 function getStaticPaths() {
   return [
