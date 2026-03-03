@@ -198,8 +198,8 @@ const App: React.FC = () => {
               Meilleure Apprentie de France
             </span>
           </div>
-          <h1 className="text-5xl md:text-8xl lg:text-9xl text-white serif mb-10 leading-[0.9] md:leading-[0.8]">
-            L'Éclat du <br /> <span className="italic font-light">Bien-être</span>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl text-white serif mb-10 leading-[1.05] md:leading-[1]">
+            Votre bien‑être,<br /> <span className="italic font-light">tout simplement</span>
           </h1>
           <p className="text-white/90 text-base md:text-2xl mb-12 max-w-2xl mx-auto font-light leading-relaxed montserrat">
             Maison de Beauté à Hyères. L'expertise du drainage lymphatique brésilien et l'art du regard.
