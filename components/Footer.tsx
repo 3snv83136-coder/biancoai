@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BUSINESS_INFO } from '../constants';
+import { services } from '../servicesData';
 
 const Footer: React.FC = () => {
   return (
@@ -82,10 +83,45 @@ const Footer: React.FC = () => {
         </div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/10 text-center text-gray-500 text-sm">
+      <SeoIndex />
+
+      <div className="max-w-7xl mx-auto px-6 mt-6 text-center text-gray-500 text-sm">
         <p>© {new Date().getFullYear()} Bianco Esthétique. Tous droits réservés. Créé avec passion à Hyères.</p>
       </div>
     </footer>
+  );
+};
+
+const SeoIndex: React.FC = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="max-w-7xl mx-auto px-6 mt-12 border-t border-white/10 pt-6 text-xs text-gray-400">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest hover:text-primary transition-colors"
+        aria-expanded={open}
+      >
+        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-500">
+          <span className={`transform transition-transform ${open ? 'rotate-90' : ''}`}>{'>'}</span>
+        </span>
+        Index SEO des soins
+      </button>
+      {open && (
+        <p className="mt-3 leading-relaxed">
+          Institut de beauté à Hyères :{' '}
+          {services.map((service, index) => (
+            <React.Fragment key={service.id}>
+              <Link to={`/services/${service.id}`} className="hover:text-primary">
+                {service.title}
+              </Link>
+              {index < services.length - 1 && <span> • </span>}
+            </React.Fragment>
+          ))}
+        </p>
+      )}
+    </div>
   );
 };
 

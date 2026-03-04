@@ -14,10 +14,10 @@ export const BUSINESS_INFO: BusinessInfo = {
   hours: {
     "Lundi": "10:00 – 18:00",
     "Mardi": "10:00 – 18:00",
-    "Mercredi": "Fermé",
+    "Mercredi": "10:00 – 18:00",
     "Jeudi": "10:00 – 18:00",
     "Vendredi": "10:00 – 18:00",
-    "Samedi": "10:30 – 15:30",
+    "Samedi": "Fermé",
     "Dimanche": "Fermé"
   },
   planityUrl: "https://www.planity.com/bianco-esthetique-83400-hyeres",

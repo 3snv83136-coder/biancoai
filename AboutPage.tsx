@@ -55,10 +55,6 @@ const AboutPage: React.FC = () => {
 
             <section>
               <h2 className="text-2xl md:text-3xl serif text-dark mb-6">Un institut créé à la force du travail</h2>
-              <p className="text-gray-600 font-light leading-relaxed mb-4">
-                Bianco Esthétique n&apos;est pas un concept marketing.<br />
-                C&apos;est un institut construit pas à pas, à la force des bras, avec du travail, de la discipline et une vraie vision du métier.
-              </p>
               <p className="text-gray-600 font-light leading-relaxed mb-6">
                 Salomé a fait le choix de l&apos;indépendance pour garantir :
               </p>
