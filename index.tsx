@@ -6,6 +6,8 @@ import ServicesPage from './ServicesPage';
 import ServiceDetailPage from './ServiceDetailPage';
 import AboutPage from './AboutPage';
 import PricingPage from './PricingPage';
+import BlogListPage from './BlogListPage';
+import BlogPostPage from './BlogPostPage';
 import LegalPage from './LegalPage';
 import PrivacyPage from './PrivacyPage';
 import CookiesPage from './CookiesPage';
@@ -51,6 +53,8 @@ root.render(
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/tarifs" element={<PricingPage />} />
+          <Route path="/blog" element={<BlogListPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/mentions-legales" element={<LegalPage />} />
           <Route path="/confidentialite" element={<PrivacyPage />} />
           <Route path="/cookies" element={<CookiesPage />} />

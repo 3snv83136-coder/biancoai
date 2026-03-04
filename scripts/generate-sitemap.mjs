@@ -8,6 +8,7 @@ const __dirname = dirname(__filename);
 const ROOT = resolve(__dirname, '..');
 const PUBLIC_DIR = resolve(ROOT, 'public');
 const SERVICES_DATA_PATH = resolve(ROOT, 'servicesData.ts');
+const BLOG_DATA_PATH = resolve(ROOT, 'blogData.ts');
 
 const BASE_URL = process.env.SITEMAP_BASE_URL || 'https://www.bianco-esthetique.fr';
 
@@ -41,6 +42,23 @@ function getServiceSlugs() {
   return Array.from(ids).map((id) => `/services/${id}`);
 }
 
+function getBlogSlugs() {
+  let source;
+  try {
+    source = readFileSync(BLOG_DATA_PATH, 'utf8');
+  } catch {
+    return [];
+  }
+
+  const slugs = new Set();
+  const regex = /slug:\s*'([^']+)'/g;
+  let match;
+  while ((match = regex.exec(source)) !== null) {
+    slugs.add(match[1]);
+  }
+  return Array.from(slugs).map((slug) => `/blog/${slug}`);
+}
+
 function buildSitemapXml(urls) {
   const lastmod = new Date().toISOString();
   const urlEntries = urls
@@ -63,7 +81,8 @@ mkdirSync(PUBLIC_DIR, { recursive: true });
 
 const staticPaths = getStaticPaths();
 const servicePaths = getServiceSlugs();
-const allPaths = Array.from(new Set([...staticPaths, ...servicePaths]));
+const blogPaths = getBlogSlugs();
+const allPaths = Array.from(new Set([...staticPaths, ...servicePaths, ...blogPaths]));
 
 const xml = buildSitemapXml(allPaths);
 const outPath = resolve(PUBLIC_DIR, 'sitemap.xml');
