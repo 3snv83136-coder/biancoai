@@ -276,8 +276,8 @@ const App: React.FC = () => {
                 <div className="flex gap-6 md:gap-8 items-start">
                 <span className="text-primary text-4xl md:text-6xl serif font-light">01</span>
                   <div>
-                    <h3 className="text-2xl md:text-3xl serif mb-4 group-hover:text-primary transition-colors">Beauté du Regard</h3>
-                    <p className="text-gray-500 leading-relaxed mb-6 text-sm md:text-base">Sublimez vos yeux avec nos extensions de cils sur-mesure. Du naturel discret au volume sophistiqué, chaque pose est une création unique.</p>
+                    <h3 className="text-2xl md:text-3xl serif mb-4 group-hover:text-primary transition-colors">Soin Visage</h3>
+                    <p className="text-gray-500 leading-relaxed mb-6 text-sm md:text-base">Offrez à votre peau un soin visage sur-mesure pour lisser, réhydrater et réveiller l&apos;éclat de votre teint, saison après saison.</p>
                   </div>
                 </div>
               </div>

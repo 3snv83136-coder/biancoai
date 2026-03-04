@@ -2,38 +2,31 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import { servicesList } from './servicesList';
+import { planityPrestations } from './planityPrestations';
 
-const THEMES = [
-  { key: 'head-spa', label: 'Head spa' },
-  { key: 'massage', label: 'Massage & corps' },
-  { key: 'visage', label: 'Soins visage' },
-  { key: 'ongles', label: 'Mains & pieds' },
-  { key: 'maquillage', label: 'Maquillage & regard' },
-];
-
-const getThemeFromId = (id: string): string => {
-  if (id.startsWith('head-spa')) return 'head-spa';
-  if (id.startsWith('massage') || id.startsWith('kobido') || id.startsWith('drainage-lymphatique-visage')) {
-    return id.startsWith('drainage') || id.startsWith('kobido') ? 'visage' : 'massage';
+const getCategorySummary = (label: string): string => {
+  switch (label) {
+    case 'Soins corps':
+      return 'Soin du corps relaxant ou ciblé, adapté à vos besoins et à votre niveau de fatigue.';
+    case 'Soins visage':
+      return 'Protocole visage sur-mesure pour réhydrater, lisser et illuminer votre teint.';
+    case 'Beauté des mains':
+      return 'Mains soignées, ongles nets et vernis impeccable avec ou sans semi-permanent.';
+    case 'Maquillage':
+      return 'Maquillage personnalisé pour le jour J, un événement ou simplement se sentir plus sûre de soi.';
+    case 'Beauté des pieds':
+      return 'Soin complet des pieds pour une peau douce, des ongles propres et un vernis qui tient.';
+    case 'Beauté du regard':
+      return 'Prestations pour structurer et intensifier le regard en douceur et en respectant votre morphologie.';
+    case 'Extensions de cils':
+      return 'Extensions sur-mesure pour ouvrir le regard, du naturel au plus sophistiqué.';
+    case 'Drainage lymphatique méthode brésilienne':
+      return 'Drainage manuel tonique pour alléger les jambes, lisser la peau et affiner visuellement la silhouette.';
+    case 'Cure drainage lymphatique (5 séances + 1 offerte)':
+      return 'Forfaits de séances pour un travail en profondeur et des résultats plus durables sur la silhouette.';
+    default:
+      return 'Prestation réalisée sur-mesure après un échange avec votre esthéticienne à Hyères.';
   }
-  if (id.startsWith('soin-visage') || id.startsWith('drainage')) return 'visage';
-  if (
-    id.includes('ongles') ||
-    id.includes('gel') ||
-    id.includes('vernis') ||
-    id.includes('manucure') ||
-    id.includes('pédicure') ||
-    id.includes('pieds') ||
-    id.includes('nail') ||
-    id.includes('babyboomer') ||
-    id.includes('pose-gel') ||
-    id.includes('beaute-des-pieds') ||
-    id.includes('pedicure')
-  ) {
-    return 'ongles';
-  }
-  return 'maquillage';
 };
 
 const ServicesPage: React.FC = () => {
@@ -44,21 +37,19 @@ const ServicesPage: React.FC = () => {
   useEffect(() => {
     const prevTitle = document.title;
     const prevDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
-    document.title = 'Nos services | Bianco Esthétique – Hyères';
+    document.title = 'Nos prestations | Bianco Esthétique – Hyères';
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', 'Découvrez tous nos services à Hyères : head spa, massage, soins visage, ongles, maquillage, drainage lymphatique, extensions de cils. Réservation en ligne.');
+    if (meta)
+      meta.setAttribute(
+        'content',
+        'Aperçu de toutes les prestations Bianco Esthétique à Hyères : soins corps, visage, regard, mains, pieds, maquillage et drainage lymphatique.'
+      );
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
     };
   }, []);
-
-  const byTheme = THEMES.map(({ key, label }) => ({
-    key,
-    label,
-    items: servicesList.filter((s) => getThemeFromId(s.id) === key),
-  })).filter((t) => t.items.length > 0);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -74,29 +65,34 @@ const ServicesPage: React.FC = () => {
             </svg>
             Retour à l&apos;accueil
           </Link>
-          <h1 className="text-4xl md:text-5xl serif text-dark mb-4">Nos services</h1>
+          <h1 className="text-4xl md:text-5xl serif text-dark mb-4">Nos prestations</h1>
           <p className="text-gray-500 font-light mb-12 max-w-2xl">
-            Retrouvez tous nos services par thème. Cliquez sur un service pour découvrir une fiche détaillée avec description complète et
-            informations pratiques.
+            Retrouvez en un coup d&apos;œil l&apos;ensemble des prestations proposées à Hyères. Les tarifs détaillés sont disponibles dans la
+            rubrique dédiée.
           </p>
           <div className="space-y-12">
-            {byTheme.map(({ key, label, items }) => (
-              <section key={key} id={key}>
-                <h2 className="text-2xl serif text-dark mb-6">{label}</h2>
-                <ul className="space-y-3">
-                  {items.map((s) => (
-                    <li key={s.id}>
-                      <Link
-                        to={`/services/${s.id}`}
-                        className="text-dark hover:text-primary transition-colors border-b border-gray-100 hover:border-primary/30 pb-1"
+            {planityPrestations.map(({ label, items }) => {
+              const summary = getCategorySummary(label);
+              return (
+                <section key={label}>
+                  <h2 className="text-2xl serif text-dark mb-2">{label}</h2>
+                  <p className="text-sm text-gray-500 font-light mb-4">{summary}</p>
+                  <ul className="space-y-3">
+                    {items.map((item) => (
+                      <li
+                        key={item.title}
+                        className="border-b border-gray-100 last:border-0 pb-3"
                       >
-                        {s.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
+                        <p className="text-dark font-medium">{item.title}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Durée indicative&nbsp;: {item.duration}. Un échange préalable permet d&apos;adapter le protocole à vos besoins.
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              );
+            })}
           </div>
         </div>
       </section>
