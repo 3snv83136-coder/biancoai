@@ -310,6 +310,18 @@ const App: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              <div className="group cursor-pointer">
+                <div className="flex gap-6 md:gap-8 items-start">
+                  <span className="text-primary text-4xl md:text-6xl serif font-light">03</span>
+                  <div>
+                    <h3 className="text-2xl md:text-3xl serif mb-4 group-hover:text-primary transition-colors">Head Spa</h3>
+                    <p className="text-gray-500 leading-relaxed mb-6 text-sm md:text-base">
+                      Rituel inspiré du Japon pour délier les tensions de la nuque et du cuir chevelu, favoriser la microcirculation et offrir une détente profonde.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="relative">
