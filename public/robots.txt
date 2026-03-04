@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://www.bianco-esthetique.fr/sitemap.xml
+
 # Bianco Esthétique - Institut de beauté & bien-être à Hyères
 # Ce fichier permet aux moteurs de recherche d'explorer l'ensemble du site.
 

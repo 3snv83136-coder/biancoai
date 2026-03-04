@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import App from './App';
-import ServicesPage from './ServicesPage';
-import ServiceDetailPage from './ServiceDetailPage';
-import AboutPage from './AboutPage';
-import PricingPage from './PricingPage';
-import BlogListPage from './BlogListPage';
-import BlogPostPage from './BlogPostPage';
-import LegalPage from './LegalPage';
-import PrivacyPage from './PrivacyPage';
-import CookiesPage from './CookiesPage';
 import MobileCta from './components/MobileCta';
 import CookieBanner from './components/CookieBanner';
+
+const App = React.lazy(() => import('./App'));
+const ServicesPage = React.lazy(() => import('./ServicesPage'));
+const ServiceDetailPage = React.lazy(() => import('./ServiceDetailPage'));
+const AboutPage = React.lazy(() => import('./AboutPage'));
+const PricingPage = React.lazy(() => import('./PricingPage'));
+const BlogListPage = React.lazy(() => import('./BlogListPage'));
+const BlogPostPage = React.lazy(() => import('./BlogPostPage'));
+const LegalPage = React.lazy(() => import('./LegalPage'));
+const PrivacyPage = React.lazy(() => import('./PrivacyPage'));
+const CookiesPage = React.lazy(() => import('./CookiesPage'));
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
@@ -46,19 +47,27 @@ root.render(
   <React.StrictMode>
     <ErrorBoundary>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/prestations" element={<ServicesPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/services/:slug" element={<ServiceDetailPage />} />
-          <Route path="/a-propos" element={<AboutPage />} />
-          <Route path="/tarifs" element={<PricingPage />} />
-          <Route path="/blog" element={<BlogListPage />} />
-          <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/mentions-legales" element={<LegalPage />} />
-          <Route path="/confidentialite" element={<PrivacyPage />} />
-          <Route path="/cookies" element={<CookiesPage />} />
-        </Routes>
+        <Suspense
+          fallback={
+            <div className="min-h-screen flex items-center justify-center bg-surface text-sm text-gray-500">
+              Chargement...
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/prestations" element={<ServicesPage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/services/:slug" element={<ServiceDetailPage />} />
+            <Route path="/a-propos" element={<AboutPage />} />
+            <Route path="/tarifs" element={<PricingPage />} />
+            <Route path="/blog" element={<BlogListPage />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/mentions-legales" element={<LegalPage />} />
+            <Route path="/confidentialite" element={<PrivacyPage />} />
+            <Route path="/cookies" element={<CookiesPage />} />
+          </Routes>
+        </Suspense>
         <MobileCta />
         <CookieBanner />
       </BrowserRouter>
