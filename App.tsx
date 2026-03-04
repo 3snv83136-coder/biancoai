@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { BUSINESS_INFO, SERVICES, REVIEWS, FAQ_ITEMS, FALLBACK_WELLNESS_TIPS } from './constants';
+import { services as SEO_SERVICES } from './servicesData';
 import type { WellnessTip } from './types';
 
 const FAQAccordionItem: React.FC<{ question: string; answer: string; isOpen: boolean; onClick: () => void }> = ({ question, answer, isOpen, onClick }) => {
@@ -75,10 +76,27 @@ const App: React.FC = () => {
       "sameAs": [BUSINESS_INFO.instagram, BUSINESS_INFO.facebook, BUSINESS_INFO.planityUrl]
     };
 
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(jsonLd);
-    document.head.appendChild(script);
+    const salonScript = document.createElement('script');
+    salonScript.type = 'application/ld+json';
+    salonScript.text = JSON.stringify(jsonLd);
+    document.head.appendChild(salonScript);
+
+    const itemList = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: SEO_SERVICES.map((service, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${window.location.origin}/services/${service.id}`,
+        name: service.metaTitle || service.title,
+        description: service.metaDescription,
+      })),
+    };
+
+    const indexScript = document.createElement('script');
+    indexScript.type = 'application/ld+json';
+    indexScript.text = JSON.stringify(itemList);
+    document.head.appendChild(indexScript);
 
     const fetchTips = async () => {
       try {
@@ -94,8 +112,9 @@ const App: React.FC = () => {
     if (view === 'home') fetchTips();
 
     return () => {
-      const existingScript = document.querySelector('script[type="application/ld+json"]');
-      if (existingScript) document.head.removeChild(existingScript);
+      [salonScript, indexScript].forEach((s) => {
+        if (s && s.parentNode) s.parentNode.removeChild(s);
+      });
     };
   }, [view]);
 

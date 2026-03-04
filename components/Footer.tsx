@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BUSINESS_INFO } from '../constants';
+import { services } from '../servicesData';
 
 const Footer: React.FC = () => {
   return (
@@ -82,7 +83,22 @@ const Footer: React.FC = () => {
         </div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/10 text-center text-gray-500 text-sm">
+      <div className="max-w-7xl mx-auto px-6 mt-12 border-t border-white/10 pt-8 text-xs text-gray-500 leading-relaxed">
+        <p className="font-semibold tracking-widest uppercase text-[10px] text-gray-400 mb-3">Index SEO – Soins Bianco Esthétique</p>
+        <p>
+          Institut de beauté à Hyères :{' '}
+          {services.map((service, index) => (
+            <React.Fragment key={service.id}>
+              <Link to={`/services/${service.id}`} className="hover:text-primary">
+                {service.title}
+              </Link>
+              {index < services.length - 1 && <span> • </span>}
+            </React.Fragment>
+          ))}
+        </p>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 mt-6 text-center text-gray-500 text-sm">
         <p>© {new Date().getFullYear()} Bianco Esthétique. Tous droits réservés. Créé avec passion à Hyères.</p>
       </div>
     </footer>
