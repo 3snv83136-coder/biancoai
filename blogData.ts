@@ -20,7 +20,7 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       'Découverte du head spa à Hyères : un soin dédié au cuir chevelu qui détend en profondeur, relance la microcirculation et améliore la qualité des cheveux.',
     coverImage:
-      'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&q=70&w=1200&fm=webp',
+      'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&q=60&w=900&fm=webp',
     tags: ['Head spa', 'Cuir chevelu', 'Bien-être'],
     metaTitle: 'Head spa Hyères : rituel cuir chevelu | Bianco Esthétique',
     metaDescription:
@@ -51,7 +51,7 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       'Le drainage lymphatique méthode brésilienne est devenu un incontournable pour alléger les jambes, affiner la silhouette et relancer la circulation.',
     coverImage:
-      'https://images.unsplash.com/photo-1592150621744-aca64f48394a?auto=format&fit=crop&q=70&w=1200&fm=webp',
+      'https://images.unsplash.com/photo-1592150621744-aca64f48394a?auto=format&fit=crop&q=60&w=900&fm=webp',
     tags: ['Drainage lymphatique', 'Jambes lourdes', 'Silhouette'],
     metaTitle: 'Drainage lymphatique brésilien Hyères | Bianco Esthétique',
     metaDescription:
@@ -82,7 +82,7 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       "Les extensions de cils permettent d'ouvrir le regard sans maquillage. Encore faut-il choisir la bonne technique et adopter les bons gestes d'entretien.",
     coverImage:
-      'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=70&w=1200&fm=webp',
+      'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=60&w=900&fm=webp',
     tags: ['Extensions de cils', 'Beauté du regard'],
     metaTitle: 'Extensions de cils Hyères : cil à cil, mixte, volume | Bianco Esthétique',
     metaDescription:
@@ -113,7 +113,7 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       'Entre le soleil, le vent marin et le quotidien, la peau peut manquer d’éclat. Un soin visage ciblé permet de réhydrater, lisser et unifier le teint.',
     coverImage:
-      'https://images.unsplash.com/photo-1559594714-990f66f6f669?auto=format&fit=crop&q=70&w=1200&fm=webp',
+      'https://images.unsplash.com/photo-1559594714-990f66f6f669?auto=format&fit=crop&q=60&w=900&fm=webp',
     tags: ['Soin visage', 'Éclat', 'Hydratation'],
     metaTitle: 'Soin visage Hyères : retrouver une peau lumineuse | Bianco Esthétique',
     metaDescription:
@@ -144,7 +144,7 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       'Callosités, ongles abîmés ou vernis qui s’écaille vite : un soin beauté des pieds en institut permet de repartir sur de bonnes bases avant l’été.',
     coverImage:
-      'https://images.unsplash.com/photo-1522335789203-41f1cd1f6c93?auto=format&fit=crop&q=70&w=1200&fm=webp',
+      'https://images.unsplash.com/photo-1522335789203-41f1cd1f6c93?auto=format&fit=crop&q=60&w=900&fm=webp',
     tags: ['Beauté des pieds', 'Ongles', 'Pédicure'],
     metaTitle: 'Beauté des pieds Hyères : soin et vernis longue tenue | Bianco Esthétique',
     metaDescription:

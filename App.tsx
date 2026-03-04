@@ -72,7 +72,7 @@ const App: React.FC = () => {
       "url": window.location.origin,
       "openingHours": openingHours.length ? openingHours : undefined,
       "priceRange": "$$",
-      "image": "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&q=70&w=800&fm=webp",
+      "image": "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&q=60&w=600&fm=webp",
       "sameAs": [BUSINESS_INFO.instagram, BUSINESS_INFO.facebook, BUSINESS_INFO.planityUrl]
     };
 
@@ -188,7 +188,7 @@ const App: React.FC = () => {
                 <a href={BUSINESS_INFO.planityUrl} target="_blank" className="inline-block bg-primary text-white px-12 py-5 rounded-full text-lg font-bold hover:bg-white hover:text-dark transition-all">Prendre rendez-vous</a>
               </div>
               <div className="w-full md:w-1/3 aspect-square rounded-[2rem] overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=70&w=600&fm=webp" className="w-full h-full object-cover grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700" alt="Détente" loading="lazy" />
+                <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=60&w=500&fm=webp" className="w-full h-full object-cover grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700" alt="Détente" loading="lazy" />
               </div>
             </div>
           </div>
@@ -207,7 +207,7 @@ const App: React.FC = () => {
       <section className="relative h-[100svh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 scale-105">
           <img 
-            src="https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&q=70&w=1200&fm=webp" 
+            src="https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&q=60&w=1100&fm=webp" 
             alt="Bianco Esthétique Ambiance" 
             className="w-full h-full object-cover brightness-[0.65]"
           />
@@ -314,7 +314,7 @@ const App: React.FC = () => {
 
             <div className="relative">
               <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl scale-95 hover:scale-100 transition-transform duration-700">
-                <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=70&w=700&fm=webp" className="w-full h-full object-cover" alt="Soin Bianco" loading="lazy" />
+                <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=60&w=600&fm=webp" className="w-full h-full object-cover" alt="Soin Bianco" loading="lazy" />
               </div>
               <div className="absolute -bottom-10 -left-10 w-32 h-32 md:w-48 md:h-48 bg-primary/10 rounded-full -z-10 animate-pulse"></div>
             </div>
