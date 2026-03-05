@@ -1,0 +1,19 @@
+# Sources GEO
+
+## Maddyness — Le GEO va tuer 80 % des sites web (et tant mieux)
+
+Source :
+https://www.maddyness.com/2026/02/27/le-geo-va-tuer-80-des-sites-web-et-tant-mieux/
+
+Auteur : Pauline Viseur, Mélina Ramos  
+Date : 27 février 2026
+
+Résumé :
+
+- Le GEO (Generative Engine Optimization) concerne l’optimisation des contenus pour les moteurs génératifs.
+- Les IA ne renvoient plus seulement des liens mais synthétisent des sources.
+- Les sites génériques ou sans expertise claire risquent de disparaître des réponses générées.
+- Les contenus structurés, experts et différenciés sont plus susceptibles d’être cités.
+
+Référence :
+Maddyness – 27/02/2026
