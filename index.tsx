@@ -11,6 +11,7 @@ const AboutPage = React.lazy(() => import('./AboutPage'));
 const PricingPage = React.lazy(() => import('./PricingPage'));
 const BlogListPage = React.lazy(() => import('./BlogListPage'));
 const BlogPostPage = React.lazy(() => import('./BlogPostPage'));
+const HeadSpaPage = React.lazy(() => import('./HeadSpaPage'));
 const LegalPage = React.lazy(() => import('./LegalPage'));
 const PrivacyPage = React.lazy(() => import('./PrivacyPage'));
 const CookiesPage = React.lazy(() => import('./CookiesPage'));
@@ -61,6 +62,7 @@ root.render(
             <Route path="/services/:slug" element={<ServiceDetailPage />} />
             <Route path="/a-propos" element={<AboutPage />} />
             <Route path="/tarifs" element={<PricingPage />} />
+            <Route path="/head-spa-hyeres" element={<HeadSpaPage />} />
             <Route path="/blog" element={<BlogListPage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/mentions-legales" element={<LegalPage />} />

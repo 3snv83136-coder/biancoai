@@ -59,8 +59,10 @@ const App: React.FC = () => {
     const jsonLd = {
       "@context": "https://schema.org",
       "@type": "BeautySalon",
-      "name": BUSINESS_INFO.name,
-      "description": "Institut de beauté et bien-être à Hyères. Spécialiste du drainage lymphatique méthode brésilienne et de la beauté du regard (extensions de cils). Meilleure Apprentie de France.",
+      "name": "Bianco Esthétique",
+      "url": "https://www.bianco-esthetique.fr",
+      "description": "Institut de beauté et bien-être à Hyères. Spécialiste du drainage lymphatique méthode brésilienne, des soins visage et de la beauté du regard.",
+      "telephone": "+33749769691",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "3 Avenue Ernest Millet",
@@ -68,12 +70,24 @@ const App: React.FC = () => {
         "postalCode": "83400",
         "addressCountry": "FR"
       },
-      "telephone": BUSINESS_INFO.phone,
-      "url": window.location.origin,
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "43.1199",
+        "longitude": "6.1314"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Hyères"
+      },
       "openingHours": openingHours.length ? openingHours : undefined,
-      "priceRange": "$$",
+      "priceRange": "€€",
       "image": "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&q=70&w=600",
-      "sameAs": [BUSINESS_INFO.instagram, BUSINESS_INFO.facebook, BUSINESS_INFO.planityUrl]
+      "sameAs": [
+        BUSINESS_INFO.instagram,
+        BUSINESS_INFO.facebook,
+        BUSINESS_INFO.planityUrl,
+        "https://www.facebook.com/biancoesthetique"
+      ]
     };
 
     const salonScript = document.createElement('script');

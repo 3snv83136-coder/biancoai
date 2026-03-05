@@ -19,6 +19,7 @@ function getStaticPaths() {
     '/services',
     '/a-propos',
     '/tarifs',
+    '/head-spa-hyeres',
     '/mentions-legales',
     '/confidentialite',
     '/cookies',
