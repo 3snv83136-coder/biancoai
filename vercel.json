@@ -7,8 +7,8 @@
   ],
   "redirects": [
     {
-      "source": "http://bianco-esthetique.fr/:path*",
-      "destination": "https://www.bianco-esthetique.fr/:path*",
+      "source": "/:path*",
+      "destination": "https://bianco-esthetique.fr/:path*",
       "permanent": true
     }
   ]
