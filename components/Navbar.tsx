@@ -51,16 +51,62 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center space-x-12">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.to}
-                className="text-[11px] font-bold uppercase tracking-widest transition-all montserrat hover:text-primary relative group text-dark/70"
-              >
-                {link.label}
-                <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-primary transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              if (link.label === 'Prestations') {
+                return (
+                  <div key={link.label} className="relative group">
+                    <Link
+                      to={link.to}
+                      className="text-[11px] font-bold uppercase tracking-widest transition-all montserrat hover:text-primary relative text-dark/70 flex items-center gap-1"
+                    >
+                      {link.label}
+                      <span className="inline-block transform transition-transform group-hover:rotate-180">
+                        ▼
+                      </span>
+                    </Link>
+                    <div className="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-200 absolute left-1/2 -translate-x-1/2 mt-4 w-72 rounded-2xl bg-white shadow-2xl border border-gray-100 py-3">
+                      <div className="px-4 pb-2 text-[11px] font-semibold text-gray-500 uppercase tracking-widest">
+                        Pages prestations
+                      </div>
+                      <div className="flex flex-col px-2 pb-2 text-sm">
+                        <Link to="/institut-beaute-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
+                          Institut de beauté à Hyères
+                        </Link>
+                        <Link to="/soin-visage-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
+                          Soin du visage à Hyères
+                        </Link>
+                        <Link to="/manucure-ongles-gel-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
+                          Manucure &amp; ongles en gel
+                        </Link>
+                        <Link to="/extensions-cils-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
+                          Extensions de cils
+                        </Link>
+                        <Link to="/massage-californien-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
+                          Massage californien
+                        </Link>
+                        <Link to="/callus-peeling-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
+                          Callus peeling &amp; soin des pieds
+                        </Link>
+                        <Link to="/soin-visage-toulon" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
+                          Soin du visage près de Toulon
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className="text-[11px] font-bold uppercase tracking-widest transition-all montserrat hover:text-primary relative group text-dark/70"
+                >
+                  {link.label}
+                  <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              );
+            })}
             <a
               href={BUSINESS_INFO.planityUrl}
               target="_blank"
@@ -100,15 +146,95 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
       >
         <div className="space-y-10">
           {navLinks.map((link, i) => (
-            <Link 
-              key={link.label} 
-              to={link.to}
-              className={`block text-4xl serif hover:text-primary transition-all transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
-              style={{ transitionDelay: `${i * 100}ms` }}
-              onClick={() => { setMobileMenuOpen(false); onLinkClick?.(); }}
-            >
-              {link.label}
-            </Link>
+            <div key={link.label} className="space-y-3">
+              <Link
+                to={link.to}
+                className={`block text-4xl serif hover:text-primary transition-all transform ${
+                  mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+                }`}
+                style={{ transitionDelay: `${i * 100}ms` }}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onLinkClick?.();
+                }}
+              >
+                {link.label}
+              </Link>
+              {link.label === 'Prestations' && (
+                <div className="space-y-1 text-base text-gray-600 mt-1">
+                  <Link
+                    to="/institut-beaute-hyeres"
+                    className="block hover:text-primary"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLinkClick?.();
+                    }}
+                  >
+                    Institut de beauté à Hyères
+                  </Link>
+                  <Link
+                    to="/soin-visage-hyeres"
+                    className="block hover:text-primary"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLinkClick?.();
+                    }}
+                  >
+                    Soin du visage à Hyères
+                  </Link>
+                  <Link
+                    to="/manucure-ongles-gel-hyeres"
+                    className="block hover:text-primary"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLinkClick?.();
+                    }}
+                  >
+                    Manucure &amp; ongles en gel
+                  </Link>
+                  <Link
+                    to="/extensions-cils-hyeres"
+                    className="block hover:text-primary"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLinkClick?.();
+                    }}
+                  >
+                    Extensions de cils
+                  </Link>
+                  <Link
+                    to="/massage-californien-hyeres"
+                    className="block hover:text-primary"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLinkClick?.();
+                    }}
+                  >
+                    Massage californien
+                  </Link>
+                  <Link
+                    to="/callus-peeling-hyeres"
+                    className="block hover:text-primary"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLinkClick?.();
+                    }}
+                  >
+                    Callus peeling &amp; soin des pieds
+                  </Link>
+                  <Link
+                    to="/soin-visage-toulon"
+                    className="block hover:text-primary"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLinkClick?.();
+                    }}
+                  >
+                    Soin du visage près de Toulon
+                  </Link>
+                </div>
+              )}
+            </div>
           ))}
           <div className={`pt-10 transition-all duration-700 delay-500 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <a 
