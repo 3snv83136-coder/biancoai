@@ -30,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${isScrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100 py-4' : 'bg-transparent py-8'}`}>
+      <nav className="fixed top-0 left-0 right-0 z-[100] bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100 py-4 transition-all duration-500">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
           <Link
             to="/"
@@ -41,35 +41,39 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
               onLinkClick?.();
             }}
           >
-            <span className={`text-2xl md:text-3xl font-bold tracking-[0.2em] uppercase transition-colors duration-300 serif ${isScrolled ? 'text-dark' : 'text-white'}`}>Bianco</span>
-            <span className={`text-[10px] tracking-ultra-wide uppercase transition-colors duration-300 montserrat font-bold -mt-1 ${isScrolled ? 'text-primary' : 'text-primary'}`}>Esthétique</span>
+            <span className="text-2xl md:text-3xl font-bold tracking-[0.2em] uppercase transition-colors duration-300 serif text-dark">
+              Bianco
+            </span>
+            <span className="text-[10px] tracking-ultra-wide uppercase transition-colors duration-300 montserrat font-bold -mt-1 text-primary">
+              Esthétique
+            </span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center space-x-12">
             {navLinks.map((link) => (
-              <Link 
-                key={link.label} 
+              <Link
+                key={link.label}
                 to={link.to}
-                className={`text-[11px] font-bold uppercase tracking-widest transition-all montserrat hover:text-primary relative group ${isScrolled ? 'text-dark/70' : 'text-white/80'}`}
+                className="text-[11px] font-bold uppercase tracking-widest transition-all montserrat hover:text-primary relative group text-dark/70"
               >
                 {link.label}
                 <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-primary transition-all duration-300 group-hover:w-full"></span>
               </Link>
             ))}
-            <a 
+            <a
               href={BUSINESS_INFO.planityUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all montserrat shadow-xl shadow-primary/20 ${isScrolled ? 'bg-primary text-white hover:bg-dark' : 'bg-white text-dark hover:bg-primary hover:text-white'}`}
+              className="px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all montserrat shadow-xl shadow-primary/20 bg-primary text-white hover:bg-dark"
             >
               Réserver
             </a>
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
-            className={`lg:hidden p-2 rounded-xl transition-colors ${isScrolled ? 'text-dark bg-gray-50' : 'text-white bg-white/10 backdrop-blur-md'}`}
+          <button
+            className="lg:hidden p-2 rounded-xl transition-colors text-dark bg-gray-50"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
             aria-expanded={mobileMenuOpen}

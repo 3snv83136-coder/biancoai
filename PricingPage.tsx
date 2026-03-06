@@ -39,6 +39,35 @@ const PricingPage: React.FC = () => {
           <p className="text-gray-500 font-light mb-8 max-w-2xl">
             Retrouvez l&apos;ensemble de nos prestations et leurs tarifs. Réservez en ligne selon vos disponibilités.
           </p>
+          <div className="mb-10 rounded-2xl bg-white/80 shadow-sm border border-gray-100 p-6">
+            <h2 className="text-lg font-semibold text-dark mb-3">Pages détaillées par prestation</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Consultez nos pages complètes pour découvrir chaque soin en détail avant de réserver.
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Link to="/institut-beaute-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Institut de beauté à Hyères
+              </Link>
+              <Link to="/soin-visage-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Soin du visage à Hyères
+              </Link>
+              <Link to="/manucure-ongles-gel-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Manucure &amp; ongles en gel à Hyères
+              </Link>
+              <Link to="/extensions-cils-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Extensions de cils à Hyères
+              </Link>
+              <Link to="/massage-californien-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Massage californien à Hyères
+              </Link>
+              <Link to="/callus-peeling-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Callus peeling &amp; soin des pieds à Hyères
+              </Link>
+              <Link to="/soin-visage-toulon" className="text-sm text-primary hover:text-dark hover:underline">
+                Soin du visage près de Toulon
+              </Link>
+            </div>
+          </div>
           <a
             href={BUSINESS_INFO.planityUrl}
             target="_blank"
