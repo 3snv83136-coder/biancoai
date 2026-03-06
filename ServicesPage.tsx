@@ -70,6 +70,35 @@ const ServicesPage: React.FC = () => {
             Retrouvez en un coup d&apos;œil l&apos;ensemble des prestations proposées à Hyères. Les tarifs détaillés sont disponibles dans la
             rubrique dédiée.
           </p>
+          <div className="mb-12 rounded-2xl bg-white/80 shadow-sm border border-gray-100 p-6">
+            <h2 className="text-lg font-semibold text-dark mb-3">Pages détaillées par prestation</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Avant de réserver, découvrez nos pages complètes pour chaque soin, avec détails, bienfaits et FAQ.
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Link to="/institut-beaute-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Institut de beauté à Hyères
+              </Link>
+              <Link to="/soin-visage-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Soin du visage à Hyères
+              </Link>
+              <Link to="/manucure-ongles-gel-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Manucure &amp; ongles en gel à Hyères
+              </Link>
+              <Link to="/extensions-cils-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Extensions de cils à Hyères
+              </Link>
+              <Link to="/massage-californien-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Massage californien à Hyères
+              </Link>
+              <Link to="/callus-peeling-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
+                Callus peeling &amp; soin des pieds à Hyères
+              </Link>
+              <Link to="/soin-visage-toulon" className="text-sm text-primary hover:text-dark hover:underline">
+                Soin du visage près de Toulon
+              </Link>
+            </div>
+          </div>
           <div className="space-y-12">
             {planityPrestations.map(({ label, items }) => {
               const summary = getCategorySummary(label);
