@@ -12,6 +12,7 @@ const PricingPage = React.lazy(() => import('./PricingPage'));
 const BlogListPage = React.lazy(() => import('./BlogListPage'));
 const BlogPostPage = React.lazy(() => import('./BlogPostPage'));
 const HeadSpaPage = React.lazy(() => import('./HeadSpaPage'));
+const SEOPrestationPage = React.lazy(() => import('./SEOPrestationPage'));
 const LegalPage = React.lazy(() => import('./LegalPage'));
 const PrivacyPage = React.lazy(() => import('./PrivacyPage'));
 const CookiesPage = React.lazy(() => import('./CookiesPage'));
@@ -63,6 +64,13 @@ root.render(
             <Route path="/a-propos" element={<AboutPage />} />
             <Route path="/tarifs" element={<PricingPage />} />
             <Route path="/head-spa-hyeres" element={<HeadSpaPage />} />
+            <Route path="/institut-beaute-hyeres" element={<SEOPrestationPage pageSlug="institut-beaute-hyeres" />} />
+            <Route path="/soin-visage-hyeres" element={<SEOPrestationPage pageSlug="soin-visage-hyeres" />} />
+            <Route path="/manucure-ongles-gel-hyeres" element={<SEOPrestationPage pageSlug="manucure-ongles-gel-hyeres" />} />
+            <Route path="/extensions-cils-hyeres" element={<SEOPrestationPage pageSlug="extensions-cils-hyeres" />} />
+            <Route path="/massage-californien-hyeres" element={<SEOPrestationPage pageSlug="massage-californien-hyeres" />} />
+            <Route path="/callus-peeling-hyeres" element={<SEOPrestationPage pageSlug="callus-peeling-hyeres" />} />
+            <Route path="/soin-visage-toulon" element={<SEOPrestationPage pageSlug="soin-visage-toulon" />} />
             <Route path="/blog" element={<BlogListPage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/mentions-legales" element={<LegalPage />} />

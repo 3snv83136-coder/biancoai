@@ -6,10 +6,35 @@ interface NavbarProps {
   onLinkClick?: () => void;
 }
 
+const PRESTATION_LINKS = [
+  { label: 'Institut de beauté à Hyères', to: '/institut-beaute-hyeres' },
+  { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+  { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+  { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+  { label: 'Massage californien', to: '/massage-californien-hyeres' },
+  { label: 'Callus peeling & soin des pieds', to: '/callus-peeling-hyeres' },
+  { label: 'Soin du visage près de Toulon', to: '/soin-visage-toulon' },
+];
+
 const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [prestationsOpen, setPrestationsOpen] = useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
   useLocation();
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setPrestationsOpen(false);
+      }
+    };
+    if (prestationsOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [prestationsOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,44 +79,54 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
             {navLinks.map((link) => {
               if (link.label === 'Prestations') {
                 return (
-                  <div key={link.label} className="relative group">
-                    <Link
-                      to={link.to}
-                      className="text-[11px] font-bold uppercase tracking-widest transition-all montserrat hover:text-primary relative text-dark/70 flex items-center gap-1"
+                  <div key={link.label} ref={dropdownRef} className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setPrestationsOpen((v) => !v)}
+                      className="text-[11px] font-bold uppercase tracking-widest transition-all montserrat hover:text-primary text-dark/70 flex items-center gap-1.5"
+                      aria-expanded={prestationsOpen}
+                      aria-haspopup="true"
                     >
                       {link.label}
-                      <span className="inline-block transform transition-transform group-hover:rotate-180">
-                        ▼
-                      </span>
-                    </Link>
-                    <div className="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-200 absolute left-1/2 -translate-x-1/2 mt-4 w-72 rounded-2xl bg-white shadow-2xl border border-gray-100 py-3">
-                      <div className="px-4 pb-2 text-[11px] font-semibold text-gray-500 uppercase tracking-widest">
-                        Pages prestations
+                      <svg
+                        className={`w-3 h-3 transition-transform duration-200 ${prestationsOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {prestationsOpen && (
+                      <div className="absolute left-0 top-full mt-2 w-80 rounded-xl bg-white shadow-xl border border-gray-100 py-3 z-[110]">
+                        <div className="px-4 pb-2 border-b border-gray-100 mb-2">
+                          <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">
+                            Nos prestations
+                          </span>
+                        </div>
+                        <div className="max-h-[70vh] overflow-y-auto">
+                          {PRESTATION_LINKS.map((item) => (
+                            <Link
+                              key={item.to}
+                              to={item.to}
+                              className="block px-4 py-2.5 text-sm text-dark/90 hover:bg-primary/5 hover:text-primary transition-colors"
+                              onClick={() => { setPrestationsOpen(false); onLinkClick?.(); }}
+                            >
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
+                        <div className="border-t border-gray-100 mt-2 pt-2 px-4">
+                          <Link
+                            to="/prestations"
+                            className="block py-2 text-sm font-medium text-primary hover:underline"
+                            onClick={() => { setPrestationsOpen(false); onLinkClick?.(); }}
+                          >
+                            Voir toutes les prestations →
+                          </Link>
+                        </div>
                       </div>
-                      <div className="flex flex-col px-2 pb-2 text-sm">
-                        <Link to="/institut-beaute-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
-                          Institut de beauté à Hyères
-                        </Link>
-                        <Link to="/soin-visage-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
-                          Soin du visage à Hyères
-                        </Link>
-                        <Link to="/manucure-ongles-gel-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
-                          Manucure &amp; ongles en gel
-                        </Link>
-                        <Link to="/extensions-cils-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
-                          Extensions de cils
-                        </Link>
-                        <Link to="/massage-californien-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
-                          Massage californien
-                        </Link>
-                        <Link to="/callus-peeling-hyeres" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
-                          Callus peeling &amp; soin des pieds
-                        </Link>
-                        <Link to="/soin-visage-toulon" className="px-2 py-1.5 rounded-md text-dark/80 hover:bg-primary/5 hover:text-primary">
-                          Soin du visage près de Toulon
-                        </Link>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 );
               }
@@ -161,76 +196,29 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
                 {link.label}
               </Link>
               {link.label === 'Prestations' && (
-                <div className="space-y-1 text-base text-gray-600 mt-1">
+                <div className="space-y-0.5 text-lg text-gray-600 mt-2 pl-4 border-l-2 border-primary/20">
+                  {PRESTATION_LINKS.map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="block py-1.5 hover:text-primary"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        onLinkClick?.();
+                      }}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
                   <Link
-                    to="/institut-beaute-hyeres"
-                    className="block hover:text-primary"
+                    to="/prestations"
+                    className="block py-1.5 font-medium text-primary mt-2"
                     onClick={() => {
                       setMobileMenuOpen(false);
                       onLinkClick?.();
                     }}
                   >
-                    Institut de beauté à Hyères
-                  </Link>
-                  <Link
-                    to="/soin-visage-hyeres"
-                    className="block hover:text-primary"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onLinkClick?.();
-                    }}
-                  >
-                    Soin du visage à Hyères
-                  </Link>
-                  <Link
-                    to="/manucure-ongles-gel-hyeres"
-                    className="block hover:text-primary"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onLinkClick?.();
-                    }}
-                  >
-                    Manucure &amp; ongles en gel
-                  </Link>
-                  <Link
-                    to="/extensions-cils-hyeres"
-                    className="block hover:text-primary"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onLinkClick?.();
-                    }}
-                  >
-                    Extensions de cils
-                  </Link>
-                  <Link
-                    to="/massage-californien-hyeres"
-                    className="block hover:text-primary"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onLinkClick?.();
-                    }}
-                  >
-                    Massage californien
-                  </Link>
-                  <Link
-                    to="/callus-peeling-hyeres"
-                    className="block hover:text-primary"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onLinkClick?.();
-                    }}
-                  >
-                    Callus peeling &amp; soin des pieds
-                  </Link>
-                  <Link
-                    to="/soin-visage-toulon"
-                    className="block hover:text-primary"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onLinkClick?.();
-                    }}
-                  >
-                    Soin du visage près de Toulon
+                    Voir toutes les prestations
                   </Link>
                 </div>
               )}
