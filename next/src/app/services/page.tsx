@@ -21,7 +21,8 @@ function slugify(s: string): string {
 
 export const metadata = {
   title: 'Nos services | Institut de beauté Hyères et environs',
-  description: 'Tous nos services par thème et par ville : head spa, massage, soins visage, ongles, maquillage. Hyères, Toulon, Carqueiranne, La Londe, La Crau, Le Pradet, Pierrefeu, La Valette, Solliès-Pont.',
+  description:
+    'Tous nos services par thème et par ville : head spa, massage, soins visage, ongles, maquillage. Institut de beauté à Hyères, Toulon, Carqueiranne, La Londe, La Crau, Le Pradet, Pierrefeu, La Valette, Solliès-Pont.',
 };
 
 export default function ServicesIndexPage() {
