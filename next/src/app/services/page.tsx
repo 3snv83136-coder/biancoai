@@ -41,7 +41,21 @@ export default function ServicesIndexPage() {
   const cityToAnchor = (city: string, themeAnchor: string) =>
     `${themeAnchor}-${slugify(city)}`;
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.bianco-esthetique.fr/services' },
+    ],
+  };
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+    />
     <div className="max-w-5xl mx-auto px-6 py-10">
       <nav aria-label="Fil d'Ariane" className="text-xs md:text-sm text-gray-500 mb-6">
         <ol className="flex flex-wrap gap-x-2 gap-y-1">
@@ -102,5 +116,6 @@ export default function ServicesIndexPage() {
         ))}
       </div>
     </div>
+    </>
   );
 }

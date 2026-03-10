@@ -103,16 +103,32 @@ const HeadSpaPage: React.FC = () => {
       ],
     };
 
+    const breadcrumb = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+        { '@type': 'ListItem', position: 2, name: 'Head Spa à Hyères', item: 'https://www.bianco-esthetique.fr/head-spa-hyeres' },
+      ],
+    };
+
     const script = document.createElement('script');
     script.type = 'application/ld+json';
     script.text = JSON.stringify(faqJsonLd);
     document.head.appendChild(script);
 
+    const breadcrumbScript = document.createElement('script');
+    breadcrumbScript.type = 'application/ld+json';
+    breadcrumbScript.text = JSON.stringify(breadcrumb);
+    document.head.appendChild(breadcrumbScript);
+
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
-      if (script.parentNode) script.parentNode.removeChild(script);
+      [script, breadcrumbScript].forEach((s) => {
+        if (s.parentNode) s.parentNode.removeChild(s);
+      });
     };
   }, []);
 

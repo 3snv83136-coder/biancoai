@@ -112,6 +112,24 @@ const App: React.FC = () => {
     indexScript.text = JSON.stringify(itemList);
     document.head.appendChild(indexScript);
 
+    const faqPageJsonLd = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": FAQ_ITEMS.map((item) => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer,
+        },
+      })),
+    };
+
+    const faqScript = document.createElement('script');
+    faqScript.type = 'application/ld+json';
+    faqScript.text = JSON.stringify(faqPageJsonLd);
+    document.head.appendChild(faqScript);
+
     const fetchTips = async () => {
       try {
         const { getWellnessTips } = await import('./geminiService');
@@ -126,7 +144,7 @@ const App: React.FC = () => {
     if (view === 'home') fetchTips();
 
     return () => {
-      [salonScript, indexScript].forEach((s) => {
+      [salonScript, indexScript, faqScript].forEach((s) => {
         if (s && s.parentNode) s.parentNode.removeChild(s);
       });
     };

@@ -64,13 +64,24 @@ export default async function ServicePage({
     '@type': 'Service',
     name: service.title,
     description: service.metaDescription,
+    url: `https://www.bianco-esthetique.fr/services/${service.id}`,
     areaServed: {
       '@type': 'City',
       name: service.city,
     },
     provider: {
       '@type': 'BeautySalon',
-      name: 'Institut de beauté',
+      '@id': 'https://www.bianco-esthetique.fr/#business',
+      name: 'Bianco Esthétique',
+      url: 'https://www.bianco-esthetique.fr',
+      telephone: '+33749769691',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '3 Avenue Ernest Millet',
+        addressLocality: 'Hyères',
+        postalCode: '83400',
+        addressCountry: 'FR',
+      },
     },
   };
 
@@ -87,6 +98,16 @@ export default async function ServicePage({
     })),
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.bianco-esthetique.fr/services' },
+      { '@type': 'ListItem', position: 3, name: service.title, item: `https://www.bianco-esthetique.fr/services/${service.id}` },
+    ],
+  };
+
   return (
     <>
       <script
@@ -96,6 +117,10 @@ export default async function ServicePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="bg-surface/60">
         <div className="max-w-4xl mx-auto px-6 py-10">

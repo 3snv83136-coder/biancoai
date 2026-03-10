@@ -44,10 +44,26 @@ const ServicesPage: React.FC = () => {
         'content',
         'Aperçu de toutes les prestations Bianco Esthétique à Hyères : soins corps, visage, regard, mains, pieds, maquillage et drainage lymphatique.'
       );
+
+    const breadcrumb = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+        { '@type': 'ListItem', position: 2, name: 'Prestations', item: 'https://www.bianco-esthetique.fr/prestations' },
+      ],
+    };
+
+    const breadcrumbScript = document.createElement('script');
+    breadcrumbScript.type = 'application/ld+json';
+    breadcrumbScript.text = JSON.stringify(breadcrumb);
+    document.head.appendChild(breadcrumbScript);
+
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
+      if (breadcrumbScript.parentNode) breadcrumbScript.parentNode.removeChild(breadcrumbScript);
     };
   }, []);
 

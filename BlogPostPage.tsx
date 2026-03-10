@@ -29,8 +29,18 @@ const BlogPostPage: React.FC = () => {
       datePublished: post.date,
       image: post.coverImage,
       author: {
-        '@type': 'Person',
+        '@type': 'Organization',
         name: 'Bianco Esthétique',
+        url: 'https://www.bianco-esthetique.fr',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Bianco Esthétique',
+        url: 'https://www.bianco-esthetique.fr',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://www.bianco-esthetique.fr/favicon.png',
+        },
       },
       mainEntityOfPage: {
         '@type': 'WebPage',
@@ -38,18 +48,33 @@ const BlogPostPage: React.FC = () => {
       },
     };
 
+    const breadcrumb = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.bianco-esthetique.fr/blog' },
+        { '@type': 'ListItem', position: 3, name: post.title, item: window.location.href },
+      ],
+    };
+
     const script = document.createElement('script');
     script.type = 'application/ld+json';
     script.text = JSON.stringify(jsonLd);
     document.head.appendChild(script);
 
+    const breadcrumbScript = document.createElement('script');
+    breadcrumbScript.type = 'application/ld+json';
+    breadcrumbScript.text = JSON.stringify(breadcrumb);
+    document.head.appendChild(breadcrumbScript);
+
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
+      [script, breadcrumbScript].forEach((s) => {
+        if (s.parentNode) s.parentNode.removeChild(s);
+      });
     };
   }, [post]);
 

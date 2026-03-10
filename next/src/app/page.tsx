@@ -1,7 +1,20 @@
 import Link from 'next/link';
 
 export default function HomePage() {
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+    ],
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
     <div className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-background">
       <div className="absolute inset-0 -z-10 opacity-40">
         <div className="h-full w-full bg-gradient-to-br from-secondary via-background to-surface" />
@@ -34,5 +47,6 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
