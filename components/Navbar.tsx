@@ -181,48 +181,20 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
       >
         <div className="space-y-10">
           {navLinks.map((link, i) => (
-            <div key={link.label} className="space-y-3">
-              <Link
-                to={link.to}
-                className={`block text-4xl serif hover:text-primary transition-all transform ${
-                  mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                }`}
-                style={{ transitionDelay: `${i * 100}ms` }}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onLinkClick?.();
-                }}
-              >
-                {link.label}
-              </Link>
-              {link.label === 'Prestations' && (
-                <div className="space-y-0.5 text-lg text-gray-600 mt-2 pl-4 border-l-2 border-primary/20">
-                  {PRESTATION_LINKS.map((item) => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className="block py-1.5 hover:text-primary"
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        onLinkClick?.();
-                      }}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                  <Link
-                    to="/prestations"
-                    className="block py-1.5 font-medium text-primary mt-2"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onLinkClick?.();
-                    }}
-                  >
-                    Voir toutes les prestations
-                  </Link>
-                </div>
-              )}
-            </div>
+            <Link
+              key={link.label}
+              to={link.to}
+              className={`block text-4xl serif hover:text-primary transition-all transform ${
+                mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`}
+              style={{ transitionDelay: `${i * 100}ms` }}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onLinkClick?.();
+              }}
+            >
+              {link.label}
+            </Link>
           ))}
           <div className={`pt-10 transition-all duration-700 delay-500 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <a 
