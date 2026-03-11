@@ -1,0 +1,70 @@
+{
+    "pages": [
+        {
+            "url": "/",
+            "title": "Accueil",
+            "keywords": ["institut", "beaute", "hyeres", "esthetique", "bianco", "soins"],
+            "description": "Page d'accueil de Bianco Esth\u00e9tique"
+        },
+        {
+            "url": "/prestations",
+            "title": "Prestations",
+            "keywords": ["prestations", "soins", "services", "tarifs", "beaute"],
+            "description": "Toutes nos prestations"
+        },
+        {
+            "url": "/tarifs",
+            "title": "Tarifs",
+            "keywords": ["tarifs", "prix", "prestations", "forfait"],
+            "description": "Nos tarifs"
+        },
+        {
+            "url": "/a-propos",
+            "title": "L'Institut",
+            "keywords": ["institut", "equipe", "histoire", "hyeres", "bianco"],
+            "description": "\u00c0 propos de Bianco Esth\u00e9tique"
+        },
+        {
+            "url": "/institut-beaute-hyeres",
+            "title": "Institut de beaut\u00e9 \u00e0 Hy\u00e8res",
+            "keywords": ["institut", "beaute", "hyeres", "soins", "esthetique"],
+            "description": "Institut de beaut\u00e9 \u00e0 Hy\u00e8res"
+        },
+        {
+            "url": "/soin-visage-hyeres",
+            "title": "Soin du visage \u00e0 Hy\u00e8res",
+            "keywords": ["soin", "visage", "hyeres", "peau", "eclat", "anti-age"],
+            "description": "Soin du visage \u00e0 Hy\u00e8res"
+        },
+        {
+            "url": "/manucure-ongles-gel-hyeres",
+            "title": "Manucure & ongles en gel",
+            "keywords": ["manucure", "ongles", "gel", "semi-permanent", "mains", "hyeres"],
+            "description": "Manucure et ongles en gel \u00e0 Hy\u00e8res"
+        },
+        {
+            "url": "/extensions-cils-hyeres",
+            "title": "Extensions de cils",
+            "keywords": ["extensions", "cils", "regard", "pose", "volume", "hyeres"],
+            "description": "Extensions de cils \u00e0 Hy\u00e8res"
+        },
+        {
+            "url": "/massage-californien-hyeres",
+            "title": "Massage californien",
+            "keywords": ["massage", "californien", "detente", "relaxation", "hyeres"],
+            "description": "Massage californien \u00e0 Hy\u00e8res"
+        },
+        {
+            "url": "/callus-peeling-hyeres",
+            "title": "Callus peeling & soin des pieds",
+            "keywords": ["callus", "peeling", "pieds", "soin", "pedicure", "hyeres"],
+            "description": "Callus peeling et soin des pieds \u00e0 Hy\u00e8res"
+        },
+        {
+            "url": "/soin-visage-toulon",
+            "title": "Soin du visage pr\u00e8s de Toulon",
+            "keywords": ["soin", "visage", "toulon", "hyeres", "peau"],
+            "description": "Soin du visage pr\u00e8s de Toulon"
+        }
+    ]
+}

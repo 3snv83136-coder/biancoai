@@ -1,0 +1,71 @@
+{
+    "updated_at": "2026-03-11T09:00:00+01:00",
+    "sections": [
+        {
+            "id": "section_regard",
+            "title": "Regard",
+            "items": [
+                {
+                    "id": "item_1",
+                    "label": "Cil \u00e0 cil - Pose compl\u00e8te",
+                    "price": "70",
+                    "unit": "\u20ac",
+                    "description": "Une pose naturelle pour sublimer votre regard au quotidien."
+                },
+                {
+                    "id": "item_2",
+                    "label": "Volume mixte - Pose compl\u00e8te",
+                    "price": "80",
+                    "unit": "\u20ac",
+                    "description": "Un m\u00e9lange parfait entre naturel et intensit\u00e9."
+                }
+            ]
+        },
+        {
+            "id": "section_drainage",
+            "title": "Drainage",
+            "items": [
+                {
+                    "id": "item_3",
+                    "label": "Drainage lymphatique jambes",
+                    "price": "85",
+                    "unit": "\u20ac",
+                    "description": "M\u00e9thode br\u00e9silienne pour des jambes l\u00e9g\u00e8res et sculpt\u00e9es."
+                },
+                {
+                    "id": "item_4",
+                    "label": "Drainage corps entier",
+                    "price": "115",
+                    "unit": "\u20ac",
+                    "description": "Soin complet d\u00e9toxifiant et remodelant."
+                }
+            ]
+        },
+        {
+            "id": "section_visage",
+            "title": "Visage",
+            "items": [
+                {
+                    "id": "item_5",
+                    "label": "Soin \u00e9clat visage",
+                    "price": "65",
+                    "unit": "\u20ac",
+                    "description": "Redonnez de la luminosit\u00e9 et de la fra\u00eecheur \u00e0 votre peau."
+                }
+            ]
+        },
+        {
+            "id": "section_mains",
+            "title": "Mains",
+            "items": [
+                {
+                    "id": "item_6",
+                    "label": "Beaut\u00e9 des mains & Semi-permanent",
+                    "price": "45",
+                    "unit": "\u20ac",
+                    "description": "Manucure soign\u00e9e avec pose de vernis longue tenue."
+                }
+            ]
+        }
+    ]
+}

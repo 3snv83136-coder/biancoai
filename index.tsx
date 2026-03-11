@@ -16,6 +16,7 @@ const SEOPrestationPage = React.lazy(() => import('./SEOPrestationPage'));
 const LegalPage = React.lazy(() => import('./LegalPage'));
 const PrivacyPage = React.lazy(() => import('./PrivacyPage'));
 const CookiesPage = React.lazy(() => import('./CookiesPage'));
+const AdminPage = React.lazy(() => import('./components/AdminPage'));
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
@@ -76,6 +77,7 @@ root.render(
             <Route path="/mentions-legales" element={<LegalPage />} />
             <Route path="/confidentialite" element={<PrivacyPage />} />
             <Route path="/cookies" element={<CookiesPage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </Suspense>
         <MobileCta />
