@@ -84,6 +84,7 @@ const Footer: React.FC = () => {
       </div>
       
       <SeoIndex />
+      <SeoGeoIndex />
 
       <div className="max-w-7xl mx-auto px-6 mt-6 text-center text-gray-500 text-sm">
         <p>© {new Date().getFullYear()} Bianco Esthétique. Tous droits réservés. Créé avec passion à Hyères.</p>
@@ -117,6 +118,58 @@ const SeoIndex: React.FC = () => {
                 {service.title}
               </Link>
               {index < services.length - 1 && <span> • </span>}
+            </React.Fragment>
+          ))}
+        </p>
+      )}
+    </div>
+  );
+};
+
+const GEO_LINKS = [
+  { label: 'Centre-ville Hyères', to: '/institut-beaute-centre-ville-hyeres' },
+  { label: 'Costebelle', to: '/institut-beaute-costebelle-hyeres' },
+  { label: 'Les Palmiers', to: '/institut-beaute-les-palmiers-hyeres' },
+  { label: 'Le Port', to: '/institut-beaute-port-hyeres' },
+  { label: "L'Almanarre", to: '/institut-beaute-almanarre-hyeres' },
+  { label: 'Giens', to: '/institut-beaute-giens-hyeres' },
+  { label: 'Toulon', to: '/institut-beaute-toulon' },
+  { label: 'La Garde', to: '/institut-beaute-la-garde' },
+  { label: 'Carqueiranne', to: '/institut-beaute-carqueiranne' },
+  { label: 'Le Pradet', to: '/institut-beaute-le-pradet' },
+  { label: 'La Crau', to: '/institut-beaute-la-crau' },
+  { label: 'La Londe-les-Maures', to: '/institut-beaute-la-londe-les-maures' },
+  { label: 'Bormes-les-Mimosas', to: '/institut-beaute-bormes-les-mimosas' },
+  { label: 'La Valette-du-Var', to: '/institut-beaute-la-valette-du-var' },
+  { label: 'Solliès-Pont', to: '/institut-beaute-sollies-pont' },
+  { label: 'Cuers', to: '/institut-beaute-cuers' },
+];
+
+const SeoGeoIndex: React.FC = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="max-w-7xl mx-auto px-6 mt-4 text-xs text-gray-400">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest hover:text-primary transition-colors"
+        aria-expanded={open}
+      >
+        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-500">
+          <span className={`transform transition-transform ${open ? 'rotate-90' : ''}`}>{'>'}</span>
+        </span>
+        Zone de chalandise
+      </button>
+      {open && (
+        <p className="mt-3 leading-relaxed">
+          Institut de beauté près de :{' '}
+          {GEO_LINKS.map((link, index) => (
+            <React.Fragment key={link.to}>
+              <Link to={link.to} className="hover:text-primary">
+                {link.label}
+              </Link>
+              {index < GEO_LINKS.length - 1 && <span> • </span>}
             </React.Fragment>
           ))}
         </p>
