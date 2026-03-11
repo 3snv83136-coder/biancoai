@@ -26,6 +26,7 @@ async function api(path: string, options: RequestInit = {}) {
 // ============================================================
 const LoginForm: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -34,19 +35,20 @@ const LoginForm: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
     setLoading(true);
     setError('');
     try {
-      const data = await fetch(API + '/login', {
+      const res = await fetch(API + '/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
-      }).then(r => r.json());
+      });
+      const data = await res.json();
       if (data.token) {
         localStorage.setItem('admin_token', data.token);
         onLogin();
       } else {
-        setError(data.error || 'Erreur de connexion');
+        setError(data.error || 'Erreur de connexion (code ' + res.status + ')');
       }
-    } catch {
-      setError('Erreur de connexion');
+    } catch (err: any) {
+      setError('Erreur reseau : ' + (err?.message || 'impossible de joindre le serveur'));
     }
     setLoading(false);
   };
@@ -56,15 +58,25 @@ const LoginForm: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
       <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '3rem', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,.1)', width: '100%', maxWidth: 400 }}>
         <h1 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1.5rem', color: '#222' }}>Bianco Admin</h1>
         {error && <p style={{ color: '#e74c3c', textAlign: 'center', marginBottom: '1rem', fontSize: '.9rem' }}>{error}</p>}
-        <input
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          placeholder="Mot de passe"
-          required
-          autoFocus
-          style={{ width: '100%', padding: '.8rem 1rem', border: '1px solid #ddd', borderRadius: 8, fontSize: '1rem', marginBottom: '1rem', boxSizing: 'border-box' }}
-        />
+        <div style={{ position: 'relative', marginBottom: '1rem' }}>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="Mot de passe"
+            required
+            autoFocus
+            style={{ width: '100%', padding: '.8rem 3rem .8rem 1rem', border: '1px solid #ddd', borderRadius: 8, fontSize: '1rem', boxSizing: 'border-box' }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(v => !v)}
+            style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: '#888', padding: '0.3rem' }}
+            tabIndex={-1}
+          >
+            {showPassword ? '🙈' : '👁'}
+          </button>
+        </div>
         <button
           type="submit"
           disabled={loading}
