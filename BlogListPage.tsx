@@ -1,12 +1,31 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { blogPosts } from './blogData';
 
+interface ApiPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  date: string;
+  tags: string[];
+  images: { file: string; url?: string; caption?: string }[];
+}
+
 const BlogListPage: React.FC = () => {
+  const [apiPosts, setApiPosts] = useState<ApiPost[]>([]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/posts')
+      .then(r => r.json())
+      .then(d => setApiPosts(d?.posts || []))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -49,6 +68,56 @@ const BlogListPage: React.FC = () => {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Articles depuis l'API (admin) */}
+            {apiPosts.map((post) => {
+              const coverUrl = post.images?.[0]?.url || '';
+              return (
+                <article
+                  key={post.id}
+                  className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col"
+                >
+                  {coverUrl && (
+                    <Link to={`/blog/${post.id}`} className="block overflow-hidden">
+                      <img
+                        src={coverUrl}
+                        alt={post.title}
+                        className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    </Link>
+                  )}
+                  <div className="p-6 flex flex-col flex-1">
+                    <p className="text-xs font-semibold tracking-widest uppercase text-primary mb-2">
+                      {new Date(post.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </p>
+                    <Link to={`/blog/${post.id}`} className="block mb-3">
+                      <h2 className="text-xl serif text-dark leading-snug hover:text-primary transition-colors">{post.title}</h2>
+                    </Link>
+                    <p className="text-sm text-gray-500 font-light mb-4 flex-1">{post.excerpt}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-wrap gap-1">
+                        {(post.tags || []).slice(0, 2).map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] px-2 py-1 rounded-full bg-primary/5 text-primary font-semibold uppercase tracking-widest"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <Link
+                        to={`/blog/${post.id}`}
+                        className="text-xs font-bold uppercase tracking-widest text-dark hover:text-primary border-b border-dark/20 hover:border-primary transition-colors"
+                      >
+                        Lire
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+
+            {/* Articles statiques (blogData.ts) */}
             {blogPosts.map((post) => (
               <article
                 key={post.slug}
@@ -101,4 +170,3 @@ const BlogListPage: React.FC = () => {
 };
 
 export default BlogListPage;
-
