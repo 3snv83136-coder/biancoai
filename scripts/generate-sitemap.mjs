@@ -20,9 +20,36 @@ function getStaticPaths() {
     '/a-propos',
     '/tarifs',
     '/head-spa-hyeres',
+    '/blog',
     '/mentions-legales',
     '/confidentialite',
     '/cookies',
+    // SEO Prestation pages
+    '/institut-beaute-hyeres',
+    '/soin-visage-hyeres',
+    '/manucure-ongles-gel-hyeres',
+    '/extensions-cils-hyeres',
+    '/massage-californien-hyeres',
+    '/callus-peeling-hyeres',
+    '/soin-visage-toulon',
+    // SEO Geo - Quartiers Hyères
+    '/institut-beaute-centre-ville-hyeres',
+    '/institut-beaute-costebelle-hyeres',
+    '/institut-beaute-les-palmiers-hyeres',
+    '/institut-beaute-port-hyeres',
+    '/institut-beaute-almanarre-hyeres',
+    '/institut-beaute-giens-hyeres',
+    // SEO Geo - Villes limitrophes
+    '/institut-beaute-toulon',
+    '/institut-beaute-la-garde',
+    '/institut-beaute-carqueiranne',
+    '/institut-beaute-le-pradet',
+    '/institut-beaute-la-crau',
+    '/institut-beaute-la-londe-les-maures',
+    '/institut-beaute-bormes-les-mimosas',
+    '/institut-beaute-la-valette-du-var',
+    '/institut-beaute-sollies-pont',
+    '/institut-beaute-cuers',
   ];
 }
 

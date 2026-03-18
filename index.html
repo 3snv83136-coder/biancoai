@@ -8,7 +8,27 @@
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="canonical" href="https://www.bianco-esthetique.fr">
   <title>Bianco Esthétique | Institut de Beauté & Bien-être Hyères</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="robots" content="index, follow">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Institut de Beauté à Hyères — Bianco Esthétique">
+  <meta property="og:description" content="Institut de beauté à Hyères. Drainage lymphatique brésilien, beauté du regard, soins visage et bien-être. Prenez rendez-vous en ligne.">
+  <meta property="og:url" content="https://www.bianco-esthetique.fr/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="Bianco Esthétique">
+  <meta property="og:image" content="https://www.bianco-esthetique.fr/og-image.jpg">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Institut de Beauté à Hyères — Bianco Esthétique">
+  <meta name="twitter:description" content="Drainage lymphatique brésilien, beauté du regard, soins visage. Institut de beauté à Hyères (83).">
+  <meta name="twitter:image" content="https://www.bianco-esthetique.fr/og-image.jpg">
+  <!-- LLM discovery -->
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM information">
+  <!-- Preload hero image (LCP) -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&q=70&w=1100" fetchpriority="high">
+  <!-- DNS prefetch for external resources -->
+  <link rel="dns-prefetch" href="https://images.unsplash.com">
+  <link rel="dns-prefetch" href="https://esm.sh">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -30,48 +50,104 @@
       background-repeat: no-repeat;
       background-size: cover;
     }
-    /* Hide scrollbar for Chrome, Safari and Opera */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
-    /* Hide scrollbar for IE, Edge and Firefox */
     .no-scrollbar {
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
   </style>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#C9A77C',
-            secondary: '#F4EBE2',
-            accent: '#D4AF37',
-            background: '#FFFFFF',
-            surface: '#FCFBFA',
-            dark: '#121212'
-          },
-          letterSpacing: {
-            'ultra-wide': '0.35em'
-          }
+  <link rel="stylesheet" href="/index.css">
+
+  <!-- JSON-LD statique (visible sans JavaScript) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BeautySalon",
+    "name": "Bianco Esthétique",
+    "url": "https://www.bianco-esthetique.fr",
+    "description": "Institut de beauté et bien-être à Hyères. Spécialiste du drainage lymphatique méthode brésilienne, des soins visage et de la beauté du regard.",
+    "telephone": "+33749769691",
+    "email": "contact@bianco-esthetique.fr",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "3 Avenue Ernest Millet",
+      "addressLocality": "Hyères",
+      "postalCode": "83400",
+      "addressRegion": "Var",
+      "addressCountry": "FR"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "43.1199",
+      "longitude": "6.1314"
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "10:00",
+        "closes": "18:00"
+      }
+    ],
+    "priceRange": "€€",
+    "image": "https://www.bianco-esthetique.fr/og-image.jpg",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "reviewCount": "24"
+    },
+    "sameAs": [
+      "https://www.instagram.com/bianco_esthetique",
+      "https://www.facebook.com/p/Bianco-Esthétique-61557009986241/",
+      "https://www.planity.com/bianco-esthetique-83400-hyeres"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Quelles sont les contre-indications du drainage ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Le drainage est déconseillé en cas d'infections aiguës, de fièvre, de problèmes cardiaques non traités ou de phlébite récente. En cas de doute, demandez l'avis de votre médecin."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Combien de temps dure une pose de cils ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Comptez entre 1h30 et 2h selon la technique choisie (Cil à cil ou Volume Russe/Mixte) pour une première pose."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment se déroule le premier rendez-vous ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nous commençons par un diagnostic personnalisé pour comprendre vos attentes et vérifier l'absence de contre-indications, suivi de votre soin dans une ambiance relaxante."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Proposez-vous des cures ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Oui, nous proposons des forfaits avantageux pour le drainage lymphatique (5 ou 10 séances) pour des résultats optimaux sur le long terme."
         }
       }
-    }
-  </script>
-<script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+    ]
   }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+  </script>
 </head>
 <body class="bg-background text-dark">
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[200] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-bold">Aller au contenu principal</a>
   <div id="root"></div>
 <script type="module" src="/index.tsx"></script>
 </body>

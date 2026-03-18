@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Breadcrumb from './components/Breadcrumb';
 import { blogPosts } from './blogData';
 
 interface ApiPost {
@@ -26,15 +27,26 @@ const BlogPostPage: React.FC = () => {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  // Si pas d'article statique, chercher dans l'API
+  // Si pas d'article statique, chercher dans l'API par slug
   useEffect(() => {
     if (staticPost) return;
     setLoading(true);
-    fetch(`/api/posts?id=${encodeURIComponent(slug || '')}`)
+    fetch(`/api/posts?slug=${encodeURIComponent(slug || '')}`)
       .then(r => r.json())
       .then(d => {
-        if (d && !d.error) setApiPost(d);
-        setLoading(false);
+        if (d && !d.error) {
+          setApiPost(d);
+          setLoading(false);
+        } else {
+          // Fallback: essayer par id (anciens articles avec timestamp dans l'URL)
+          fetch(`/api/posts?id=${encodeURIComponent(slug || '')}`)
+            .then(r2 => r2.json())
+            .then(d2 => {
+              if (d2 && !d2.error) setApiPost(d2);
+              setLoading(false);
+            })
+            .catch(() => setLoading(false));
+        }
       })
       .catch(() => setLoading(false));
   }, [slug, staticPost]);
@@ -49,13 +61,27 @@ const BlogPostPage: React.FC = () => {
 
     const jsonLd = {
       '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      headline: staticPost.title,
-      description: staticPost.metaDescription,
-      datePublished: staticPost.date,
-      image: staticPost.coverImage,
-      author: { '@type': 'Person', name: 'Bianco Esthétique' },
-      mainEntityOfPage: { '@type': 'WebPage', '@id': window.location.href },
+      '@graph': [
+        {
+          '@type': 'BlogPosting',
+          headline: staticPost.title,
+          description: staticPost.metaDescription,
+          datePublished: staticPost.date,
+          image: staticPost.coverImage,
+          author: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+          publisher: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+          mainEntityOfPage: { '@type': 'WebPage', '@id': window.location.href },
+          keywords: staticPost.tags.join(', '),
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+            { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.bianco-esthetique.fr/blog' },
+            { '@type': 'ListItem', position: 3, name: staticPost.title, item: `https://www.bianco-esthetique.fr/blog/${staticPost.slug}` },
+          ],
+        },
+      ],
     };
     const script = document.createElement('script');
     script.type = 'application/ld+json';
@@ -70,7 +96,7 @@ const BlogPostPage: React.FC = () => {
     };
   }, [staticPost]);
 
-  // Meta tags pour articles API
+  // Meta tags + JSON-LD pour articles API
   useEffect(() => {
     if (!apiPost) return;
     const prevTitle = document.title;
@@ -79,10 +105,40 @@ const BlogPostPage: React.FC = () => {
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute('content', apiPost.meta_desc || apiPost.excerpt);
 
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'BlogPosting',
+          headline: apiPost.title,
+          description: apiPost.meta_desc || apiPost.excerpt,
+          datePublished: apiPost.date,
+          image: apiPost.images?.[0]?.url || '',
+          author: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+          publisher: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+          mainEntityOfPage: { '@type': 'WebPage', '@id': window.location.href },
+          keywords: (apiPost.tags || []).join(', '),
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+            { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.bianco-esthetique.fr/blog' },
+            { '@type': 'ListItem', position: 3, name: apiPost.title, item: `https://www.bianco-esthetique.fr/blog/${apiPost.slug || apiPost.id}` },
+          ],
+        },
+      ],
+    };
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
+      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, [apiPost]);
 
@@ -154,14 +210,14 @@ const BlogPostPage: React.FC = () => {
 
             {coverUrl && (
               <div className="rounded-[2rem] overflow-hidden mb-10 shadow-2xl border border-white">
-                <img src={coverUrl} alt={apiPost.title} className="w-full h-72 md:h-96 object-cover" loading="lazy" />
+                <img src={coverUrl} alt={apiPost.title} className="w-full h-72 md:h-96 object-cover" loading="lazy" width={900} height={384} />
               </div>
             )}
 
             {/* Images supplementaires */}
             {apiPost.images?.slice(1).map((img, i) => (
               <figure key={i} className="my-8 text-center">
-                <img src={img.url || ''} alt={img.caption || ''} className="max-w-full h-auto rounded-2xl mx-auto" loading="lazy" />
+                <img src={img.url || ''} alt={img.caption || apiPost.title} className="max-w-full h-auto rounded-2xl mx-auto" loading="lazy" width={800} height={600} />
                 {img.caption && <figcaption className="text-gray-400 text-sm mt-2">{img.caption}</figcaption>}
               </figure>
             ))}
@@ -184,15 +240,11 @@ const BlogPostPage: React.FC = () => {
       <Navbar onLinkClick={() => {}} />
       <article className="pt-28 md:pt-32 pb-20">
         <div className="max-w-5xl mx-auto px-6">
-          <Link
-            to="/blog"
-            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs mb-8 px-5 py-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-all"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Retour au blog
-          </Link>
+          <Breadcrumb items={[
+            { label: 'Accueil', to: '/' },
+            { label: 'Blog', to: '/blog' },
+            { label: post.title },
+          ]} />
 
           <div className="mb-10">
             <p className="text-xs font-semibold tracking-widest uppercase text-primary mb-2">
@@ -210,7 +262,7 @@ const BlogPostPage: React.FC = () => {
           </div>
 
           <div className="rounded-[2rem] overflow-hidden mb-10 shadow-2xl border border-white">
-            <img src={post.coverImage} alt={post.title} className="w-full h-72 md:h-96 object-cover" loading="lazy" />
+            <img src={post.coverImage} alt={post.title} className="w-full h-72 md:h-96 object-cover" loading="lazy" width={900} height={384} />
           </div>
 
           <div className="space-y-8 text-gray-600 font-light leading-relaxed text-sm md:text-base">

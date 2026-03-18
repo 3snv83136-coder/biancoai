@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Breadcrumb from './components/Breadcrumb';
 import { services } from './servicesData';
 import { BUSINESS_INFO } from './constants';
 import type { Service } from './servicesData';
@@ -15,15 +16,54 @@ const ServiceDetailPage: React.FC = () => {
   }, [slug]);
 
   useEffect(() => {
-    if (service) {
-      document.title = `${service.metaTitle} | Bianco Esthétique`;
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', service.metaDescription);
-      return () => {
-        document.title = 'Bianco Esthétique | Institut de Beauté & Bien-être Hyères';
-        if (metaDesc) metaDesc.setAttribute('content', 'Institut de beauté et bien-être à Hyères. Spécialiste du drainage lymphatique méthode brésilienne et de la beauté du regard.');
-      };
-    }
+    if (!service) return;
+    document.title = `${service.metaTitle} | Bianco Esthétique`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', service.metaDescription);
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Service',
+          name: service.title,
+          description: service.metaDescription,
+          provider: { '@type': 'BeautySalon', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+          areaServed: { '@type': 'City', name: service.city || 'Hyères' },
+          serviceType: service.title,
+          url: `https://www.bianco-esthetique.fr/services/${service.id}`,
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+            { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.bianco-esthetique.fr/services' },
+            { '@type': 'ListItem', position: 3, name: service.title, item: `https://www.bianco-esthetique.fr/services/${service.id}` },
+          ],
+        },
+        ...(service.faq.length > 0
+          ? [{
+              '@type': 'FAQPage' as const,
+              mainEntity: service.faq.map((f) => ({
+                '@type': 'Question' as const,
+                name: f.question,
+                acceptedAnswer: { '@type': 'Answer' as const, text: f.answer },
+              })),
+            }]
+          : []),
+      ],
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+
+    return () => {
+      document.title = 'Bianco Esthétique | Institut de Beauté & Bien-être Hyères';
+      if (metaDesc) metaDesc.setAttribute('content', 'Institut de beauté et bien-être à Hyères. Spécialiste du drainage lymphatique méthode brésilienne et de la beauté du regard.');
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
   }, [service]);
 
   return (
@@ -31,22 +71,11 @@ const ServiceDetailPage: React.FC = () => {
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="flex flex-wrap gap-3 mb-10">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs px-5 py-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-all"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-            Accueil
-          </Link>
-          <Link
-            to="/services"
-            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs px-5 py-3 rounded-full border border-primary/30 hover:bg-primary/10 transition-all"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Retour aux services
-          </Link>
-        </div>
+          <Breadcrumb items={[
+            { label: 'Accueil', to: '/' },
+            { label: 'Services', to: '/services' },
+            ...(service ? [{ label: service.title }] : [{ label: 'Non trouvé' }]),
+          ]} />
 
           {service ? (
             <ServiceContent service={service} />

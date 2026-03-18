@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
 import { SEO_PRESTATION_PAGES } from './seoPrestationPages';
 
-const SITE_URL = 'https://bianco-esthetique.fr';
+const SITE_URL = 'https://www.bianco-esthetique.fr';
 
 interface SEOPrestationPageProps {
   pageSlug: string;
@@ -41,6 +42,7 @@ const SEOPrestationPage: React.FC<SEOPrestationPageProps> = ({ pageSlug }) => {
       '@graph': [
         {
           '@type': 'BeautySalon',
+          '@id': `${SITE_URL}/#organization`,
           name: 'Bianco Esthétique',
           url: SITE_URL,
           telephone: '+33749967691',
@@ -54,6 +56,23 @@ const SEOPrestationPage: React.FC<SEOPrestationPageProps> = ({ pageSlug }) => {
           geo: { '@type': 'GeoCoordinates', latitude: 43.1175016, longitude: 6.1280558 },
           priceRange: '€€',
           aggregateRating: { '@type': 'AggregateRating', ratingValue: '5', reviewCount: '24' },
+        },
+        {
+          '@type': 'Service',
+          name: page.h1,
+          description: page.metaDescription,
+          provider: { '@type': 'BeautySalon', '@id': `${SITE_URL}/#organization` },
+          areaServed: { '@type': 'City', name: 'Hyères' },
+          serviceType: page.title.split('|')[0].trim(),
+          url: `${SITE_URL}/${page.slug}`,
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL },
+            { '@type': 'ListItem', position: 2, name: 'Prestations', item: `${SITE_URL}/prestations` },
+            { '@type': 'ListItem', position: 3, name: page.title.split('|')[0].trim(), item: `${SITE_URL}/${page.slug}` },
+          ],
         },
         {
           '@type': 'FAQPage',
@@ -102,23 +121,11 @@ const SEOPrestationPage: React.FC<SEOPrestationPageProps> = ({ pageSlug }) => {
       <main className="pt-28 md:pt-32 pb-20">
         <section className="px-6">
           <div className="max-w-5xl mx-auto">
-            <div className="flex flex-wrap gap-3 mb-10">
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs px-5 py-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-all"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Accueil
-              </Link>
-              <Link
-                to="/prestations"
-                className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs px-5 py-3 rounded-full border border-primary/30 hover:bg-primary/10 transition-all"
-              >
-                Prestations
-              </Link>
-            </div>
+            <Breadcrumb items={[
+              { label: 'Accueil', to: '/' },
+              { label: 'Prestations', to: '/prestations' },
+              { label: page.title.split('|')[0].trim() },
+            ]} />
 
             <header className="mb-14">
               <span className="text-primary font-bold tracking-ultra-wide uppercase text-xs montserrat block mb-4">

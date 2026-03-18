@@ -55,7 +55,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLinkClick }) => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-[100] bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100 py-4 transition-all duration-500">
+      <nav aria-label="Navigation principale" className="fixed top-0 left-0 right-0 z-[100] bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-100 py-4 transition-all duration-500">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
           <Link
             to="/"

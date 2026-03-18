@@ -16,9 +16,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'GET') {
     const data = await readJson<any>('posts.json');
     const posts = data?.posts || [];
-    const { id } = req.query;
+    const { id, slug } = req.query;
     if (id) {
       const post = posts.find((p: any) => p.id === id);
+      return post ? res.json(post) : res.status(404).json({ error: 'Article introuvable' });
+    }
+    if (slug) {
+      const post = posts.find((p: any) => p.slug === slug);
       return post ? res.json(post) : res.status(404).json({ error: 'Article introuvable' });
     }
     return res.json({ posts });

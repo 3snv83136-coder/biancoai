@@ -1,52 +1,90 @@
-# Informations pour moteurs génératifs - Bianco Esthétique
+# Bianco Esthétique — Institut de beauté à Hyères (83400)
 
-## À propos
-Bianco Esthétique est un institut de beauté et bien-être à Hyères (Var).
-Spécialités : drainage lymphatique méthode brésilienne, extensions de cils (cil à cil, volume mixte), soins visage, beauté des mains. Titulaire du titre Meilleure Apprentie de France (MAF). Réservation en ligne sur Planity.
-
-## Coordonnées
+## Identité
+- Nom : Bianco Esthétique
+- Activité : Institut de beauté et bien-être
+- Gérante : Salomé, Meilleure Apprentie de France (MAF)
 - Adresse : 3 Avenue Ernest Millet, 83400 Hyères, France
 - Téléphone : 07 49 96 76 91
+- Site web : https://www.bianco-esthetique.fr
 - Réservation en ligne : https://www.planity.com/bianco-esthetique-83400-hyeres
 - Instagram : https://www.instagram.com/bianco_esthetique
 - Facebook : https://www.facebook.com/p/Bianco-Esthétique-61557009986241/
+- Coordonnées GPS : 43.1199, 6.1314
 
-## Services principaux
-- Cil à cil - Pose complète : 70€ (1h30)
-- Volume mixte - Pose complète : 80€ (2h)
-- Drainage lymphatique jambes (méthode brésilienne) : 85€ (45min)
-- Drainage lymphatique corps entier : 115€ (1h15)
-- Soin éclat visage : 65€ (1h)
-- Beauté des mains & Semi-permanent : 45€ (1h)
-Forfaits drainage (5 ou 10 séances) sur demande.
-
-## Zone d'intervention
-Hyères et environs (83400, Var, Provence-Alpes-Côte d'Azur). Institut fixe, pas de déplacement à domicile.
-
-## Horaires
+## Horaires d'ouverture
 - Lundi : 10:00 – 18:00
 - Mardi : 10:00 – 18:00
-- Mercredi : Fermé
+- Mercredi : 10:00 – 18:00
 - Jeudi : 10:00 – 18:00
 - Vendredi : 10:00 – 18:00
-- Samedi : 10:30 – 15:30
+- Samedi : Fermé
 - Dimanche : Fermé
 
-## Informations légales
-- Nom commercial : Bianco Esthétique
-- Activité : Institut de beauté, soins esthétiques, drainage lymphatique
+## Spécialités
+1. Drainage lymphatique méthode brésilienne (jambes 85€, corps entier 115€, cures 5 ou 10 séances)
+2. Extensions de cils (cil à cil 70€, volume mixte 80€)
+3. Soins du visage (soin fondamental 63€, traitement intensif hydratant/jeunesse 92€, soin éclat 53€)
+4. Head Spa japonais (rituel cuir chevelu, massage crânien, détente nuque)
+5. Massage californien (45min 40€, 1h 80€, 1h30 98€)
+6. Beauté des mains (semi-permanent 28€, pose gel complète, nail art, french manucure)
+7. Beauté des pieds (callus peeling, vernis semi-permanent)
+8. Maquillage (mariée, soirée, événement, naturel)
+9. Soin du corps sur-mesure (gommage, enveloppement, modelage, soin signature Indonésie 90€)
 
-## Pages importantes
+## Zone de chalandise
+Institut fixe à Hyères (pas de déplacement à domicile). Clientèle venant de :
+- Hyères centre-ville, Costebelle, Les Palmiers, Le Port, L'Almanarre, Giens
+- Toulon (15 min), La Garde (10 min), Carqueiranne (10 min)
+- Le Pradet, La Crau, La Londe-les-Maures, Bormes-les-Mimosas
+- La Valette-du-Var, Solliès-Pont, Cuers, Pierrefeu-du-Var
+
+## Pages du site
 - Accueil : /
-- Prestations / Carte des soins : /#prestations
+- Prestations (carte Planity complète) : /prestations
+- Tarifs détaillés : /tarifs
+- Head Spa Hyères : /head-spa-hyeres
+- À propos / L'Institut : /a-propos
+- Blog : /blog
 - Contact & Accès : /#contact
 - FAQ : /#faq
-(Site en une page ; ancres pour naviguer.)
+
+### Pages prestations SEO
+- Institut de beauté à Hyères : /institut-beaute-hyeres
+- Soin du visage à Hyères : /soin-visage-hyeres
+- Manucure & ongles en gel Hyères : /manucure-ongles-gel-hyeres
+- Extensions de cils Hyères : /extensions-cils-hyeres
+- Massage californien Hyères : /massage-californien-hyeres
+- Callus peeling Hyères : /callus-peeling-hyeres
+- Soin du visage près de Toulon : /soin-visage-toulon
+
+### Pages géolocalisées
+- Centre-ville Hyères : /institut-beaute-centre-ville-hyeres
+- Costebelle : /institut-beaute-costebelle-hyeres
+- Les Palmiers : /institut-beaute-les-palmiers-hyeres
+- Le Port : /institut-beaute-port-hyeres
+- L'Almanarre : /institut-beaute-almanarre-hyeres
+- Giens : /institut-beaute-giens-hyeres
+- Toulon : /institut-beaute-toulon
+- La Garde : /institut-beaute-la-garde
+- Carqueiranne : /institut-beaute-carqueiranne
+- Le Pradet : /institut-beaute-le-pradet
+- La Crau : /institut-beaute-la-crau
+- La Londe-les-Maures : /institut-beaute-la-londe-les-maures
+- Bormes-les-Mimosas : /institut-beaute-bormes-les-mimosas
+- La Valette-du-Var : /institut-beaute-la-valette-du-var
+- Solliès-Pont : /institut-beaute-sollies-pont
+- Cuers : /institut-beaute-cuers
 
 ## Données structurées
 Le site utilise des données structurées JSON-LD (Schema.org) :
-- BeautySalon (LocalBusiness)
-- Adresse (PostalAddress), horaires (openingHours), sameAs (réseaux sociaux et Planity)
+- BeautySalon avec adresse, horaires, géolocalisation, avis (5/5, 24 avis)
+- FAQPage sur la page d'accueil et chaque page prestation/géo
+- Service pour chaque prestation (head spa, massage, soins visage, etc.)
+- BreadcrumbList sur toutes les pages secondaires
+- BlogPosting pour chaque article de blog
+- WebPage + Offer sur la page tarifs
+- ItemList pour le catalogue de prestations
 
 ## Mise à jour
-Dernière mise à jour : 2025-03-02
+Dernière mise à jour : 2026-03-18

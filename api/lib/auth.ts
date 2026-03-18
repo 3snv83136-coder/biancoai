@@ -3,7 +3,10 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { readJson } from './storage.js';
 
-const JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'bianco-admin-secret-change-me';
+const JWT_SECRET = process.env.ADMIN_JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('ADMIN_JWT_SECRET environment variable is required');
+}
 
 export function signToken(username: string): string {
   return jwt.sign({ username }, JWT_SECRET, { expiresIn: '24h' });

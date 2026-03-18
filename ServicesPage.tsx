@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Breadcrumb from './components/Breadcrumb';
 import { planityPrestations } from './planityPrestations';
 
 const getCategorySummary = (label: string): string => {
@@ -44,10 +45,40 @@ const ServicesPage: React.FC = () => {
         'content',
         'Aperçu de toutes les prestations Bianco Esthétique à Hyères : soins corps, visage, regard, mains, pieds, maquillage et drainage lymphatique.'
       );
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'ItemList',
+          name: 'Prestations Bianco Esthétique',
+          itemListElement: planityPrestations.map((cat, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: cat.label,
+            url: 'https://www.bianco-esthetique.fr/prestations',
+          })),
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+            { '@type': 'ListItem', position: 2, name: 'Prestations', item: 'https://www.bianco-esthetique.fr/prestations' },
+          ],
+        },
+      ],
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
+      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
 
@@ -56,15 +87,10 @@ const ServicesPage: React.FC = () => {
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs mb-10 px-5 py-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-all"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Retour à l&apos;accueil
-          </Link>
+          <Breadcrumb items={[
+            { label: 'Accueil', to: '/' },
+            { label: 'Prestations' },
+          ]} />
           <h1 className="text-4xl md:text-5xl serif text-dark mb-4">Nos prestations</h1>
           <p className="text-gray-500 font-light mb-12 max-w-2xl">
             Retrouvez en un coup d&apos;œil l&apos;ensemble des prestations proposées à Hyères. Les tarifs détaillés sont disponibles dans la

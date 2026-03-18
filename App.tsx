@@ -17,7 +17,7 @@ const FAQAccordionItem: React.FC<{ question: string; answer: string; isOpen: boo
       >
         <span className="text-base md:text-xl serif pr-4 text-dark font-medium leading-tight">{question}</span>
         <span className={`flex-shrink-0 bg-primary/10 p-2 rounded-full text-primary transition-transform duration-300 ${isOpen ? 'rotate-180 bg-primary text-white' : ''}`}>
-          <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </span>
@@ -90,10 +90,28 @@ const App: React.FC = () => {
       ]
     };
 
+    const faqJsonLd = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": FAQ_ITEMS.map(item => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer,
+        },
+      })),
+    };
+
     const salonScript = document.createElement('script');
     salonScript.type = 'application/ld+json';
     salonScript.text = JSON.stringify(jsonLd);
     document.head.appendChild(salonScript);
+
+    const faqScript = document.createElement('script');
+    faqScript.type = 'application/ld+json';
+    faqScript.text = JSON.stringify(faqJsonLd);
+    document.head.appendChild(faqScript);
 
     const itemList = {
       "@context": "https://schema.org",
@@ -126,7 +144,7 @@ const App: React.FC = () => {
     if (view === 'home') fetchTips();
 
     return () => {
-      [salonScript, indexScript].forEach((s) => {
+      [salonScript, faqScript, indexScript].forEach((s) => {
         if (s && s.parentNode) s.parentNode.removeChild(s);
       });
     };
@@ -150,7 +168,7 @@ const App: React.FC = () => {
       <p className="text-gray-500 font-light mb-6 leading-relaxed">{service.description}</p>
       <div className="flex justify-between items-center">
         <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 montserrat">{service.duration}</span>
-        <a href={BUSINESS_INFO.planityUrl} target="_blank" className="text-xs font-bold uppercase tracking-widest text-dark hover:text-primary transition-colors border-b border-dark/20 hover:border-primary">Réserver</a>
+        <a href={BUSINESS_INFO.planityUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-dark hover:text-primary transition-colors border-b border-dark/20 hover:border-primary">Réserver</a>
       </div>
     </div>
   );
@@ -199,10 +217,10 @@ const App: React.FC = () => {
               <div className="flex-1">
                 <h3 className="text-4xl serif mb-6">L'Expérience Bianco</h3>
                 <p className="text-gray-400 font-light leading-relaxed mb-8">Chaque soin est une invitation au voyage intérieur. Nous combinons des techniques ancestrales et des innovations esthétiques pour révéler votre beauté singulière.</p>
-                <a href={BUSINESS_INFO.planityUrl} target="_blank" className="inline-block bg-primary text-white px-12 py-5 rounded-full text-lg font-bold hover:bg-white hover:text-dark transition-all">Prendre rendez-vous</a>
+                <a href={BUSINESS_INFO.planityUrl} target="_blank" rel="noopener noreferrer" className="inline-block bg-primary text-white px-12 py-5 rounded-full text-lg font-bold hover:bg-white hover:text-dark transition-all">Prendre rendez-vous</a>
               </div>
               <div className="w-full md:w-1/3 aspect-square rounded-[2rem] overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=70&w=500" className="w-full h-full object-cover grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700" alt="Détente" loading="lazy" />
+                <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=70&w=500" className="w-full h-full object-cover grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700" alt="Moment de détente et relaxation à Bianco Esthétique Hyères" loading="lazy" width={500} height={500} />
               </div>
             </div>
           </div>
@@ -222,8 +240,11 @@ const App: React.FC = () => {
         <div className="absolute inset-0 z-0 scale-105">
           <img 
             src="https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&q=70&w=1100" 
-            alt="Bianco Esthétique Ambiance" 
+            alt="Ambiance institut de beauté Bianco Esthétique à Hyères, espace détente et bien-être"
             className="w-full h-full object-cover brightness-[0.65]"
+            width={1100}
+            height={733}
+            fetchPriority="high"
           />
         </div>
         <div className="relative z-10 text-center px-6 max-w-5xl pt-16 md:pt-24">
@@ -239,9 +260,10 @@ const App: React.FC = () => {
             Maison de Beauté à Hyères. L'expertise du drainage lymphatique brésilien et l'art du regard.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <a 
+            <a
               href={BUSINESS_INFO.planityUrl}
               target="_blank"
+              rel="noopener noreferrer"
               className="group relative w-full sm:w-auto overflow-hidden bg-primary text-white px-12 py-5 rounded-full text-lg font-bold transition-all shadow-2xl hover:shadow-primary/20"
             >
               <span className="relative z-10">Réserver en ligne</span>
@@ -260,6 +282,19 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* Intro géo-ciblée */}
+      <section id="main-content" className="py-16 md:py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl serif mb-6">Institut de Beauté à Hyères</h2>
+          <p className="text-gray-600 font-light leading-relaxed mb-4">
+            Bianco Esthétique est votre institut de beauté de référence à <strong className="font-medium text-dark">Hyères (83400)</strong>, dans le département du <strong className="font-medium text-dark">Var</strong>. Salomé vous accueille dans un espace chaleureux pour des soins du visage, du drainage lymphatique méthode brésilienne, des extensions de cils, des manucures et des massages sur mesure.
+          </p>
+          <p className="text-gray-500 font-light leading-relaxed text-sm">
+            À quelques minutes de <strong>Toulon</strong>, <strong>Carqueiranne</strong>, <strong>La Garde</strong>, <strong>Le Pradet</strong> et <strong>La Londe-les-Maures</strong>, l'institut est facilement accessible depuis toute la presqu'île de Giens et les communes voisines du Var.
+          </p>
+        </div>
+      </section>
+
       {/* Why Bianco? */}
       <section className="py-20 md:py-32 bg-surface">
         <div className="max-w-7xl mx-auto px-6">
@@ -269,21 +304,21 @@ const App: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 text-center">
             <div className="group">
               <div className="w-16 h-16 md:w-20 md:h-20 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-6 md:mb-8 transition-transform group-hover:-rotate-12 group-hover:bg-primary group-hover:text-white">
-                <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.143-7.714L1 12l7.714-2.143L11 3z" /></svg>
+                <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.143-7.714L1 12l7.714-2.143L11 3z" /></svg>
               </div>
               <h3 className="text-xl md:text-2xl serif mb-4">Excellence MAF</h3>
               <p className="text-gray-500 font-light leading-relaxed text-sm md:text-base">Le savoir-faire récompensé d'une Meilleure Apprentie de France pour des résultats d'exception.</p>
             </div>
             <div className="group">
               <div className="w-16 h-16 md:w-20 md:h-20 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-6 md:mb-8 transition-transform group-hover:-rotate-12 group-hover:bg-primary group-hover:text-white">
-                <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
               </div>
               <h3 className="text-xl md:text-2xl serif mb-4">Approche Holistique</h3>
               <p className="text-gray-500 font-light leading-relaxed text-sm md:text-base">Une vision globale de la beauté où le drainage lymphatique rencontre les soins esthétiques avancés.</p>
             </div>
             <div className="group">
               <div className="w-16 h-16 md:w-20 md:h-20 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-6 md:mb-8 transition-transform group-hover:-rotate-12 group-hover:bg-primary group-hover:text-white">
-                <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               </div>
               <h3 className="text-xl md:text-2xl serif mb-4">Instant Suspendu</h3>
               <p className="text-gray-500 font-light leading-relaxed text-sm md:text-base">Une parenthèse de calme absolu au cœur de Hyères, pensée pour votre sérénité totale.</p>
@@ -340,7 +375,7 @@ const App: React.FC = () => {
 
             <div className="relative">
               <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl scale-95 hover:scale-100 transition-transform duration-700">
-                <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=70&w=600" className="w-full h-full object-cover" alt="Soin Bianco" loading="lazy" />
+                <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=70&w=600" className="w-full h-full object-cover" alt="Soin visage et bien-être à l'institut Bianco Esthétique Hyères" loading="lazy" width={600} height={800} />
               </div>
               <div className="absolute -bottom-10 -left-10 w-32 h-32 md:w-48 md:h-48 bg-primary/10 rounded-full -z-10 animate-pulse"></div>
             </div>
@@ -398,8 +433,47 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* Avis Clients */}
+      <section className="py-20 md:py-32 bg-surface">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-primary font-bold tracking-ultra-wide uppercase text-xs montserrat block mb-4">Confiance</span>
+            <h2 className="text-4xl md:text-5xl serif">Ce que disent nos clientes</h2>
+            <p className="text-gray-400 mt-4 font-light text-sm">Note 5/5 sur Google — 24 avis vérifiés</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {REVIEWS.map((review) => (
+              <div key={review.id} className="bg-white p-8 rounded-[2rem] border border-gray-50 shadow-sm">
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <svg key={i} className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-gray-600 font-light text-sm leading-relaxed mb-4">&ldquo;{review.content}&rdquo;</p>
+                <div className="flex justify-between items-center text-xs text-gray-400">
+                  <span className="font-semibold text-dark">{review.author}</span>
+                  <span>{review.date}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <a
+              href="https://www.google.com/maps/place/Bianco+Esth%C3%A9tique/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-bold uppercase tracking-widest text-primary border-b-2 border-primary pb-1 hover:text-dark hover:border-dark transition-all"
+            >
+              Voir tous les avis Google
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Contact & Accès */}
-      <section id="contact" className="py-20 md:py-32 bg-surface">
+      <section id="contact" className="py-20 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 md:gap-32 items-start">
           <div>
             <h2 className="text-4xl md:text-5xl serif mb-12">Nous Trouver</h2>

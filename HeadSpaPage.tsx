@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
 
 const HeadSpaPage: React.FC = () => {
@@ -60,11 +61,32 @@ const HeadSpaPage: React.FC = () => {
           sameAs: [BUSINESS_INFO.instagram, BUSINESS_INFO.facebook, BUSINESS_INFO.planityUrl],
         },
         {
+          '@type': 'Service',
+          name: 'Head Spa à Hyères',
+          description: 'Rituel head spa inspiré du Japon : massage crânien, détente de la nuque et du cuir chevelu chez Bianco Esthétique à Hyères.',
+          provider: { '@type': 'BeautySalon', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+          areaServed: [
+            { '@type': 'City', name: 'Hyères' },
+            { '@type': 'City', name: 'Carqueiranne' },
+            { '@type': 'City', name: 'La Crau' },
+            { '@type': 'City', name: 'La Londe-les-Maures' },
+          ],
+          serviceType: 'Head Spa',
+          url: 'https://www.bianco-esthetique.fr/head-spa-hyeres',
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+            { '@type': 'ListItem', position: 2, name: 'Head Spa Hyères', item: 'https://www.bianco-esthetique.fr/head-spa-hyeres' },
+          ],
+        },
+        {
           '@type': 'FAQPage',
           mainEntity: [
             {
               '@type': 'Question',
-              name: 'Qu’est-ce qu’un head spa à Hyères ?',
+              name: "Qu'est-ce qu'un head spa à Hyères ?",
               acceptedAnswer: {
                 '@type': 'Answer',
                 text:
@@ -73,11 +95,11 @@ const HeadSpaPage: React.FC = () => {
             },
             {
               '@type': 'Question',
-              name: 'À qui s’adresse le head spa ?',
+              name: "À qui s'adresse le head spa ?",
               acceptedAnswer: {
                 '@type': 'Answer',
                 text:
-                  "Le head spa convient aux femmes et aux hommes qui souhaitent soulager les tensions au niveau de la tête, de la nuque et des épaules, ou simplement s’offrir un moment de relaxation profonde.",
+                  "Le head spa convient aux femmes et aux hommes qui souhaitent soulager les tensions au niveau de la tête, de la nuque et des épaules, ou simplement s\u0027offrir un moment de relaxation profonde.",
               },
             },
             {
@@ -86,7 +108,7 @@ const HeadSpaPage: React.FC = () => {
               acceptedAnswer: {
                 '@type': 'Answer',
                 text:
-                  'Selon la formule choisie, une séance de head spa dure en moyenne entre 45 minutes et 1h15. Le temps inclut un court échange, l’installation et le rituel de massage.',
+                  "Selon la formule choisie, une séance de head spa dure en moyenne entre 45 minutes et 1h15. Le temps inclut un court échange, l'installation et le rituel de massage.",
               },
             },
             {
@@ -95,7 +117,7 @@ const HeadSpaPage: React.FC = () => {
               acceptedAnswer: {
                 '@type': 'Answer',
                 text:
-                  'Il est conseillé d’arriver quelques minutes en avance, d’éviter les coiffures trop serrées et les repas trop lourds avant la séance. Après le soin, privilégiez le calme et l’hydratation.',
+                  "Il est conseillé d'arriver quelques minutes en avance, d'éviter les coiffures trop serrées et les repas trop lourds avant la séance. Après le soin, privilégiez le calme et l'hydratation.",
               },
             },
           ],
@@ -123,15 +145,10 @@ const HeadSpaPage: React.FC = () => {
       <main className="pt-28 md:pt-32 pb-20">
         <section className="px-6">
           <div className="max-w-5xl mx-auto">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs mb-10 px-5 py-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-all"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Retour à l&apos;accueil
-            </Link>
+            <Breadcrumb items={[
+              { label: 'Accueil', to: '/' },
+              { label: 'Head Spa Hyères' },
+            ]} />
 
             <header className="mb-14">
               <span className="text-primary font-bold tracking-ultra-wide uppercase text-xs montserrat block mb-4">
@@ -150,7 +167,7 @@ const HeadSpaPage: React.FC = () => {
               <div className="space-y-6 text-gray-600 font-light text-sm md:text-base leading-relaxed">
                 <h2 className="text-2xl serif text-dark">Un soin centré sur le cuir chevelu</h2>
                 <p>
-                  Lors d’un head spa, le travail se concentre sur le cuir chevelu, la nuque et le haut des épaules. Les manœuvres sont
+                  Lors d'un head spa, le travail se concentre sur le cuir chevelu, la nuque et le haut des épaules. Les manœuvres sont
                   lentes, enveloppantes et ciblées pour délier les tensions accumulées par le stress, les écrans ou la posture.
                 </p>
                 <p>
@@ -182,10 +199,10 @@ const HeadSpaPage: React.FC = () => {
                 <h2 className="text-2xl serif text-dark">Comment se déroule une séance ?</h2>
                 <p>
                   La séance commence par un court échange pour comprendre vos besoins : fatigue, charge mentale, tensions localisées…
-                  Ensuite, vous prenez place confortablement pendant que le rituel s’enchaîne sur le cuir chevelu, la nuque et les épaules.
+                  Ensuite, vous prenez place confortablement pendant que le rituel s'enchaîne sur le cuir chevelu, la nuque et les épaules.
                 </p>
                 <p>
-                  La pression est ajustée en fonction de votre ressenti. Le but est de trouver l’équilibre entre efficacité et confort pour
+                  La pression est ajustée en fonction de votre ressenti. Le but est de trouver l'équilibre entre efficacité et confort pour
                   que le corps puisse vraiment relâcher.
                 </p>
               </div>
@@ -214,7 +231,7 @@ const HeadSpaPage: React.FC = () => {
                 </details>
                 <details className="bg-white rounded-2xl border border-gray-100 px-4 py-3">
                   <summary className="cursor-pointer font-semibold text-dark">
-                    Puis-je faire un head spa si j’ai des extensions ou une coloration&nbsp;?
+                    Puis-je faire un head spa si j'ai des extensions ou une coloration&nbsp;?
                   </summary>
                   <p className="mt-2">
                     Oui, sous réserve d&apos;en parler au préalable. Les manœuvres sont adaptées pour ne pas fragiliser vos cheveux ou vos

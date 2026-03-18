@@ -23,7 +23,7 @@ const CookieBanner: React.FC = () => {
   };
 
   return (
-    <div className="fixed left-0 right-0 bottom-16 md:bottom-0 z-[90] bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-4 py-3 md:px-6 md:py-3">
+    <div className="fixed left-0 right-0 bottom-[56px] md:bottom-0 z-[90] bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-4 py-3 md:px-6 md:py-3">
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <p className="text-xs md:text-sm text-gray-600 font-light">
           Nous utilisons des cookies pour le bon fonctionnement du site.{' '}

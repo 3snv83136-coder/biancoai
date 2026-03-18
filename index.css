@@ -1,4 +1,16 @@
-/* Base styles – Tailwind est chargé via CDN dans index.html */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Focus visible pour navigation clavier */
+@layer base {
+  :focus-visible {
+    outline: 2px solid #C9A77C;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
 #root {
   min-height: 100vh;
 }

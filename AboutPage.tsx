@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
 
 const AboutPage: React.FC = () => {
@@ -15,10 +16,26 @@ const AboutPage: React.FC = () => {
     document.title = 'À propos | Bianco Esthétique – Institut de beauté Hyères';
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.setAttribute('content', 'Bianco Esthétique : l\'histoire de Salomé, une esthéticienne passionnée à Hyères. Exigence MAF, formation continue, Head Spa à venir. Rigueur et proximité au service de votre beauté.');
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+        { '@type': 'ListItem', position: 2, name: 'À propos', item: 'https://www.bianco-esthetique.fr/a-propos' },
+      ],
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+
     return () => {
       document.title = defaultTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && defaultDesc) m.setAttribute('content', defaultDesc);
+      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
 
@@ -27,13 +44,10 @@ const AboutPage: React.FC = () => {
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 md:pb-32 px-6">
         <div className="max-w-3xl mx-auto">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs mb-10 px-5 py-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-all"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Retour à l&apos;accueil
-          </Link>
+          <Breadcrumb items={[
+            { label: 'Accueil', to: '/' },
+            { label: 'À propos' },
+          ]} />
 
           <h1 className="text-4xl md:text-5xl serif text-dark mb-12">À propos – Bianco Esthétique</h1>
 

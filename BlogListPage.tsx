@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Breadcrumb from './components/Breadcrumb';
 import { blogPosts } from './blogData';
 
 interface ApiPost {
@@ -39,10 +40,36 @@ const BlogListPage: React.FC = () => {
         'Découvrez les conseils beauté et bien-être de Bianco Esthétique à Hyères : head spa, drainage lymphatique, extensions de cils, soins visage et beauté des pieds.'
       );
     }
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Blog',
+          name: 'Blog — Bianco Esthétique',
+          url: 'https://www.bianco-esthetique.fr/blog',
+          publisher: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+            { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.bianco-esthetique.fr/blog' },
+          ],
+        },
+      ],
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
+      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
 
@@ -51,15 +78,10 @@ const BlogListPage: React.FC = () => {
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-5xl mx-auto">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs mb-10 px-5 py-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-all"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Retour à l&apos;accueil
-          </Link>
+          <Breadcrumb items={[
+            { label: 'Accueil', to: '/' },
+            { label: 'Blog' },
+          ]} />
 
           <h1 className="text-4xl md:text-5xl serif text-dark mb-4">Le journal Bianco</h1>
           <p className="text-gray-500 font-light mb-12 max-w-2xl">
@@ -77,12 +99,14 @@ const BlogListPage: React.FC = () => {
                   className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col"
                 >
                   {coverUrl && (
-                    <Link to={`/blog/${post.id}`} className="block overflow-hidden">
+                    <Link to={`/blog/${post.slug || post.id}`} className="block overflow-hidden">
                       <img
                         src={coverUrl}
                         alt={post.title}
                         className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
                         loading="lazy"
+                        width={400}
+                        height={192}
                       />
                     </Link>
                   )}
@@ -90,7 +114,7 @@ const BlogListPage: React.FC = () => {
                     <p className="text-xs font-semibold tracking-widest uppercase text-primary mb-2">
                       {new Date(post.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </p>
-                    <Link to={`/blog/${post.id}`} className="block mb-3">
+                    <Link to={`/blog/${post.slug || post.id}`} className="block mb-3">
                       <h2 className="text-xl serif text-dark leading-snug hover:text-primary transition-colors">{post.title}</h2>
                     </Link>
                     <p className="text-sm text-gray-500 font-light mb-4 flex-1">{post.excerpt}</p>
@@ -106,7 +130,7 @@ const BlogListPage: React.FC = () => {
                         ))}
                       </div>
                       <Link
-                        to={`/blog/${post.id}`}
+                        to={`/blog/${post.slug || post.id}`}
                         className="text-xs font-bold uppercase tracking-widest text-dark hover:text-primary border-b border-dark/20 hover:border-primary transition-colors"
                       >
                         Lire
@@ -129,6 +153,8 @@ const BlogListPage: React.FC = () => {
                     alt={post.title}
                     className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
                     loading="lazy"
+                    width={400}
+                    height={192}
                   />
                 </Link>
                 <div className="p-6 flex flex-col flex-1">
