@@ -15,7 +15,6 @@ const BASE_URL = process.env.SITEMAP_BASE_URL || 'https://www.bianco-esthetique.
 function getStaticPaths() {
   return [
     '/',
-    '/prestations',
     '/services',
     '/a-propos',
     '/tarifs',

@@ -36,8 +36,7 @@ const App: React.FC = () => {
   const [view, setView] = useState<'home' | 'services'>('home');
   const [activeCategory, setActiveCategory] = useState('Regard');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-  const [wellnessTips, setWellnessTips] = useState<WellnessTip[]>([]);
-  const [loadingTips, setLoadingTips] = useState(true);
+  const [wellnessTips] = useState<WellnessTip[]>(FALLBACK_WELLNESS_TIPS);
 
   useEffect(() => {
     const id = hash?.replace('#', '');
@@ -49,19 +48,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (hash !== '#prestations') window.scrollTo(0, 0);
-
-    const fetchTips = async () => {
-      try {
-        const { getWellnessTips } = await import('./geminiService');
-        const tips = await getWellnessTips();
-        setWellnessTips(tips);
-      } catch {
-        setWellnessTips(FALLBACK_WELLNESS_TIPS);
-      } finally {
-        setLoadingTips(false);
-      }
-    };
-    if (view === 'home') fetchTips();
   }, [view]);
 
   // JSON-LD (computed at render for SSR visibility)
@@ -385,23 +371,17 @@ const App: React.FC = () => {
             <p className="text-gray-400 mt-4 font-light text-sm md:text-base">Les secrets de Bianco pour rayonner au quotidien</p>
           </div>
 
-          {loadingTips ? (
-            <div className="flex justify-center py-20">
-              <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {wellnessTips.map((tip, i) => (
-                <div key={i} className="bg-white p-8 rounded-[2rem] border border-gray-50 hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-                  <div className="w-12 h-12 bg-surface rounded-2xl flex items-center justify-center text-primary font-bold text-xl mb-6 shadow-sm serif italic">
-                    {i + 1}
-                  </div>
-                  <h3 className="text-xl serif mb-4 leading-tight">{tip.title}</h3>
-                  <p className="text-gray-500 font-light text-sm leading-relaxed">{tip.content}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {wellnessTips.map((tip, i) => (
+              <div key={i} className="bg-white p-8 rounded-[2rem] border border-gray-50 hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                <div className="w-12 h-12 bg-surface rounded-2xl flex items-center justify-center text-primary font-bold text-xl mb-6 shadow-sm serif italic">
+                  {i + 1}
                 </div>
-              ))}
-            </div>
-          )}
+                <h3 className="text-xl serif mb-4 leading-tight">{tip.title}</h3>
+                <p className="text-gray-500 font-light text-sm leading-relaxed">{tip.content}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

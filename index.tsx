@@ -1,26 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MobileCta from './components/MobileCta';
 import CookieBanner from './components/CookieBanner';
 
-// Direct imports (no React.lazy) for hydration compatibility
+// Homepage : import direct (LCP, toujours visitée en premier)
 import App from './App';
-import ServicesPage from './ServicesPage';
-import ServiceDetailPage from './ServiceDetailPage';
-import AboutPage from './AboutPage';
-import PricingPage from './PricingPage';
-import BlogListPage from './BlogListPage';
-import BlogPostPage from './BlogPostPage';
-import HeadSpaPage from './HeadSpaPage';
-import SEOPrestationPage from './SEOPrestationPage';
-import LegalPage from './LegalPage';
-import PrivacyPage from './PrivacyPage';
-import CookiesPage from './CookiesPage';
-import SEOGeoPage from './SEOGeoPage';
-import NotFoundPage from './NotFoundPage';
 
-// Admin reste lazy (pas prerendu, pas besoin d'hydration)
+// Lazy-load pour toutes les autres routes (code-splitting)
+const ServicesPage = React.lazy(() => import('./ServicesPage'));
+const ServiceDetailPage = React.lazy(() => import('./ServiceDetailPage'));
+const AboutPage = React.lazy(() => import('./AboutPage'));
+const PricingPage = React.lazy(() => import('./PricingPage'));
+const BlogListPage = React.lazy(() => import('./BlogListPage'));
+const BlogPostPage = React.lazy(() => import('./BlogPostPage'));
+const HeadSpaPage = React.lazy(() => import('./HeadSpaPage'));
+const SEOPrestationPage = React.lazy(() => import('./SEOPrestationPage'));
+const LegalPage = React.lazy(() => import('./LegalPage'));
+const PrivacyPage = React.lazy(() => import('./PrivacyPage'));
+const CookiesPage = React.lazy(() => import('./CookiesPage'));
+const SEOGeoPage = React.lazy(() => import('./SEOGeoPage'));
+const NotFoundPage = React.lazy(() => import('./NotFoundPage'));
 const AdminPage = React.lazy(() => import('./components/AdminPage'));
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
@@ -54,9 +54,10 @@ const appTree = (
   <React.StrictMode>
     <ErrorBoundary>
       <BrowserRouter>
+        <React.Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<App />} />
-          <Route path="/prestations" element={<ServicesPage />} />
+          <Route path="/prestations" element={<Navigate to="/services" replace />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
           <Route path="/a-propos" element={<AboutPage />} />
@@ -74,11 +75,7 @@ const appTree = (
           <Route path="/mentions-legales" element={<LegalPage />} />
           <Route path="/confidentialite" element={<PrivacyPage />} />
           <Route path="/cookies" element={<CookiesPage />} />
-          <Route path="/admin" element={
-            <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-surface text-sm text-gray-500">Chargement...</div>}>
-              <AdminPage />
-            </React.Suspense>
-          } />
+          <Route path="/admin" element={<AdminPage />} />
           {/* SEO Geo - Quartiers Hyeres */}
           <Route path="/institut-beaute-centre-ville-hyeres" element={<SEOGeoPage pageSlug="institut-beaute-centre-ville-hyeres" />} />
           <Route path="/institut-beaute-costebelle-hyeres" element={<SEOGeoPage pageSlug="institut-beaute-costebelle-hyeres" />} />
@@ -99,6 +96,7 @@ const appTree = (
           <Route path="/institut-beaute-cuers" element={<SEOGeoPage pageSlug="institut-beaute-cuers" />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </React.Suspense>
         <MobileCta />
         <CookieBanner />
       </BrowserRouter>
