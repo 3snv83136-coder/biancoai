@@ -1,8 +1,30 @@
 User-agent: *
 Allow: /
 
+# AI search crawlers — allowed for search visibility
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# AI training crawlers — blocked
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
 Sitemap: https://www.bianco-esthetique.fr/sitemap.xml
-
-# Bianco Esthétique - Institut de beauté & bien-être à Hyères
-# Ce fichier permet aux moteurs de recherche d'explorer l'ensemble du site.
-

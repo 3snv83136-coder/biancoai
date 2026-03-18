@@ -135,11 +135,12 @@ const ServicesPage: React.FC = () => {
                       >
                         <p className="text-dark font-medium">{item.title}</p>
                         <p className="text-xs text-gray-500 mt-1">
-                          Durée indicative&nbsp;: {item.duration}. Un échange préalable permet d&apos;adapter le protocole à vos besoins.
+                          Durée indicative&nbsp;: {item.duration}
                         </p>
                       </li>
                     ))}
                   </ul>
+                  <p className="text-xs text-gray-400 font-light mt-3 italic">Un échange préalable permet d&apos;adapter le protocole à vos besoins.</p>
                 </section>
               );
             })}

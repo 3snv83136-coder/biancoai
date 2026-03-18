@@ -37,7 +37,17 @@ const LegalPage: React.FC = () => {
               <p>
                 <strong className="font-medium text-dark">Bianco Esthétique</strong>
                 <br />
-                Institut de beauté à Hyères.
+                Institut de beauté — Micro-entreprise
+                <br />
+                Gérante : Salomé Bianco
+                <br />
+                3 Avenue Ernest Millet, 83400 Hyères, France
+                <br />
+                Téléphone : 07 49 76 96 91
+                <br />
+                Email : contact@bianco-esthetique.fr
+                <br />
+                SIRET : en cours d&apos;immatriculation
               </p>
             </section>
 

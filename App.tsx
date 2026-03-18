@@ -94,11 +94,32 @@ const App: React.FC = () => {
     ...(openingHours.length ? { "openingHours": openingHours } : {}),
     "priceRange": "€€",
     "image": "https://www.bianco-esthetique.fr/og-image.jpg",
+    "founder": {
+      "@type": "Person",
+      "name": "Salomé Bianco",
+      "jobTitle": "Esthéticienne, gérante"
+    },
     "sameAs": [
       BUSINESS_INFO.instagram,
       BUSINESS_INFO.facebook,
       BUSINESS_INFO.planityUrl,
     ]
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Bianco Esthétique",
+    "url": "https://www.bianco-esthetique.fr",
+    "publisher": {
+      "@type": "BeautySalon",
+      "name": "Bianco Esthétique"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.bianco-esthetique.fr/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
   };
 
   const faqJsonLd = {
@@ -210,6 +231,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(salonJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <Navbar onLinkClick={() => setView('home')} />

@@ -12,43 +12,47 @@ const BLOG_DATA_PATH = resolve(ROOT, 'blogData.ts');
 
 const BASE_URL = process.env.SITEMAP_BASE_URL || 'https://www.bianco-esthetique.fr';
 
+// Date of last meaningful content update per page type
+const SITE_LAUNCH_DATE = '2026-03-01';
+const today = new Date().toISOString().split('T')[0];
+
 function getStaticPaths() {
   return [
-    '/',
-    '/services',
-    '/a-propos',
-    '/tarifs',
-    '/head-spa-hyeres',
-    '/blog',
-    '/mentions-legales',
-    '/confidentialite',
-    '/cookies',
+    { path: '/', lastmod: today },
+    { path: '/services', lastmod: '2026-03-15' },
+    { path: '/a-propos', lastmod: '2026-02-01' },
+    { path: '/tarifs', lastmod: '2026-03-15' },
+    { path: '/head-spa-hyeres', lastmod: '2026-03-01' },
+    { path: '/blog', lastmod: today },
+    { path: '/mentions-legales', lastmod: '2026-01-15' },
+    { path: '/confidentialite', lastmod: '2026-01-15' },
+    { path: '/cookies', lastmod: '2026-01-15' },
     // SEO Prestation pages
-    '/institut-beaute-hyeres',
-    '/soin-visage-hyeres',
-    '/manucure-ongles-gel-hyeres',
-    '/extensions-cils-hyeres',
-    '/massage-californien-hyeres',
-    '/callus-peeling-hyeres',
-    '/soin-visage-toulon',
-    // SEO Geo - Quartiers Hyères
-    '/institut-beaute-centre-ville-hyeres',
-    '/institut-beaute-costebelle-hyeres',
-    '/institut-beaute-les-palmiers-hyeres',
-    '/institut-beaute-port-hyeres',
-    '/institut-beaute-almanarre-hyeres',
-    '/institut-beaute-giens-hyeres',
+    { path: '/institut-beaute-hyeres', lastmod: SITE_LAUNCH_DATE },
+    { path: '/soin-visage-hyeres', lastmod: SITE_LAUNCH_DATE },
+    { path: '/manucure-ongles-gel-hyeres', lastmod: SITE_LAUNCH_DATE },
+    { path: '/extensions-cils-hyeres', lastmod: SITE_LAUNCH_DATE },
+    { path: '/massage-californien-hyeres', lastmod: SITE_LAUNCH_DATE },
+    { path: '/callus-peeling-hyeres', lastmod: SITE_LAUNCH_DATE },
+    { path: '/soin-visage-toulon', lastmod: SITE_LAUNCH_DATE },
+    // SEO Geo - Quartiers Hyeres
+    { path: '/institut-beaute-centre-ville-hyeres', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-costebelle-hyeres', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-les-palmiers-hyeres', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-port-hyeres', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-almanarre-hyeres', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-giens-hyeres', lastmod: '2026-03-10' },
     // SEO Geo - Villes limitrophes
-    '/institut-beaute-toulon',
-    '/institut-beaute-la-garde',
-    '/institut-beaute-carqueiranne',
-    '/institut-beaute-le-pradet',
-    '/institut-beaute-la-crau',
-    '/institut-beaute-la-londe-les-maures',
-    '/institut-beaute-bormes-les-mimosas',
-    '/institut-beaute-la-valette-du-var',
-    '/institut-beaute-sollies-pont',
-    '/institut-beaute-cuers',
+    { path: '/institut-beaute-toulon', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-la-garde', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-carqueiranne', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-le-pradet', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-la-crau', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-la-londe-les-maures', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-bormes-les-mimosas', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-la-valette-du-var', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-sollies-pont', lastmod: '2026-03-10' },
+    { path: '/institut-beaute-cuers', lastmod: '2026-03-10' },
   ];
 }
 
@@ -66,10 +70,10 @@ function getServiceSlugs() {
   while ((match = regex.exec(source)) !== null) {
     ids.add(match[1]);
   }
-  return Array.from(ids).map((id) => `/services/${id}`);
+  return Array.from(ids).map((id) => ({ path: `/services/${id}`, lastmod: SITE_LAUNCH_DATE }));
 }
 
-function getBlogSlugs() {
+function getBlogEntries() {
   let source;
   try {
     source = readFileSync(BLOG_DATA_PATH, 'utf8');
@@ -77,20 +81,25 @@ function getBlogSlugs() {
     return [];
   }
 
-  const slugs = new Set();
-  const regex = /slug:\s*'([^']+)'/g;
+  const entries = [];
+  const slugRegex = /slug:\s*'([^']+)'/g;
+  const dateRegex = /date:\s*'([^']+)'/g;
+  const slugs = [];
+  const dates = [];
   let match;
-  while ((match = regex.exec(source)) !== null) {
-    slugs.add(match[1]);
+  while ((match = slugRegex.exec(source)) !== null) slugs.push(match[1]);
+  while ((match = dateRegex.exec(source)) !== null) dates.push(match[1]);
+
+  for (let i = 0; i < slugs.length; i++) {
+    entries.push({ path: `/blog/${slugs[i]}`, lastmod: dates[i] || SITE_LAUNCH_DATE });
   }
-  return Array.from(slugs).map((slug) => `/blog/${slug}`);
+  return entries;
 }
 
-function buildSitemapXml(urls) {
-  const lastmod = new Date().toISOString();
-  const urlEntries = urls
+function buildSitemapXml(entries) {
+  const urlEntries = entries
     .map(
-      (path) => `  <url>
+      ({ path, lastmod }) => `  <url>
     <loc>${BASE_URL.replace(/\/$/, '')}${path}</loc>
     <lastmod>${lastmod}</lastmod>
   </url>`
@@ -106,14 +115,20 @@ ${urlEntries}
 
 mkdirSync(PUBLIC_DIR, { recursive: true });
 
-const staticPaths = getStaticPaths();
-const servicePaths = getServiceSlugs();
-const blogPaths = getBlogSlugs();
-const allPaths = Array.from(new Set([...staticPaths, ...servicePaths, ...blogPaths]));
+const staticEntries = getStaticPaths();
+const serviceEntries = getServiceSlugs();
+const blogEntries = getBlogEntries();
 
-const xml = buildSitemapXml(allPaths);
+// Deduplicate by path
+const seen = new Set();
+const allEntries = [...staticEntries, ...serviceEntries, ...blogEntries].filter(e => {
+  if (seen.has(e.path)) return false;
+  seen.add(e.path);
+  return true;
+});
+
+const xml = buildSitemapXml(allEntries);
 const outPath = resolve(PUBLIC_DIR, 'sitemap.xml');
 writeFileSync(outPath, xml, 'utf8');
 
-console.log(`Sitemap generated at ${outPath} with ${allPaths.length} URLs.`);
-
+console.log(`Sitemap generated at ${outPath} with ${allEntries.length} URLs.`);
