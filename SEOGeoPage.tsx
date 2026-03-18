@@ -25,12 +25,12 @@ const SEOGeoPage: React.FC<SEOGeoPageProps> = ({ pageSlug }) => {
     const prevTitle = document.title;
     const prevDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
 
-    // Title + meta description
+    // Title + meta description (for SPA navigation)
     document.title = page.title;
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.setAttribute('content', page.metaDescription);
 
-    // Canonical
+    // Canonical (for SPA navigation)
     let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!canonicalLink) {
       canonicalLink = document.createElement('link');
@@ -39,107 +39,75 @@ const SEOGeoPage: React.FC<SEOGeoPageProps> = ({ pageSlug }) => {
     }
     canonicalLink.href = `${SITE_URL}/${page.slug}`;
 
-    // Meta geo tags
-    const geoTags = [
-      { name: 'geo.region', content: 'FR-PAC' },
-      { name: 'geo.placename', content: page.geoName },
-      { name: 'geo.position', content: `${page.geoLat};${page.geoLng}` },
-      { name: 'ICBM', content: `${page.geoLat}, ${page.geoLng}` },
-    ];
-
-    const createdMetas: HTMLMetaElement[] = [];
-    geoTags.forEach(tag => {
-      let meta = document.querySelector(`meta[name="${tag.name}"]`) as HTMLMetaElement | null;
-      if (!meta) {
-        meta = document.createElement('meta');
-        meta.name = tag.name;
-        document.head.appendChild(meta);
-        createdMetas.push(meta);
-      }
-      meta.content = tag.content;
-    });
-
-    // JSON-LD : LocalBusiness + FAQPage
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'BeautySalon',
-          name: 'Bianco Esthetique',
-          url: SITE_URL,
-          telephone: '+33749967691',
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: '3 Avenue Ernest Millet',
-            addressLocality: 'Hyeres',
-            postalCode: '83400',
-            addressRegion: 'Provence-Alpes-Cote d\'Azur',
-            addressCountry: 'FR',
-          },
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: 43.1175016,
-            longitude: 6.1280558,
-          },
-          areaServed: {
-            '@type': 'Place',
-            name: page.geoName,
-            geo: {
-              '@type': 'GeoCoordinates',
-              latitude: page.geoLat,
-              longitude: page.geoLng,
-            },
-          },
-          openingHoursSpecification: [
-            { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '10:00', closes: '18:00' },
-          ],
-          priceRange: '€€',
-          image: `${SITE_URL}/logo.webp`,
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: '5',
-            reviewCount: '24',
-          },
-          sameAs: [
-            BUSINESS_INFO.instagram,
-            BUSINESS_INFO.facebook,
-          ],
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL },
-            { '@type': 'ListItem', position: 2, name: 'Prestations', item: `${SITE_URL}/prestations` },
-            { '@type': 'ListItem', position: 3, name: `Institut de beauté ${page.geoName}`, item: `${SITE_URL}/${page.slug}` },
-          ],
-        },
-        {
-          '@type': 'FAQPage',
-          mainEntity: page.faq.map(f => ({
-            '@type': 'Question',
-            name: f.question,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: f.answer,
-            },
-          })),
-        },
-      ],
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(jsonLd);
-    document.head.appendChild(script);
-
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
-      if (script.parentNode) script.parentNode.removeChild(script);
-      createdMetas.forEach(meta => { if (meta.parentNode) meta.parentNode.removeChild(meta); });
     };
   }, [page]);
+
+  // JSON-LD (inline for SSR visibility)
+  const jsonLd = page ? {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BeautySalon',
+        name: 'Bianco Esthetique',
+        url: SITE_URL,
+        telephone: '+33749967691',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '3 Avenue Ernest Millet',
+          addressLocality: 'Hyeres',
+          postalCode: '83400',
+          addressRegion: 'Provence-Alpes-Cote d\'Azur',
+          addressCountry: 'FR',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 43.1175016,
+          longitude: 6.1280558,
+        },
+        areaServed: {
+          '@type': 'Place',
+          name: page.geoName,
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: page.geoLat,
+            longitude: page.geoLng,
+          },
+        },
+        openingHoursSpecification: [
+          { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '10:00', closes: '18:00' },
+        ],
+        priceRange: '€€',
+        image: `${SITE_URL}/logo.webp`,
+        sameAs: [
+          BUSINESS_INFO.instagram,
+          BUSINESS_INFO.facebook,
+        ],
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Prestations', item: `${SITE_URL}/prestations` },
+          { '@type': 'ListItem', position: 3, name: `Institut de beauté ${page.geoName}`, item: `${SITE_URL}/${page.slug}` },
+        ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: page.faq.map(f => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: f.answer,
+          },
+        })),
+      },
+    ],
+  } : null;
 
   if (!page) {
     return (
@@ -156,6 +124,9 @@ const SEOGeoPage: React.FC<SEOGeoPageProps> = ({ pageSlug }) => {
 
   return (
     <div className="min-h-screen bg-surface">
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      )}
       <Navbar onLinkClick={() => {}} />
 
       <main className="pt-28 md:pt-32 pb-20">

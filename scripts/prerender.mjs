@@ -13,8 +13,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const DIST = resolve(ROOT, 'dist');
 
+const SITE_URL = 'https://www.bianco-esthetique.fr';
+
 // ── 1. Import SSR bundle ────────────────────────────────────────────
-const { render } = await import(resolve(DIST, 'server', 'entry-server.js'));
+const { render, getRouteMeta } = await import(resolve(DIST, 'server', 'entry-server.js'));
 
 // ── 2. Read client template ─────────────────────────────────────────
 const template = readFileSync(resolve(DIST, 'index.html'), 'utf8');
@@ -32,39 +34,7 @@ if (existsSync(sitemapPath)) {
   routes = ['/', ...sitemapRoutes];
 }
 
-// ── 4. Route-specific meta data ─────────────────────────────────────
-// Maps route → { title, description } for <head> injection
-const META = {
-  '/': {
-    title: 'Bianco Esthétique | Institut de Beauté & Bien-être Hyères',
-    desc: "Bianco Esthétique, institut de beauté et de bien-être à Hyères. Drainage lymphatique brésilien, beauté du regard et soins sur-mesure.",
-  },
-  '/prestations': {
-    title: 'Nos prestations | Bianco Esthétique – Hyères',
-    desc: 'Aperçu de toutes les prestations Bianco Esthétique à Hyères : soins corps, visage, regard, mains, pieds, maquillage et drainage lymphatique.',
-  },
-  '/tarifs': {
-    title: 'Tarifs et prestations | Bianco Esthétique – Hyères',
-    desc: 'Tarifs des soins et prestations de Bianco Esthétique à Hyères. Soins corps, visage, mains, pieds, regard, drainage lymphatique.',
-  },
-  '/a-propos': {
-    title: 'À propos | Bianco Esthétique – Institut de beauté Hyères',
-    desc: "Bianco Esthétique : l'histoire de Salomé, esthéticienne passionnée à Hyères. Exigence MAF, formation continue.",
-  },
-  '/head-spa-hyeres': {
-    title: 'Head Spa à Hyères | Rituel cuir chevelu & détente profonde',
-    desc: 'Découvrez le head spa à Hyères chez Bianco Esthétique : massage crânien, détente profonde du cuir chevelu, rituel japonais.',
-  },
-  '/blog': {
-    title: 'Blog | Bianco Esthétique – Conseils beauté & bien-être à Hyères',
-    desc: 'Découvrez les conseils beauté et bien-être de Bianco Esthétique à Hyères.',
-  },
-  '/mentions-legales': { title: 'Mentions légales | Bianco Esthétique', desc: 'Mentions légales du site Bianco Esthétique.' },
-  '/confidentialite': { title: 'Confidentialité | Bianco Esthétique', desc: 'Politique de confidentialité de Bianco Esthétique.' },
-  '/cookies': { title: 'Cookies | Bianco Esthétique', desc: 'Politique cookies de Bianco Esthétique.' },
-};
-
-// ── 5. Prerender each route ─────────────────────────────────────────
+// ── 4. Prerender each route ─────────────────────────────────────────
 let count = 0;
 let errors = 0;
 
@@ -77,18 +47,51 @@ for (const route of routes) {
       `<div id="root">${appHtml}</div>`
     );
 
-    // Inject route-specific <title> and <meta description>
-    const meta = META[route];
+    // Get route-specific meta (title + description)
+    const meta = getRouteMeta(route);
+    const canonicalUrl = route === '/' ? SITE_URL : `${SITE_URL}${route}`;
+
     if (meta) {
+      // Title
       page = page.replace(
         /<title>[^<]*<\/title>/,
         `<title>${meta.title}</title>`
       );
+      // Meta description
       page = page.replace(
         /<meta name="description" content="[^"]*">/,
         `<meta name="description" content="${meta.desc}">`
       );
+      // OG title + description
+      page = page.replace(
+        /<meta property="og:title" content="[^"]*">/,
+        `<meta property="og:title" content="${meta.title}">`
+      );
+      page = page.replace(
+        /<meta property="og:description" content="[^"]*">/,
+        `<meta property="og:description" content="${meta.desc}">`
+      );
+      // Twitter title + description
+      page = page.replace(
+        /<meta name="twitter:title" content="[^"]*">/,
+        `<meta name="twitter:title" content="${meta.title}">`
+      );
+      page = page.replace(
+        /<meta name="twitter:description" content="[^"]*">/,
+        `<meta name="twitter:description" content="${meta.desc}">`
+      );
     }
+
+    // Canonical URL (always replace, even without meta)
+    page = page.replace(
+      /<link rel="canonical" href="[^"]*">/,
+      `<link rel="canonical" href="${canonicalUrl}">`
+    );
+    // OG URL
+    page = page.replace(
+      /<meta property="og:url" content="[^"]*">/,
+      `<meta property="og:url" content="${canonicalUrl}">`
+    );
 
     // Write file
     const filePath = route === '/'

@@ -23,7 +23,7 @@ const HeadSpaPage: React.FC = () => {
       );
     }
 
-    let canonicalLink = document.querySelector('link[rel=\"canonical\"]') as HTMLLinkElement | null;
+    let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!canonicalLink) {
       canonicalLink = document.createElement('link');
       canonicalLink.rel = 'canonical';
@@ -31,115 +31,102 @@ const HeadSpaPage: React.FC = () => {
     }
     canonicalLink.href = 'https://www.bianco-esthetique.fr/head-spa-hyeres';
 
-    const faqJsonLd = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'BeautySalon',
-          name: 'Bianco Esthétique',
-          url: 'https://www.bianco-esthetique.fr/head-spa-hyeres',
-          telephone: '+33749769691',
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: '3 Avenue Ernest Millet',
-            addressLocality: 'Hyères',
-            postalCode: '83400',
-            addressCountry: 'FR',
-          },
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: '43.1199',
-            longitude: '6.1314',
-          },
-          areaServed: [
-            { '@type': 'City', name: 'Hyères' },
-            { '@type': 'City', name: 'Carqueiranne' },
-            { '@type': 'City', name: 'La Crau' },
-            { '@type': 'City', name: 'La Londe-les-Maures' },
-          ],
-          priceRange: '€€',
-          sameAs: [BUSINESS_INFO.instagram, BUSINESS_INFO.facebook, BUSINESS_INFO.planityUrl],
-        },
-        {
-          '@type': 'Service',
-          name: 'Head Spa à Hyères',
-          description: 'Rituel head spa inspiré du Japon : massage crânien, détente de la nuque et du cuir chevelu chez Bianco Esthétique à Hyères.',
-          provider: { '@type': 'BeautySalon', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
-          areaServed: [
-            { '@type': 'City', name: 'Hyères' },
-            { '@type': 'City', name: 'Carqueiranne' },
-            { '@type': 'City', name: 'La Crau' },
-            { '@type': 'City', name: 'La Londe-les-Maures' },
-          ],
-          serviceType: 'Head Spa',
-          url: 'https://www.bianco-esthetique.fr/head-spa-hyeres',
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
-            { '@type': 'ListItem', position: 2, name: 'Head Spa Hyères', item: 'https://www.bianco-esthetique.fr/head-spa-hyeres' },
-          ],
-        },
-        {
-          '@type': 'FAQPage',
-          mainEntity: [
-            {
-              '@type': 'Question',
-              name: "Qu'est-ce qu'un head spa à Hyères ?",
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text:
-                  "Le head spa est un rituel dédié au cuir chevelu et à la nuque, inspiré des techniques japonaises. Il associe massage crânien, manœuvres ciblées et détente profonde pour relâcher les tensions accumulées.",
-              },
-            },
-            {
-              '@type': 'Question',
-              name: "À qui s'adresse le head spa ?",
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text:
-                  "Le head spa convient aux femmes et aux hommes qui souhaitent soulager les tensions au niveau de la tête, de la nuque et des épaules, ou simplement s\u0027offrir un moment de relaxation profonde.",
-              },
-            },
-            {
-              '@type': 'Question',
-              name: 'Combien de temps dure une séance de head spa ?',
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text:
-                  "Selon la formule choisie, une séance de head spa dure en moyenne entre 45 minutes et 1h15. Le temps inclut un court échange, l'installation et le rituel de massage.",
-              },
-            },
-            {
-              '@type': 'Question',
-              name: 'Comment se préparer à un head spa ?',
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text:
-                  "Il est conseillé d'arriver quelques minutes en avance, d'éviter les coiffures trop serrées et les repas trop lourds avant la séance. Après le soin, privilégiez le calme et l'hydratation.",
-              },
-            },
-          ],
-        },
-      ],
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(faqJsonLd);
-    document.head.appendChild(script);
-
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
-      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
 
+  const headSpaJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BeautySalon',
+        name: 'Bianco Esthétique',
+        url: 'https://www.bianco-esthetique.fr/head-spa-hyeres',
+        telephone: '+33749769691',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '3 Avenue Ernest Millet',
+          addressLocality: 'Hyères',
+          postalCode: '83400',
+          addressCountry: 'FR',
+        },
+        geo: { '@type': 'GeoCoordinates', latitude: '43.1199', longitude: '6.1314' },
+        areaServed: [
+          { '@type': 'City', name: 'Hyères' },
+          { '@type': 'City', name: 'Carqueiranne' },
+          { '@type': 'City', name: 'La Crau' },
+          { '@type': 'City', name: 'La Londe-les-Maures' },
+        ],
+        priceRange: '€€',
+        sameAs: [BUSINESS_INFO.instagram, BUSINESS_INFO.facebook, BUSINESS_INFO.planityUrl],
+      },
+      {
+        '@type': 'Service',
+        name: 'Head Spa à Hyères',
+        description: 'Rituel head spa inspiré du Japon : massage crânien, détente de la nuque et du cuir chevelu chez Bianco Esthétique à Hyères.',
+        provider: { '@type': 'BeautySalon', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+        areaServed: [
+          { '@type': 'City', name: 'Hyères' },
+          { '@type': 'City', name: 'Carqueiranne' },
+          { '@type': 'City', name: 'La Crau' },
+          { '@type': 'City', name: 'La Londe-les-Maures' },
+        ],
+        serviceType: 'Head Spa',
+        url: 'https://www.bianco-esthetique.fr/head-spa-hyeres',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+          { '@type': 'ListItem', position: 2, name: 'Head Spa Hyères', item: 'https://www.bianco-esthetique.fr/head-spa-hyeres' },
+        ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: "Qu'est-ce qu'un head spa à Hyères ?",
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: "Le head spa est un rituel dédié au cuir chevelu et à la nuque, inspiré des techniques japonaises. Il associe massage crânien, manœuvres ciblées et détente profonde pour relâcher les tensions accumulées.",
+            },
+          },
+          {
+            '@type': 'Question',
+            name: "À qui s'adresse le head spa ?",
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: "Le head spa convient aux femmes et aux hommes qui souhaitent soulager les tensions au niveau de la tête, de la nuque et des épaules, ou simplement s\u0027offrir un moment de relaxation profonde.",
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Combien de temps dure une séance de head spa ?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: "Selon la formule choisie, une séance de head spa dure en moyenne entre 45 minutes et 1h15. Le temps inclut un court échange, l'installation et le rituel de massage.",
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Comment se préparer à un head spa ?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: "Il est conseillé d'arriver quelques minutes en avance, d'éviter les coiffures trop serrées et les repas trop lourds avant la séance. Après le soin, privilégiez le calme et l'hydratation.",
+            },
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-surface">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(headSpaJsonLd) }} />
       <Navbar onLinkClick={() => {}} />
 
       <main className="pt-28 md:pt-32 pb-20">

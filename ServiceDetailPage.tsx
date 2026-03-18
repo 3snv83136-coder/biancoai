@@ -17,57 +17,57 @@ const ServiceDetailPage: React.FC = () => {
 
   useEffect(() => {
     if (!service) return;
+    const prevTitle = document.title;
+    const prevDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
     document.title = `${service.metaTitle} | Bianco Esthétique`;
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.setAttribute('content', service.metaDescription);
 
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'Service',
-          name: service.title,
-          description: service.metaDescription,
-          provider: { '@type': 'BeautySalon', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
-          areaServed: { '@type': 'City', name: service.city || 'Hyères' },
-          serviceType: service.title,
-          url: `https://www.bianco-esthetique.fr/services/${service.id}`,
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
-            { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.bianco-esthetique.fr/services' },
-            { '@type': 'ListItem', position: 3, name: service.title, item: `https://www.bianco-esthetique.fr/services/${service.id}` },
-          ],
-        },
-        ...(service.faq.length > 0
-          ? [{
-              '@type': 'FAQPage' as const,
-              mainEntity: service.faq.map((f) => ({
-                '@type': 'Question' as const,
-                name: f.question,
-                acceptedAnswer: { '@type': 'Answer' as const, text: f.answer },
-              })),
-            }]
-          : []),
-      ],
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(jsonLd);
-    document.head.appendChild(script);
-
     return () => {
-      document.title = 'Bianco Esthétique | Institut de Beauté & Bien-être Hyères';
-      if (metaDesc) metaDesc.setAttribute('content', 'Institut de beauté et bien-être à Hyères. Spécialiste du drainage lymphatique méthode brésilienne et de la beauté du regard.');
-      if (script.parentNode) script.parentNode.removeChild(script);
+      document.title = prevTitle;
+      if (metaDesc) metaDesc.setAttribute('content', prevDesc);
     };
   }, [service]);
 
+  // JSON-LD (inline for SSR visibility)
+  const jsonLd = service ? {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Service',
+        name: service.title,
+        description: service.metaDescription,
+        provider: { '@type': 'BeautySalon', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+        areaServed: { '@type': 'City', name: service.city || 'Hyères' },
+        serviceType: service.title,
+        url: `https://www.bianco-esthetique.fr/services/${service.id}`,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+          { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.bianco-esthetique.fr/services' },
+          { '@type': 'ListItem', position: 3, name: service.title, item: `https://www.bianco-esthetique.fr/services/${service.id}` },
+        ],
+      },
+      ...(service.faq.length > 0
+        ? [{
+            '@type': 'FAQPage' as const,
+            mainEntity: service.faq.map((f) => ({
+              '@type': 'Question' as const,
+              name: f.question,
+              acceptedAnswer: { '@type': 'Answer' as const, text: f.answer },
+            })),
+          }]
+        : []),
+    ],
+  } : null;
+
   return (
     <div className="min-h-screen bg-surface">
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      )}
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">

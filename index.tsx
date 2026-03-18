@@ -18,6 +18,7 @@ import LegalPage from './LegalPage';
 import PrivacyPage from './PrivacyPage';
 import CookiesPage from './CookiesPage';
 import SEOGeoPage from './SEOGeoPage';
+import NotFoundPage from './NotFoundPage';
 
 // Admin reste lazy (pas prerendu, pas besoin d'hydration)
 const AdminPage = React.lazy(() => import('./components/AdminPage'));
@@ -96,6 +97,7 @@ const appTree = (
           <Route path="/institut-beaute-la-valette-du-var" element={<SEOGeoPage pageSlug="institut-beaute-la-valette-du-var" />} />
           <Route path="/institut-beaute-sollies-pont" element={<SEOGeoPage pageSlug="institut-beaute-sollies-pont" />} />
           <Route path="/institut-beaute-cuers" element={<SEOGeoPage pageSlug="institut-beaute-cuers" />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <MobileCta />
         <CookieBanner />

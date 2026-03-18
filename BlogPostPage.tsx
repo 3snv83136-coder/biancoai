@@ -59,44 +59,14 @@ const BlogPostPage: React.FC = () => {
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute('content', staticPost.metaDescription);
 
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'BlogPosting',
-          headline: staticPost.title,
-          description: staticPost.metaDescription,
-          datePublished: staticPost.date,
-          image: staticPost.coverImage,
-          author: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
-          publisher: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
-          mainEntityOfPage: { '@type': 'WebPage', '@id': window.location.href },
-          keywords: staticPost.tags.join(', '),
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
-            { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.bianco-esthetique.fr/blog' },
-            { '@type': 'ListItem', position: 3, name: staticPost.title, item: `https://www.bianco-esthetique.fr/blog/${staticPost.slug}` },
-          ],
-        },
-      ],
-    };
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(jsonLd);
-    document.head.appendChild(script);
-
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
-      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, [staticPost]);
 
-  // Meta tags + JSON-LD pour articles API
+  // Meta tags pour articles API (SPA navigation)
   useEffect(() => {
     if (!apiPost) return;
     const prevTitle = document.title;
@@ -105,42 +75,39 @@ const BlogPostPage: React.FC = () => {
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute('content', apiPost.meta_desc || apiPost.excerpt);
 
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'BlogPosting',
-          headline: apiPost.title,
-          description: apiPost.meta_desc || apiPost.excerpt,
-          datePublished: apiPost.date,
-          image: apiPost.images?.[0]?.url || '',
-          author: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
-          publisher: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
-          mainEntityOfPage: { '@type': 'WebPage', '@id': window.location.href },
-          keywords: (apiPost.tags || []).join(', '),
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
-            { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.bianco-esthetique.fr/blog' },
-            { '@type': 'ListItem', position: 3, name: apiPost.title, item: `https://www.bianco-esthetique.fr/blog/${apiPost.slug || apiPost.id}` },
-          ],
-        },
-      ],
-    };
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(jsonLd);
-    document.head.appendChild(script);
-
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
-      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, [apiPost]);
+
+  // JSON-LD (inline for SSR visibility)
+  const activePost = staticPost || apiPost;
+  const blogJsonLd = activePost ? {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        headline: activePost.title,
+        description: staticPost ? staticPost.metaDescription : ((apiPost?.meta_desc || apiPost?.excerpt) ?? ''),
+        datePublished: activePost.date,
+        image: staticPost ? staticPost.coverImage : (apiPost?.images?.[0]?.url || ''),
+        author: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+        publisher: { '@type': 'Organization', name: 'Bianco Esthétique', url: 'https://www.bianco-esthetique.fr' },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': `https://www.bianco-esthetique.fr/blog/${staticPost ? staticPost.slug : (apiPost?.slug || apiPost?.id)}` },
+        keywords: (activePost.tags || []).join(', '),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.bianco-esthetique.fr/blog' },
+          { '@type': 'ListItem', position: 3, name: activePost.title, item: `https://www.bianco-esthetique.fr/blog/${staticPost ? staticPost.slug : (apiPost?.slug || apiPost?.id)}` },
+        ],
+      },
+    ],
+  } : null;
 
   if (loading) {
     return (
@@ -181,6 +148,9 @@ const BlogPostPage: React.FC = () => {
     const coverUrl = apiPost.images?.[0]?.url || '';
     return (
       <div className="min-h-screen bg-surface">
+        {blogJsonLd && (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
+        )}
         <Navbar onLinkClick={() => {}} />
         <article className="pt-28 md:pt-32 pb-20">
           <div className="max-w-5xl mx-auto px-6">
@@ -234,26 +204,29 @@ const BlogPostPage: React.FC = () => {
   }
 
   // === Rendu article statique ===
-  const post = staticPost!;
+  const postData = staticPost!;
   return (
     <div className="min-h-screen bg-surface">
+      {blogJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
+      )}
       <Navbar onLinkClick={() => {}} />
       <article className="pt-28 md:pt-32 pb-20">
         <div className="max-w-5xl mx-auto px-6">
           <Breadcrumb items={[
             { label: 'Accueil', to: '/' },
             { label: 'Blog', to: '/blog' },
-            { label: post.title },
+            { label: postData.title },
           ]} />
 
           <div className="mb-10">
             <p className="text-xs font-semibold tracking-widest uppercase text-primary mb-2">
-              {new Date(post.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })} ·{' '}
-              {post.readingTime}
+              {new Date(postData.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })} ·{' '}
+              {postData.readingTime}
             </p>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl serif text-dark mb-4">{post.title}</h1>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl serif text-dark mb-4">{postData.title}</h1>
             <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {postData.tags.map((tag) => (
                 <span key={tag} className="text-[10px] px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold uppercase tracking-widest">
                   {tag}
                 </span>
@@ -262,11 +235,11 @@ const BlogPostPage: React.FC = () => {
           </div>
 
           <div className="rounded-[2rem] overflow-hidden mb-10 shadow-2xl border border-white">
-            <img src={post.coverImage} alt={post.title} className="w-full h-72 md:h-96 object-cover" loading="lazy" width={900} height={384} />
+            <img src={postData.coverImage} alt={postData.title} className="w-full h-72 md:h-96 object-cover" loading="lazy" width={900} height={384} />
           </div>
 
           <div className="space-y-8 text-gray-600 font-light leading-relaxed text-sm md:text-base">
-            {post.content.map((section) => (
+            {postData.content.map((section) => (
               <section key={section.heading}>
                 <h2 className="text-xl md:text-2xl serif text-dark mb-3">{section.heading}</h2>
                 <p>{section.body}</p>

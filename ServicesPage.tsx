@@ -46,44 +46,39 @@ const ServicesPage: React.FC = () => {
         'Aperçu de toutes les prestations Bianco Esthétique à Hyères : soins corps, visage, regard, mains, pieds, maquillage et drainage lymphatique.'
       );
 
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'ItemList',
-          name: 'Prestations Bianco Esthétique',
-          itemListElement: planityPrestations.map((cat, i) => ({
-            '@type': 'ListItem',
-            position: i + 1,
-            name: cat.label,
-            url: 'https://www.bianco-esthetique.fr/prestations',
-          })),
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
-            { '@type': 'ListItem', position: 2, name: 'Prestations', item: 'https://www.bianco-esthetique.fr/prestations' },
-          ],
-        },
-      ],
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(jsonLd);
-    document.head.appendChild(script);
-
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
-      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
 
+  const servicesJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'ItemList',
+        name: 'Prestations Bianco Esthétique',
+        itemListElement: planityPrestations.map((cat, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: cat.label,
+          url: 'https://www.bianco-esthetique.fr/prestations',
+        })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+          { '@type': 'ListItem', position: 2, name: 'Prestations', item: 'https://www.bianco-esthetique.fr/prestations' },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-surface">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }} />
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">

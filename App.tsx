@@ -49,86 +49,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (hash !== '#prestations') window.scrollTo(0, 0);
-    const dayToSchema: Record<string, string> = {
-      Lundi: 'Mo', Mardi: 'Tu', Mercredi: 'We', Jeudi: 'Th', Vendredi: 'Fr', Samedi: 'Sa', Dimanche: 'Su'
-    };
-    const openingHours = Object.entries(BUSINESS_INFO.hours)
-      .filter(([, hours]) => hours !== 'Fermé')
-      .map(([day, hours]) => `${dayToSchema[day]} ${hours.replace(/\s*–\s*/g, '-').replace(/\s/g, '')}`);
-
-    const jsonLd = {
-      "@context": "https://schema.org",
-      "@type": "BeautySalon",
-      "name": "Bianco Esthétique",
-      "url": "https://www.bianco-esthetique.fr",
-      "description": "Institut de beauté et bien-être à Hyères. Spécialiste du drainage lymphatique méthode brésilienne, des soins visage et de la beauté du regard.",
-      "telephone": "+33749769691",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "3 Avenue Ernest Millet",
-        "addressLocality": "Hyères",
-        "postalCode": "83400",
-        "addressCountry": "FR"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": "43.1199",
-        "longitude": "6.1314"
-      },
-      "areaServed": {
-        "@type": "City",
-        "name": "Hyères"
-      },
-      "openingHours": openingHours.length ? openingHours : undefined,
-      "priceRange": "€€",
-      "image": "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&q=70&w=600",
-      "sameAs": [
-        BUSINESS_INFO.instagram,
-        BUSINESS_INFO.facebook,
-        BUSINESS_INFO.planityUrl,
-        "https://www.facebook.com/biancoesthetique"
-      ]
-    };
-
-    const faqJsonLd = {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": FAQ_ITEMS.map(item => ({
-        "@type": "Question",
-        "name": item.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": item.answer,
-        },
-      })),
-    };
-
-    const salonScript = document.createElement('script');
-    salonScript.type = 'application/ld+json';
-    salonScript.text = JSON.stringify(jsonLd);
-    document.head.appendChild(salonScript);
-
-    const faqScript = document.createElement('script');
-    faqScript.type = 'application/ld+json';
-    faqScript.text = JSON.stringify(faqJsonLd);
-    document.head.appendChild(faqScript);
-
-    const itemList = {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      itemListElement: SEO_SERVICES.map((service, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        url: `${window.location.origin}/services/${service.id}`,
-        name: service.metaTitle || service.title,
-        description: service.metaDescription,
-      })),
-    };
-
-    const indexScript = document.createElement('script');
-    indexScript.type = 'application/ld+json';
-    indexScript.text = JSON.stringify(itemList);
-    document.head.appendChild(indexScript);
 
     const fetchTips = async () => {
       try {
@@ -142,13 +62,83 @@ const App: React.FC = () => {
       }
     };
     if (view === 'home') fetchTips();
-
-    return () => {
-      [salonScript, faqScript, indexScript].forEach((s) => {
-        if (s && s.parentNode) s.parentNode.removeChild(s);
-      });
-    };
   }, [view]);
+
+  // JSON-LD (computed at render for SSR visibility)
+  const dayToSchema: Record<string, string> = {
+    Lundi: 'Mo', Mardi: 'Tu', Mercredi: 'We', Jeudi: 'Th', Vendredi: 'Fr', Samedi: 'Sa', Dimanche: 'Su'
+  };
+  const openingHours = Object.entries(BUSINESS_INFO.hours)
+    .filter(([, hours]) => hours !== 'Fermé')
+    .map(([day, hours]) => `${dayToSchema[day]} ${hours.replace(/\s*–\s*/g, '-').replace(/\s/g, '')}`);
+
+  const salonJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BeautySalon",
+    "name": "Bianco Esthétique",
+    "url": "https://www.bianco-esthetique.fr",
+    "description": "Institut de beauté et bien-être à Hyères. Spécialiste du drainage lymphatique méthode brésilienne, des soins visage et de la beauté du regard.",
+    "telephone": "+33749769691",
+    "email": "contact@bianco-esthetique.fr",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "3 Avenue Ernest Millet",
+      "addressLocality": "Hyères",
+      "postalCode": "83400",
+      "addressRegion": "Var",
+      "addressCountry": "FR"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "43.1199",
+      "longitude": "6.1314"
+    },
+    "areaServed": {
+      "@type": "City",
+      "name": "Hyères"
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "10:00",
+        "closes": "18:00"
+      }
+    ],
+    ...(openingHours.length ? { "openingHours": openingHours } : {}),
+    "priceRange": "€€",
+    "image": "https://www.bianco-esthetique.fr/og-image.jpg",
+    "sameAs": [
+      BUSINESS_INFO.instagram,
+      BUSINESS_INFO.facebook,
+      BUSINESS_INFO.planityUrl,
+    ]
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": FAQ_ITEMS.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer,
+      },
+    })),
+  };
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: SEO_SERVICES.map((service, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `https://www.bianco-esthetique.fr/services/${service.id}`,
+      name: service.metaTitle || service.title,
+      description: service.metaDescription,
+    })),
+  };
 
   const categories = ['Regard', 'Drainage', 'Visage', 'Mains'];
 
@@ -233,6 +223,9 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(salonJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <Navbar onLinkClick={() => setView('home')} />
 
       {/* Hero Section */}

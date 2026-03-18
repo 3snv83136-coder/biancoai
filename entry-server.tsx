@@ -16,7 +16,82 @@ import SEOGeoPage from './SEOGeoPage';
 import LegalPage from './LegalPage';
 import PrivacyPage from './PrivacyPage';
 import CookiesPage from './CookiesPage';
+import NotFoundPage from './NotFoundPage';
 import MobileCta from './components/MobileCta';
+
+import { SEO_GEO_PAGES } from './seoGeoPages';
+import { SEO_PRESTATION_PAGES } from './seoPrestationPages';
+import { services } from './servicesData';
+import { blogPosts } from './blogData';
+
+const STATIC_META: Record<string, { title: string; desc: string }> = {
+  '/': {
+    title: 'Bianco Esthétique | Institut de Beauté & Bien-être Hyères',
+    desc: 'Bianco Esthétique, institut de beauté et de bien-être à Hyères. Drainage lymphatique brésilien, beauté du regard et soins sur-mesure.',
+  },
+  '/prestations': {
+    title: 'Nos prestations | Bianco Esthétique – Hyères',
+    desc: 'Aperçu de toutes les prestations Bianco Esthétique à Hyères : soins corps, visage, regard, mains, pieds, maquillage et drainage lymphatique.',
+  },
+  '/services': {
+    title: 'Nos prestations | Bianco Esthétique – Hyères',
+    desc: 'Aperçu de toutes les prestations Bianco Esthétique à Hyères : soins corps, visage, regard, mains, pieds, maquillage et drainage lymphatique.',
+  },
+  '/tarifs': {
+    title: 'Tarifs et prestations | Bianco Esthétique – Hyères',
+    desc: 'Tarifs des soins et prestations de Bianco Esthétique à Hyères. Soins corps, visage, mains, pieds, regard, drainage lymphatique.',
+  },
+  '/a-propos': {
+    title: 'À propos | Bianco Esthétique – Institut de beauté Hyères',
+    desc: "Bianco Esthétique : l'histoire de Salomé, esthéticienne passionnée à Hyères. Exigence MAF, formation continue.",
+  },
+  '/head-spa-hyeres': {
+    title: 'Head Spa à Hyères | Rituel cuir chevelu & détente profonde',
+    desc: 'Découvrez le head spa à Hyères chez Bianco Esthétique : massage crânien, détente profonde du cuir chevelu, rituel japonais.',
+  },
+  '/blog': {
+    title: 'Blog | Bianco Esthétique – Conseils beauté & bien-être à Hyères',
+    desc: 'Découvrez les conseils beauté et bien-être de Bianco Esthétique à Hyères.',
+  },
+  '/mentions-legales': { title: 'Mentions légales | Bianco Esthétique', desc: 'Mentions légales du site Bianco Esthétique.' },
+  '/confidentialite': { title: 'Confidentialité | Bianco Esthétique', desc: 'Politique de confidentialité de Bianco Esthétique.' },
+  '/cookies': { title: 'Cookies | Bianco Esthétique', desc: 'Politique cookies de Bianco Esthétique.' },
+};
+
+export function getRouteMeta(route: string): { title: string; desc: string } | null {
+  // Static pages
+  if (STATIC_META[route]) return STATIC_META[route];
+
+  const slug = route.replace(/^\//, '');
+
+  // SEO Geo pages
+  if (SEO_GEO_PAGES[slug]) {
+    const p = SEO_GEO_PAGES[slug];
+    return { title: p.title, desc: p.metaDescription };
+  }
+
+  // SEO Prestation pages
+  if (SEO_PRESTATION_PAGES[slug]) {
+    const p = SEO_PRESTATION_PAGES[slug];
+    return { title: p.title, desc: p.metaDescription };
+  }
+
+  // Service detail pages (/services/:slug)
+  if (route.startsWith('/services/')) {
+    const serviceSlug = route.replace('/services/', '');
+    const service = services.find(s => s.id === serviceSlug);
+    if (service) return { title: `${service.metaTitle} | Bianco Esthétique`, desc: service.metaDescription };
+  }
+
+  // Blog posts (/blog/:slug)
+  if (route.startsWith('/blog/')) {
+    const blogSlug = route.replace('/blog/', '');
+    const post = blogPosts.find(p => p.slug === blogSlug);
+    if (post) return { title: post.metaTitle, desc: post.metaDescription };
+  }
+
+  return null;
+}
 
 export function render(url: string): string {
   return renderToString(
@@ -58,6 +133,7 @@ export function render(url: string): string {
         <Route path="/institut-beaute-la-valette-du-var" element={<SEOGeoPage pageSlug="institut-beaute-la-valette-du-var" />} />
         <Route path="/institut-beaute-sollies-pont" element={<SEOGeoPage pageSlug="institut-beaute-sollies-pont" />} />
         <Route path="/institut-beaute-cuers" element={<SEOGeoPage pageSlug="institut-beaute-cuers" />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <MobileCta />
     </StaticRouter>

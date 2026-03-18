@@ -37,66 +37,60 @@ const SEOPrestationPage: React.FC<SEOPrestationPageProps> = ({ pageSlug }) => {
     }
     canonicalLink.href = `${SITE_URL}/${page.slug}`;
 
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'BeautySalon',
-          '@id': `${SITE_URL}/#organization`,
-          name: 'Bianco Esthétique',
-          url: SITE_URL,
-          telephone: '+33749967691',
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: '3 Avenue Ernest Millet',
-            addressLocality: 'Hyères',
-            postalCode: '83400',
-            addressCountry: 'FR',
-          },
-          geo: { '@type': 'GeoCoordinates', latitude: 43.1175016, longitude: 6.1280558 },
-          priceRange: '€€',
-          aggregateRating: { '@type': 'AggregateRating', ratingValue: '5', reviewCount: '24' },
-        },
-        {
-          '@type': 'Service',
-          name: page.h1,
-          description: page.metaDescription,
-          provider: { '@type': 'BeautySalon', '@id': `${SITE_URL}/#organization` },
-          areaServed: { '@type': 'City', name: 'Hyères' },
-          serviceType: page.title.split('|')[0].trim(),
-          url: `${SITE_URL}/${page.slug}`,
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL },
-            { '@type': 'ListItem', position: 2, name: 'Prestations', item: `${SITE_URL}/prestations` },
-            { '@type': 'ListItem', position: 3, name: page.title.split('|')[0].trim(), item: `${SITE_URL}/${page.slug}` },
-          ],
-        },
-        {
-          '@type': 'FAQPage',
-          mainEntity: page.faq.map((f) => ({
-            '@type': 'Question',
-            name: f.question,
-            acceptedAnswer: { '@type': 'Answer', text: f.answer },
-          })),
-        },
-      ],
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(jsonLd);
-    document.head.appendChild(script);
-
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
-      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, [page]);
+
+  // JSON-LD (inline for SSR visibility)
+  const jsonLd = page ? {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BeautySalon',
+        '@id': `${SITE_URL}/#organization`,
+        name: 'Bianco Esthétique',
+        url: SITE_URL,
+        telephone: '+33749967691',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '3 Avenue Ernest Millet',
+          addressLocality: 'Hyères',
+          postalCode: '83400',
+          addressCountry: 'FR',
+        },
+        geo: { '@type': 'GeoCoordinates', latitude: 43.1175016, longitude: 6.1280558 },
+        priceRange: '€€',
+      },
+      {
+        '@type': 'Service',
+        name: page.h1,
+        description: page.metaDescription,
+        provider: { '@type': 'BeautySalon', '@id': `${SITE_URL}/#organization` },
+        areaServed: { '@type': 'City', name: 'Hyères' },
+        serviceType: page.title.split('|')[0].trim(),
+        url: `${SITE_URL}/${page.slug}`,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Prestations', item: `${SITE_URL}/prestations` },
+          { '@type': 'ListItem', position: 3, name: page.title.split('|')[0].trim(), item: `${SITE_URL}/${page.slug}` },
+        ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: page.faq.map((f) => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: { '@type': 'Answer', text: f.answer },
+        })),
+      },
+    ],
+  } : null;
 
   if (!page) {
     return (
@@ -116,6 +110,9 @@ const SEOPrestationPage: React.FC<SEOPrestationPageProps> = ({ pageSlug }) => {
 
   return (
     <div className="min-h-screen bg-surface">
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      )}
       <Navbar onLinkClick={() => {}} />
 
       <main className="pt-28 md:pt-32 pb-20">

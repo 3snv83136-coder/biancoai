@@ -17,30 +17,25 @@ const AboutPage: React.FC = () => {
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.setAttribute('content', 'Bianco Esthétique : l\'histoire de Salomé, une esthéticienne passionnée à Hyères. Exigence MAF, formation continue, Head Spa à venir. Rigueur et proximité au service de votre beauté.');
 
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
-        { '@type': 'ListItem', position: 2, name: 'À propos', item: 'https://www.bianco-esthetique.fr/a-propos' },
-      ],
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(jsonLd);
-    document.head.appendChild(script);
-
     return () => {
       document.title = defaultTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && defaultDesc) m.setAttribute('content', defaultDesc);
-      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+      { '@type': 'ListItem', position: 2, name: 'À propos', item: 'https://www.bianco-esthetique.fr/a-propos' },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-surface">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 md:pb-32 px-6">
         <div className="max-w-3xl mx-auto">

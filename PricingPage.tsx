@@ -18,51 +18,46 @@ const PricingPage: React.FC = () => {
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute('content', 'Tarifs des soins et prestations de Bianco Esthétique à Hyères. Soins corps, visage, mains, pieds, regard, drainage lymphatique. Réservez en ligne.');
 
-    const offers = planityPrestations.flatMap(cat =>
-      cat.items
-        .filter(item => /^\d/.test(item.price))
-        .map(item => ({
-          '@type': 'Offer' as const,
-          name: item.title,
-          price: item.price.replace(/[^\d]/g, ''),
-          priceCurrency: 'EUR',
-        }))
-    );
-
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'WebPage',
-          name: 'Tarifs — Bianco Esthétique',
-          url: 'https://www.bianco-esthetique.fr/tarifs',
-          ...(offers.length > 0 ? { offers } : {}),
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
-            { '@type': 'ListItem', position: 2, name: 'Tarifs', item: 'https://www.bianco-esthetique.fr/tarifs' },
-          ],
-        },
-      ],
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(jsonLd);
-    document.head.appendChild(script);
-
     return () => {
       document.title = prevTitle;
       const m = document.querySelector('meta[name="description"]');
       if (m && prevDesc) m.setAttribute('content', prevDesc);
-      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
 
+  const offers = planityPrestations.flatMap(cat =>
+    cat.items
+      .filter(item => /^\d/.test(item.price))
+      .map(item => ({
+        '@type': 'Offer' as const,
+        name: item.title,
+        price: item.price.replace(/[^\d]/g, ''),
+        priceCurrency: 'EUR',
+      }))
+  );
+
+  const pricingJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        name: 'Tarifs — Bianco Esthétique',
+        url: 'https://www.bianco-esthetique.fr/tarifs',
+        ...(offers.length > 0 ? { offers } : {}),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+          { '@type': 'ListItem', position: 2, name: 'Tarifs', item: 'https://www.bianco-esthetique.fr/tarifs' },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-surface">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingJsonLd) }} />
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
