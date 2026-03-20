@@ -23,6 +23,37 @@ const SEOGeoPage = React.lazy(() => import('./SEOGeoPage'));
 const EpilationPasserellePage = React.lazy(() => import('./EpilationPasserellePage'));
 const NotFoundPage = React.lazy(() => import('./NotFoundPage'));
 const AdminPage = React.lazy(() => import('./components/AdminPage'));
+// Passerelles Massages
+const MassageRelaxantPage = React.lazy(() => import('./MassageRelaxantPage'));
+const MassageDosNuquePage = React.lazy(() => import('./MassageDosNuquePage'));
+const MassageBienEtrePage = React.lazy(() => import('./MassageBienEtrePage'));
+const MassageKobidoPage = React.lazy(() => import('./MassageKobidoPage'));
+const MassageFemmeEnceintePage = React.lazy(() => import('./MassageFemmeEnceintePage'));
+// Passerelles Drainage
+const DrainageJambesLourdesPage = React.lazy(() => import('./DrainageJambesLourdesPage'));
+const DrainageMinceurPage = React.lazy(() => import('./DrainageMinceurPage'));
+const DrainageApresAccouchementPage = React.lazy(() => import('./DrainageApresAccouchementPage'));
+const DrainagePrixPage = React.lazy(() => import('./DrainagePrixPage'));
+const JourneeBeautePage = React.lazy(() => import('./JourneeBeautePage'));
+// Passerelles Soins Visage
+const SoinVisageAntiAgePage = React.lazy(() => import('./SoinVisageAntiAgePage'));
+const SoinVisageEclatPage = React.lazy(() => import('./SoinVisageEclatPage'));
+const SoinVisagePeauSensiblePage = React.lazy(() => import('./SoinVisagePeauSensiblePage'));
+const SoinVisageHommePage = React.lazy(() => import('./SoinVisageHommePage'));
+const MicrodermabrasionPage = React.lazy(() => import('./MicrodermabrasionPage'));
+// Passerelles Head Spa
+const HeadSpaCadeauPage = React.lazy(() => import('./HeadSpaCadeauPage'));
+const HeadSpaDuoPage = React.lazy(() => import('./HeadSpaDuoPage'));
+const HeadSpaPrixPage = React.lazy(() => import('./HeadSpaPrixPage'));
+// Passerelles Ongles & Regard
+const PoseOnglesGelPage = React.lazy(() => import('./PoseOnglesGelPage'));
+const NailArtPage = React.lazy(() => import('./NailArtPage'));
+const RehaussementCilsPage = React.lazy(() => import('./RehaussementCilsPage'));
+// Passerelles Occasions
+const CadeauBeautePage = React.lazy(() => import('./CadeauBeautePage'));
+const BeauteMariagePage = React.lazy(() => import('./BeauteMariagePage'));
+const SoinsApressoleilPage = React.lazy(() => import('./SoinsApressoleilPage'));
+const PreparerPeauEtePage = React.lazy(() => import('./PreparerPeauEtePage'));
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
@@ -96,6 +127,37 @@ const appTree = (
           <Route path="/institut-beaute-la-valette-du-var" element={<SEOGeoPage pageSlug="institut-beaute-la-valette-du-var" />} />
           <Route path="/institut-beaute-sollies-pont" element={<SEOGeoPage pageSlug="institut-beaute-sollies-pont" />} />
           <Route path="/institut-beaute-cuers" element={<SEOGeoPage pageSlug="institut-beaute-cuers" />} />
+          {/* Passerelles Massages */}
+          <Route path="/massage-relaxant-hyeres" element={<MassageRelaxantPage />} />
+          <Route path="/massage-dos-nuque-hyeres" element={<MassageDosNuquePage />} />
+          <Route path="/massage-bien-etre-hyeres" element={<MassageBienEtrePage />} />
+          <Route path="/massage-kobido-hyeres" element={<MassageKobidoPage />} />
+          <Route path="/massage-femme-enceinte-hyeres" element={<MassageFemmeEnceintePage />} />
+          {/* Passerelles Drainage */}
+          <Route path="/drainage-lymphatique-jambes-lourdes-hyeres" element={<DrainageJambesLourdesPage />} />
+          <Route path="/drainage-lymphatique-minceur-hyeres" element={<DrainageMinceurPage />} />
+          <Route path="/drainage-lymphatique-apres-accouchement-hyeres" element={<DrainageApresAccouchementPage />} />
+          <Route path="/drainage-lymphatique-prix-hyeres" element={<DrainagePrixPage />} />
+          <Route path="/journee-beaute-hyeres" element={<JourneeBeautePage />} />
+          {/* Passerelles Soins Visage */}
+          <Route path="/soin-visage-anti-age-hyeres" element={<SoinVisageAntiAgePage />} />
+          <Route path="/soin-visage-eclat-hyeres" element={<SoinVisageEclatPage />} />
+          <Route path="/soin-visage-peau-sensible-hyeres" element={<SoinVisagePeauSensiblePage />} />
+          <Route path="/soin-visage-homme-hyeres" element={<SoinVisageHommePage />} />
+          <Route path="/microdermabrasion-hyeres" element={<MicrodermabrasionPage />} />
+          {/* Passerelles Head Spa */}
+          <Route path="/head-spa-cadeau-hyeres" element={<HeadSpaCadeauPage />} />
+          <Route path="/head-spa-duo-hyeres" element={<HeadSpaDuoPage />} />
+          <Route path="/head-spa-prix-hyeres" element={<HeadSpaPrixPage />} />
+          {/* Passerelles Ongles & Regard */}
+          <Route path="/pose-ongles-gel-hyeres" element={<PoseOnglesGelPage />} />
+          <Route path="/nail-art-hyeres" element={<NailArtPage />} />
+          <Route path="/rehaussement-cils-hyeres" element={<RehaussementCilsPage />} />
+          {/* Passerelles Occasions */}
+          <Route path="/cadeau-beaute-hyeres" element={<CadeauBeautePage />} />
+          <Route path="/beaute-mariage-hyeres" element={<BeauteMariagePage />} />
+          <Route path="/soins-peau-apres-soleil-hyeres" element={<SoinsApressoleilPage />} />
+          <Route path="/preparer-peau-ete-hyeres" element={<PreparerPeauEtePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         </React.Suspense>

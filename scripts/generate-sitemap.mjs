@@ -44,6 +44,37 @@ function getStaticPaths() {
     { path: '/institut-beaute-port-hyeres', lastmod: '2026-03-10' },
     { path: '/institut-beaute-almanarre-hyeres', lastmod: '2026-03-10' },
     { path: '/institut-beaute-giens-hyeres', lastmod: '2026-03-10' },
+    // Passerelles Massages
+    { path: '/massage-relaxant-hyeres', lastmod: today },
+    { path: '/massage-dos-nuque-hyeres', lastmod: today },
+    { path: '/massage-bien-etre-hyeres', lastmod: today },
+    { path: '/massage-kobido-hyeres', lastmod: today },
+    { path: '/massage-femme-enceinte-hyeres', lastmod: today },
+    // Passerelles Drainage
+    { path: '/drainage-lymphatique-jambes-lourdes-hyeres', lastmod: today },
+    { path: '/drainage-lymphatique-minceur-hyeres', lastmod: today },
+    { path: '/drainage-lymphatique-apres-accouchement-hyeres', lastmod: today },
+    { path: '/drainage-lymphatique-prix-hyeres', lastmod: today },
+    { path: '/journee-beaute-hyeres', lastmod: today },
+    // Passerelles Soins Visage
+    { path: '/soin-visage-anti-age-hyeres', lastmod: today },
+    { path: '/soin-visage-eclat-hyeres', lastmod: today },
+    { path: '/soin-visage-peau-sensible-hyeres', lastmod: today },
+    { path: '/soin-visage-homme-hyeres', lastmod: today },
+    { path: '/microdermabrasion-hyeres', lastmod: today },
+    // Passerelles Head Spa
+    { path: '/head-spa-cadeau-hyeres', lastmod: today },
+    { path: '/head-spa-duo-hyeres', lastmod: today },
+    { path: '/head-spa-prix-hyeres', lastmod: today },
+    // Passerelles Ongles & Regard
+    { path: '/pose-ongles-gel-hyeres', lastmod: today },
+    { path: '/nail-art-hyeres', lastmod: today },
+    { path: '/rehaussement-cils-hyeres', lastmod: today },
+    // Passerelles Occasions
+    { path: '/cadeau-beaute-hyeres', lastmod: today },
+    { path: '/beaute-mariage-hyeres', lastmod: today },
+    { path: '/soins-peau-apres-soleil-hyeres', lastmod: today },
+    { path: '/preparer-peau-ete-hyeres', lastmod: today },
     // SEO Geo - Villes limitrophes
     { path: '/institut-beaute-toulon', lastmod: '2026-03-10' },
     { path: '/institut-beaute-la-garde', lastmod: '2026-03-10' },
