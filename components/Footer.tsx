@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BUSINESS_INFO } from '../constants';
-import { services } from '../servicesData';
+import { servicesIndex as services } from '../servicesIndex';
 
 const Footer: React.FC = () => {
   return (

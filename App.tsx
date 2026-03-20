@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { BUSINESS_INFO, SERVICES, REVIEWS, FAQ_ITEMS, FALLBACK_WELLNESS_TIPS } from './constants';
-import { services as SEO_SERVICES } from './servicesData';
+import { servicesIndex as SEO_SERVICES } from './servicesIndex';
 import type { WellnessTip } from './types';
 
 const FAQAccordionItem: React.FC<{ question: string; answer: string; isOpen: boolean; onClick: () => void }> = ({ question, answer, isOpen, onClick }) => {
@@ -217,7 +217,7 @@ const App: React.FC = () => {
                 <a href={BUSINESS_INFO.planityUrl} target="_blank" rel="noopener noreferrer" className="inline-block bg-primary text-white px-12 py-5 rounded-full text-lg font-bold hover:bg-white hover:text-dark transition-all">Prendre rendez-vous</a>
               </div>
               <div className="w-full md:w-1/3 aspect-square rounded-[2rem] overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=70&w=500" className="w-full h-full object-cover grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700" alt="Moment de détente et relaxation à Bianco Esthétique Hyères" loading="lazy" width={500} height={500} />
+                <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=70&w=500" className="w-full h-full object-cover grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700" alt="Moment de détente et relaxation à Bianco Esthétique Hyères" loading="eager" width={500} height={500} />
               </div>
             </div>
           </div>

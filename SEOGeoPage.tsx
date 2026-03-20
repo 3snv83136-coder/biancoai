@@ -239,7 +239,7 @@ const SEOGeoPage: React.FC<SEOGeoPageProps> = ({ pageSlug }) => {
 
             {/* Pages geo voisines */}
             {page.nearbyPages.length > 0 && (
-              <section className="mb-16">
+              <section className="mb-10">
                 <h2 className="text-2xl serif text-dark mb-4">Institut de beaute pres d&apos;autres villes</h2>
                 <div className="flex flex-wrap gap-3">
                   {page.nearbyPages.map((link) => (
@@ -247,6 +247,24 @@ const SEOGeoPage: React.FC<SEOGeoPageProps> = ({ pageSlug }) => {
                       key={link.to}
                       to={link.to}
                       className="px-4 py-2 rounded-full border border-primary/30 text-primary text-sm font-medium hover:bg-primary/10 transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Prestations disponibles */}
+            {page.prestationLinks.length > 0 && (
+              <section className="mb-16">
+                <h2 className="text-2xl serif text-dark mb-4">Nos prestations beaute</h2>
+                <div className="flex flex-wrap gap-3">
+                  {page.prestationLinks.map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      className="px-4 py-2 rounded-full bg-primary/5 border border-primary/20 text-primary text-sm font-semibold hover:bg-primary hover:text-white transition-colors"
                     >
                       {link.label}
                     </Link>

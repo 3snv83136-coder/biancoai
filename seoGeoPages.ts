@@ -21,6 +21,7 @@ export interface SEOGeoPageData {
   ctaTitle: string;
   ctaText: string;
   nearbyPages: { label: string; to: string }[];
+  prestationLinks: { label: string; to: string }[];
 }
 
 export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
@@ -79,6 +80,13 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Le Port', to: '/institut-beaute-port-hyeres' },
       { label: 'Giens', to: '/institut-beaute-giens-hyeres' },
     ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+      { label: 'Callus peeling & pieds', to: '/callus-peeling-hyeres' },
+    ],
   },
 
   'institut-beaute-costebelle-hyeres': {
@@ -129,6 +137,13 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Carqueiranne', to: '/institut-beaute-carqueiranne' },
       { label: 'Le Pradet', to: '/institut-beaute-le-pradet' },
     ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+      { label: 'Callus peeling & pieds', to: '/callus-peeling-hyeres' },
+    ],
   },
 
   'institut-beaute-les-palmiers-hyeres': {
@@ -174,6 +189,13 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Costebelle', to: '/institut-beaute-costebelle-hyeres' },
       { label: 'Le Port', to: '/institut-beaute-port-hyeres' },
       { label: 'La Crau', to: '/institut-beaute-la-crau' },
+    ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+      { label: 'Callus peeling & pieds', to: '/callus-peeling-hyeres' },
     ],
   },
 
@@ -222,6 +244,13 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
       { label: 'Carqueiranne', to: '/institut-beaute-carqueiranne' },
     ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+      { label: 'Callus peeling & pieds', to: '/callus-peeling-hyeres' },
+    ],
   },
 
   'institut-beaute-almanarre-hyeres': {
@@ -267,6 +296,13 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Le Port', to: '/institut-beaute-port-hyeres' },
       { label: 'Costebelle', to: '/institut-beaute-costebelle-hyeres' },
       { label: 'La Londe', to: '/institut-beaute-la-londe-les-maures' },
+    ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+      { label: 'Callus peeling & pieds', to: '/callus-peeling-hyeres' },
     ],
   },
 
@@ -314,6 +350,13 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Le Port', to: '/institut-beaute-port-hyeres' },
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
       { label: 'Carqueiranne', to: '/institut-beaute-carqueiranne' },
+    ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+      { label: 'Callus peeling & pieds', to: '/callus-peeling-hyeres' },
     ],
   },
 
@@ -371,6 +414,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Le Pradet', to: '/institut-beaute-le-pradet' },
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
     ],
+    prestationLinks: [
+      { label: 'Soin du visage à Toulon', to: '/soin-visage-toulon' },
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+    ],
   },
 
   'institut-beaute-la-garde': {
@@ -420,6 +469,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Le Pradet', to: '/institut-beaute-le-pradet' },
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
     ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+    ],
   },
 
   'institut-beaute-carqueiranne': {
@@ -465,6 +520,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'La Garde', to: '/institut-beaute-la-garde' },
       { label: 'Costebelle', to: '/institut-beaute-costebelle-hyeres' },
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
+    ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
     ],
   },
 
@@ -514,6 +575,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Toulon', to: '/institut-beaute-toulon' },
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
     ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+    ],
   },
 
   'institut-beaute-la-crau': {
@@ -559,6 +626,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Les Palmiers', to: '/institut-beaute-les-palmiers-hyeres' },
       { label: 'La Garde', to: '/institut-beaute-la-garde' },
       { label: 'Cuers', to: '/institut-beaute-cuers' },
+    ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
     ],
   },
 
@@ -606,6 +679,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Cuers', to: '/institut-beaute-cuers' },
       { label: 'Le Port Hyeres', to: '/institut-beaute-port-hyeres' },
     ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+    ],
   },
 
   'institut-beaute-bormes-les-mimosas': {
@@ -648,6 +727,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'La Londe-les-Maures', to: '/institut-beaute-la-londe-les-maures' },
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
       { label: 'Le Port Hyeres', to: '/institut-beaute-port-hyeres' },
+    ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
     ],
   },
 
@@ -693,6 +778,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'Le Pradet', to: '/institut-beaute-le-pradet' },
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
     ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+    ],
   },
 
   'institut-beaute-sollies-pont': {
@@ -736,6 +827,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'La Garde', to: '/institut-beaute-la-garde' },
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
     ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
+    ],
   },
 
   'institut-beaute-cuers': {
@@ -777,6 +874,12 @@ export const SEO_GEO_PAGES: Record<string, SEOGeoPageData> = {
       { label: 'La Crau', to: '/institut-beaute-la-crau' },
       { label: 'Sollies-Pont', to: '/institut-beaute-sollies-pont' },
       { label: 'Centre-ville Hyeres', to: '/institut-beaute-centre-ville-hyeres' },
+    ],
+    prestationLinks: [
+      { label: 'Soin du visage à Hyères', to: '/soin-visage-hyeres' },
+      { label: 'Extensions de cils', to: '/extensions-cils-hyeres' },
+      { label: 'Manucure & ongles en gel', to: '/manucure-ongles-gel-hyeres' },
+      { label: 'Massage californien', to: '/massage-californien-hyeres' },
     ],
   },
 };
