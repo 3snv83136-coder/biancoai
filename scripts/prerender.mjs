@@ -107,4 +107,19 @@ for (const route of routes) {
   }
 }
 
+// ── 5. Generate 404.html for Vercel ─────────────────────────────────
+try {
+  const notFoundHtml = render('/404-not-found');
+  let page404 = template.replace(
+    '<div id="root"></div>',
+    `<div id="root">${notFoundHtml}</div>`
+  );
+  page404 = page404.replace(/<title>[^<]*<\/title>/, '<title>Page introuvable — Bianco Esthétique</title>');
+  page404 = page404.replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex,nofollow">');
+  writeFileSync(resolve(DIST, '404.html'), page404, 'utf8');
+  console.log('  ✓ 404.html generated');
+} catch (err) {
+  console.error(`  ✗ 404.html: ${err.message}`);
+}
+
 console.log(`\nPrerender complete: ${count} pages generated, ${errors} errors.`);
