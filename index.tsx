@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import MobileCta from './components/MobileCta';
 import CookieBanner from './components/CookieBanner';
+
+function PageViewTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    // Fire-and-forget, no auth needed
+    fetch('/api/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: location.pathname }),
+    }).catch(() => {});
+  }, [location.pathname]);
+  return null;
+}
 
 // Homepage : import direct (LCP, toujours visitée en premier)
 import App from './App';
@@ -86,6 +99,7 @@ const appTree = (
   <React.StrictMode>
     <ErrorBoundary>
       <BrowserRouter>
+        <PageViewTracker />
         <React.Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<App />} />

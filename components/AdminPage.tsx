@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 const API = '/api';
 
@@ -12,7 +12,7 @@ function authHeaders(): Record<string, string> {
 }
 
 async function api(path: string, options: RequestInit = {}) {
-  const res = await fetch(API + path, { ...options, headers: { ...authHeaders(), ...options.headers } });
+  const res = await fetch(API + path, { ...options, headers: { ...authHeaders(), ...(options.headers as any) } });
   if (res.status === 401) {
     localStorage.removeItem('admin_token');
     window.location.reload();
@@ -63,7 +63,7 @@ const LoginForm: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder="Mot de passe"
+            placeholder="Code d'acces"
             required
             autoFocus
             style={{ width: '100%', padding: '.8rem 3rem .8rem 1rem', border: '1px solid #ddd', borderRadius: 8, fontSize: '1rem', boxSizing: 'border-box' }}
@@ -90,36 +90,536 @@ const LoginForm: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
 };
 
 // ============================================================
-// Dashboard
+// Analytics / Visites
 // ============================================================
-const Dashboard: React.FC = () => {
-  const [stats, setStats] = useState({ posts: 0, sections: 0, items: 0 });
+type TimeFilter = 'today' | 'week' | 'month';
+
+const AnalyticsPage: React.FC = () => {
+  const [data, setData] = useState<any>(null);
+  const [filter, setFilter] = useState<TimeFilter>('week');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([api('/posts'), api('/prices')]).then(([postsData, pricesData]) => {
-      const posts = postsData?.posts?.length || 0;
-      const sections = pricesData?.sections?.length || 0;
-      const items = (pricesData?.sections || []).reduce((sum: number, s: any) => sum + (s.items?.length || 0), 0);
-      setStats({ posts, sections, items });
-    });
+    setLoading(true);
+    api('/analytics').then(d => { setData(d); setLoading(false); });
   }, []);
+
+  const getCount = () => {
+    if (!data) return 0;
+    if (filter === 'today') return data.today;
+    if (filter === 'week') return data.week;
+    return data.month;
+  };
+
+  const getDaily = (): { date: string; count: number }[] => {
+    if (!data?.daily) return [];
+    if (filter === 'today') return data.daily.slice(-1);
+    if (filter === 'week') return data.daily.slice(-7);
+    return data.daily;
+  };
+
+  const daily = getDaily();
+  const maxVal = Math.max(...daily.map(d => d.count), 1);
+
+  const formatDate = (iso: string) => {
+    const d = new Date(iso);
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+  };
 
   return (
     <div>
-      <h1 style={styles.title}>Tableau de bord</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        <StatCard number={stats.posts} label="Articles" />
-        <StatCard number={stats.sections} label="Sections tarifs" />
-        <StatCard number={stats.items} label="Prestations" />
+      <h1 style={styles.title}>Visites</h1>
+
+      {/* Filter tabs */}
+      <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.5rem' }}>
+        {([['today', "Aujourd'hui"], ['week', '7 jours'], ['month', '30 jours']] as [TimeFilter, string][]).map(([k, label]) => (
+          <button
+            key={k}
+            onClick={() => setFilter(k)}
+            style={{
+              padding: '.5rem 1.2rem',
+              borderRadius: 20,
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: filter === k ? 700 : 400,
+              background: filter === k ? '#b08d6e' : '#e0e0e0',
+              color: filter === k ? '#fff' : '#555',
+              fontSize: '.9rem',
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <p style={{ color: '#888' }}>Chargement...</p>
+      ) : (
+        <>
+          {/* Summary cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+            <StatCard number={data?.today ?? 0} label="Aujourd'hui" highlight={filter === 'today'} />
+            <StatCard number={data?.week ?? 0} label="7 jours" highlight={filter === 'week'} />
+            <StatCard number={data?.month ?? 0} label="30 jours" highlight={filter === 'month'} />
+            <StatCard number={data?.total ?? 0} label="Total" />
+          </div>
+
+          {/* Bar chart */}
+          <div style={styles.card}>
+            <h3 style={{ marginBottom: '1rem', color: '#444', fontSize: '1rem', fontWeight: 600 }}>
+              Visites — {filter === 'today' ? "aujourd'hui" : filter === 'week' ? '7 derniers jours' : '30 derniers jours'}
+            </h3>
+            {daily.length === 0 ? (
+              <p style={{ color: '#aaa' }}>Aucune donnee</p>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: 180, overflowX: 'auto' }}>
+                {daily.map(d => (
+                  <div key={d.date} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '1 0 28px', minWidth: 28 }}>
+                    <span style={{ fontSize: '.7rem', color: '#888', marginBottom: 2 }}>{d.count > 0 ? d.count : ''}</span>
+                    <div
+                      style={{
+                        width: '100%',
+                        background: '#b08d6e',
+                        borderRadius: '4px 4px 0 0',
+                        height: Math.max(4, Math.round((d.count / maxVal) * 140)),
+                        opacity: d.count === 0 ? 0.2 : 1,
+                      }}
+                    />
+                    <span style={{ fontSize: '.65rem', color: '#888', marginTop: 4, transform: 'rotate(-40deg)', transformOrigin: 'top left', whiteSpace: 'nowrap' }}>{formatDate(d.date)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Top pages */}
+          {data?.topPages?.length > 0 && (
+            <div style={styles.card}>
+              <h3 style={{ marginBottom: '1rem', color: '#444', fontSize: '1rem', fontWeight: 600 }}>Pages les plus visitees (30 jours)</h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>Page</th>
+                    <th style={{ ...styles.th, textAlign: 'right' as const }}>Visites</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.topPages.map((p: any) => (
+                    <tr key={p.path}>
+                      <td style={styles.td}><code style={{ fontSize: '.85rem' }}>{p.path}</code></td>
+                      <td style={{ ...styles.td, textAlign: 'right' as const, fontWeight: 700, color: '#b08d6e' }}>{p.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+// ============================================================
+// Newsletter
+// ============================================================
+const NewsletterPage: React.FC = () => {
+  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [addEmail, setAddEmail] = useState('');
+  const [addName, setAddName] = useState('');
+  const [addMsg, setAddMsg] = useState('');
+  const [subject, setSubject] = useState('');
+  const [htmlContent, setHtmlContent] = useState('');
+  const [sendMsg, setSendMsg] = useState('');
+  const [sending, setSending] = useState(false);
+  const [genTopic, setGenTopic] = useState('');
+  const [genTone, setGenTone] = useState('chaleureux');
+  const [generating, setGenerating] = useState(false);
+  const [tab, setTab] = useState<'list' | 'compose'>('list');
+
+  const loadSubscribers = useCallback(() => {
+    api('/newsletter').then(d => setSubscribers(d?.subscribers || []));
+  }, []);
+
+  useEffect(() => { loadSubscribers(); }, [loadSubscribers]);
+
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await api('/newsletter', {
+      method: 'POST',
+      body: JSON.stringify({ email: addEmail, name: addName }),
+    });
+    if (res.ok) {
+      setAddMsg('Abonne ajoute !');
+      setAddEmail(''); setAddName('');
+      loadSubscribers();
+    } else {
+      setAddMsg(res.error || 'Erreur');
+    }
+    setTimeout(() => setAddMsg(''), 3000);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Supprimer cet abonne ?')) return;
+    await api('/newsletter?id=' + encodeURIComponent(id), { method: 'DELETE' });
+    loadSubscribers();
+  };
+
+  const handleGenerate = async () => {
+    if (!genTopic.trim()) return;
+    setGenerating(true);
+    setSendMsg('');
+    const res = await api('/newsletter-generate', {
+      method: 'POST',
+      body: JSON.stringify({ topic: genTopic, tone: genTone }),
+    });
+    if (res.ok) {
+      setHtmlContent(res.html || '');
+      setSubject(res.subject || '');
+      setTab('compose');
+    } else {
+      setSendMsg(res.error || 'Erreur generation');
+    }
+    setGenerating(false);
+  };
+
+  const handleSend = async () => {
+    if (!subject.trim() || !htmlContent.trim()) return;
+    if (!confirm(`Envoyer a ${subscribers.filter(s => s.active).length} abonne(s) ?`)) return;
+    setSending(true);
+    setSendMsg('');
+    const res = await api('/newsletter-send', {
+      method: 'POST',
+      body: JSON.stringify({ subject, html: htmlContent }),
+    });
+    if (res.ok) {
+      setSendMsg(`Envoye ! ${res.sent} succes, ${res.failed} echecs.`);
+    } else {
+      setSendMsg(res.error || 'Erreur envoi');
+    }
+    setSending(false);
+  };
+
+  const activeCount = subscribers.filter(s => s.active).length;
+
+  return (
+    <div>
+      <h1 style={styles.title}>Newsletter</h1>
+
+      {/* Sub tabs */}
+      <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.5rem' }}>
+        {([['list', `Abonnes (${subscribers.length})`], ['compose', 'Composer & Envoyer']] as [string, string][]).map(([k, label]) => (
+          <button
+            key={k}
+            onClick={() => setTab(k as any)}
+            style={{
+              padding: '.5rem 1.2rem',
+              borderRadius: 20,
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: tab === k ? 700 : 400,
+              background: tab === k ? '#b08d6e' : '#e0e0e0',
+              color: tab === k ? '#fff' : '#555',
+              fontSize: '.9rem',
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'list' && (
+        <>
+          {/* Add subscriber */}
+          <div style={styles.card}>
+            <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Ajouter un abonne</h3>
+            <form onSubmit={handleAdd} style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+              <div style={{ flex: '1 1 200px' }}>
+                <label style={styles.label}>Email *</label>
+                <input style={styles.input} type="email" value={addEmail} onChange={e => setAddEmail(e.target.value)} required placeholder="email@exemple.fr" />
+              </div>
+              <div style={{ flex: '1 1 150px' }}>
+                <label style={styles.label}>Prenom</label>
+                <input style={styles.input} value={addName} onChange={e => setAddName(e.target.value)} placeholder="Optionnel" />
+              </div>
+              <button type="submit" style={{ ...styles.btn, alignSelf: 'flex-end' }}>Ajouter</button>
+            </form>
+            {addMsg && <p style={{ marginTop: '.5rem', color: '#155724' }}>{addMsg}</p>}
+          </div>
+
+          {/* List */}
+          <div style={styles.card}>
+            <p style={{ marginBottom: '1rem', color: '#888', fontSize: '.9rem' }}>{activeCount} abonne(s) actif(s)</p>
+            {subscribers.length === 0 ? (
+              <p style={{ color: '#aaa' }}>Aucun abonne.</p>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    {['Email', 'Prenom', 'Date inscription', 'Actions'].map(h => <th key={h} style={styles.th}>{h}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {subscribers.map(s => (
+                    <tr key={s.id}>
+                      <td style={styles.td}>{s.email}</td>
+                      <td style={styles.td}>{s.name || '—'}</td>
+                      <td style={styles.td}>{new Date(s.createdAt).toLocaleDateString('fr-FR')}</td>
+                      <td style={styles.td}>
+                        <button onClick={() => handleDelete(s.id)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>Supprimer</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </>
+      )}
+
+      {tab === 'compose' && (
+        <>
+          {/* AI generation */}
+          <div style={styles.card}>
+            <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Generer avec l'IA</h3>
+            <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+              <div style={{ flex: '2 1 250px' }}>
+                <label style={styles.label}>Sujet / theme</label>
+                <input
+                  style={styles.input}
+                  value={genTopic}
+                  onChange={e => setGenTopic(e.target.value)}
+                  placeholder="Ex: soins d'ete, promo rentre, head spa..."
+                />
+              </div>
+              <div style={{ flex: '1 1 150px' }}>
+                <label style={styles.label}>Ton</label>
+                <select style={styles.input} value={genTone} onChange={e => setGenTone(e.target.value)}>
+                  <option value="chaleureux">Chaleureux</option>
+                  <option value="professionnel">Professionnel</option>
+                  <option value="promotionnel">Promotionnel</option>
+                  <option value="informatif">Informatif</option>
+                </select>
+              </div>
+              <button onClick={handleGenerate} disabled={generating || !genTopic.trim()} style={{ ...styles.btn, alignSelf: 'flex-end' }}>
+                {generating ? 'Generation...' : 'Generer'}
+              </button>
+            </div>
+          </div>
+
+          {/* Compose form */}
+          <div style={styles.card}>
+            <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Contenu de la newsletter</h3>
+            {sendMsg && (
+              <div style={{ ...styles.success, marginBottom: '1rem', background: sendMsg.includes('chec') ? '#fdecea' : '#d4edda', color: sendMsg.includes('chec') ? '#c0392b' : '#155724' }}>
+                {sendMsg}
+              </div>
+            )}
+            <label style={styles.label}>Sujet de l'email</label>
+            <input style={styles.input} value={subject} onChange={e => setSubject(e.target.value)} placeholder="Sujet de l'email" />
+
+            <label style={styles.label}>Contenu HTML</label>
+            <textarea
+              style={{ ...styles.input, minHeight: 300, fontFamily: 'monospace', fontSize: '.85rem' }}
+              value={htmlContent}
+              onChange={e => setHtmlContent(e.target.value)}
+              placeholder="<p>Contenu de votre newsletter...</p>"
+            />
+
+            {htmlContent && (
+              <>
+                <label style={{ ...styles.label, marginTop: '1rem' }}>Apercu</label>
+                <div
+                  style={{ border: '1px solid #eee', borderRadius: 8, padding: '1rem', background: '#fafafa', marginBottom: '1rem' }}
+                  dangerouslySetInnerHTML={{ __html: htmlContent }}
+                />
+              </>
+            )}
+
+            <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <button
+                onClick={handleSend}
+                disabled={sending || !subject.trim() || !htmlContent.trim() || activeCount === 0}
+                style={styles.btn}
+              >
+                {sending ? 'Envoi...' : `Envoyer a ${activeCount} abonne(s)`}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+// ============================================================
+// Pages Editor
+// ============================================================
+const PagesEditor: React.FC = () => {
+  const [pages, setPages] = useState<any[]>([]);
+  const [search, setSearch] = useState('');
+  const [editing, setEditing] = useState<any | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const load = useCallback(() => {
+    api('/pages').then(d => setPages(d?.pages || []));
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const filtered = pages.filter(p =>
+    p.url?.toLowerCase().includes(search.toLowerCase()) ||
+    p.title?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleSave = async () => {
+    setSaving(true);
+    const updated = pages.map(p => p.url === editing.url ? editing : p);
+    await api('/pages', { method: 'PUT', body: JSON.stringify({ pages: updated }) });
+    setPages(updated);
+    setMsg('Page sauvegardee !');
+    setSaving(false);
+    setTimeout(() => setMsg(''), 3000);
+  };
+
+  const handleAdd = () => {
+    const newPage = { url: '/nouvelle-page', title: 'Nouvelle page', keywords: [], description: '' };
+    setPages(p => [...p, newPage]);
+    setEditing(newPage);
+  };
+
+  const updateField = (field: string, value: string) => {
+    setEditing((e: any) => ({ ...e, [field]: field === 'keywords' ? value.split(',').map((k: string) => k.trim()).filter(Boolean) : value }));
+  };
+
+  if (editing) {
+    return (
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+          <button onClick={() => { setEditing(null); load(); }} style={{ ...styles.btn, background: '#888' }}>← Retour</button>
+          <h1 style={{ ...styles.title, marginBottom: 0, fontSize: '1.4rem' }}>Editer : {editing.url}</h1>
+        </div>
+        {msg && <div style={styles.success}>{msg}</div>}
+        <div style={styles.card}>
+          <label style={styles.label}>URL</label>
+          <input style={styles.input} value={editing.url} onChange={e => updateField('url', e.target.value)} />
+
+          <label style={styles.label}>Titre</label>
+          <input style={styles.input} value={editing.title || ''} onChange={e => updateField('title', e.target.value)} />
+
+          <label style={styles.label}>Description</label>
+          <textarea style={{ ...styles.input, minHeight: 80 }} value={editing.description || ''} onChange={e => updateField('description', e.target.value)} />
+
+          <label style={styles.label}>Mots-cles (virgules)</label>
+          <input style={styles.input} value={(editing.keywords || []).join(', ')} onChange={e => updateField('keywords', e.target.value)} />
+
+          <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
+            <button onClick={handleSave} disabled={saving} style={styles.btn}>{saving ? 'Enregistrement...' : 'Enregistrer'}</button>
+            <button onClick={() => { setEditing(null); load(); }} style={{ ...styles.btn, background: '#888' }}>Annuler</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+        <h1 style={{ ...styles.title, marginBottom: 0 }}>Pages du site</h1>
+        <button onClick={handleAdd} style={styles.btn}>+ Ajouter</button>
+      </div>
+      <p style={{ color: '#888', marginBottom: '1rem', fontSize: '.9rem' }}>
+        {pages.length} pages enregistrees — utilisees pour le maillage interne du blog
+      </p>
+
+      <input
+        style={{ ...styles.input, marginBottom: '1rem', maxWidth: 400 }}
+        placeholder="Rechercher par URL ou titre..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+      />
+
+      <div style={styles.card}>
+        {filtered.length === 0 ? (
+          <p style={{ color: '#aaa' }}>Aucune page trouvee.</p>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>{['URL', 'Titre', 'Mots-cles', 'Actions'].map(h => <th key={h} style={styles.th}>{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {filtered.map(p => (
+                <tr key={p.url}>
+                  <td style={styles.td}><code style={{ fontSize: '.85rem' }}>{p.url}</code></td>
+                  <td style={styles.td}>{p.title}</td>
+                  <td style={{ ...styles.td, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
+                    {(p.keywords || []).join(', ')}
+                  </td>
+                  <td style={styles.td}>
+                    <button onClick={() => setEditing({ ...p })} style={{ ...styles.btn, ...styles.btnSm }}>Modifier</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
 };
 
-const StatCard: React.FC<{ number: number; label: string }> = ({ number, label }) => (
-  <div style={{ background: '#fff', padding: '1.5rem', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,.06)', textAlign: 'center' }}>
-    <div style={{ fontSize: '2rem', fontWeight: 700, color: '#b08d6e' }}>{number}</div>
-    <div style={{ fontSize: '.85rem', color: '#888', marginTop: '.3rem' }}>{label}</div>
+// ============================================================
+// Dashboard
+// ============================================================
+const Dashboard: React.FC = () => {
+  const [stats, setStats] = useState({ posts: 0, sections: 0, items: 0, subscribers: 0, visits: 0 });
+
+  useEffect(() => {
+    Promise.all([api('/posts'), api('/prices'), api('/newsletter'), api('/analytics')]).then(
+      ([postsData, pricesData, newsletterData, analyticsData]) => {
+        setStats({
+          posts: postsData?.posts?.length || 0,
+          sections: pricesData?.sections?.length || 0,
+          items: (pricesData?.sections || []).reduce((sum: number, s: any) => sum + (s.items?.length || 0), 0),
+          subscribers: newsletterData?.subscribers?.filter((s: any) => s.active)?.length || 0,
+          visits: analyticsData?.week || 0,
+        });
+      }
+    );
+  }, []);
+
+  return (
+    <div>
+      <h1 style={styles.title}>Tableau de bord</h1>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+        <StatCard number={stats.visits} label="Visites (7j)" />
+        <StatCard number={stats.posts} label="Articles blog" />
+        <StatCard number={stats.sections} label="Sections tarifs" />
+        <StatCard number={stats.items} label="Prestations" />
+        <StatCard number={stats.subscribers} label="Abonnes newsletter" />
+      </div>
+      <div style={styles.card}>
+        <p style={{ color: '#888', fontSize: '.9rem', lineHeight: 1.6 }}>
+          Bienvenue dans l'administration de <strong>Bianco Esthetique</strong>.<br />
+          Utilisez le menu pour gerer les articles, les tarifs, les abonnes newsletter et les pages du site.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const StatCard: React.FC<{ number: number; label: string; highlight?: boolean }> = ({ number, label, highlight }) => (
+  <div style={{
+    background: highlight ? '#b08d6e' : '#fff',
+    padding: '1.5rem',
+    borderRadius: 12,
+    boxShadow: '0 2px 12px rgba(0,0,0,.06)',
+    textAlign: 'center',
+    color: highlight ? '#fff' : 'inherit',
+  }}>
+    <div style={{ fontSize: '2rem', fontWeight: 700, color: highlight ? '#fff' : '#b08d6e' }}>{number}</div>
+    <div style={{ fontSize: '.85rem', color: highlight ? 'rgba(255,255,255,.8)' : '#888', marginTop: '.3rem' }}>{label}</div>
   </div>
 );
 
@@ -202,7 +702,6 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
 
     let images = [...form.images];
 
-    // Upload new files
     if (files) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -396,8 +895,8 @@ const SettingsPage: React.FC = () => {
           <label style={styles.label}>Description du site</label>
           <input style={styles.input} value={form.site_description} onChange={e => setForm(f => ({ ...f, site_description: e.target.value }))} />
 
-          <label style={styles.label}>Nouveau mot de passe (vide = inchange)</label>
-          <input style={styles.input} type="password" value={form.new_password} onChange={e => setForm(f => ({ ...f, new_password: e.target.value }))} placeholder="Nouveau mot de passe" />
+          <label style={styles.label}>Nouveau code d'acces (vide = inchange)</label>
+          <input style={styles.input} type="password" value={form.new_password} onChange={e => setForm(f => ({ ...f, new_password: e.target.value }))} placeholder="Nouveau code" />
 
           <div style={{ marginTop: '1.5rem' }}>
             <button type="submit" disabled={saving} style={styles.btn}>{saving ? 'Enregistrement...' : 'Enregistrer'}</button>
@@ -415,15 +914,19 @@ const AdminPage: React.FC = () => {
   const [logged, setLogged] = useState(!!getToken());
   const [page, setPage] = useState<string>('dashboard');
   const [editId, setEditId] = useState<string | undefined>();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (!logged) return <LoginForm onLogin={() => setLogged(true)} />;
 
   const menu = [
-    { key: 'dashboard', label: 'Tableau de bord' },
-    { key: 'posts', label: 'Articles' },
-    { key: 'post_new', label: 'Nouvel article' },
-    { key: 'prices', label: 'Tarifs' },
-    { key: 'settings', label: 'Parametres' },
+    { key: 'dashboard', label: 'Tableau de bord', icon: '◈' },
+    { key: 'analytics', label: 'Visites', icon: '◉' },
+    { key: 'newsletter', label: 'Newsletter', icon: '✉' },
+    { key: 'posts', label: 'Articles', icon: '✦' },
+    { key: 'post_new', label: 'Nouvel article', icon: '+' },
+    { key: 'prices', label: 'Tarifs', icon: '€' },
+    { key: 'pages', label: 'Pages', icon: '⊞' },
+    { key: 'settings', label: 'Parametres', icon: '⚙' },
   ];
 
   const logout = () => {
@@ -431,13 +934,21 @@ const AdminPage: React.FC = () => {
     setLogged(false);
   };
 
+  const navigate = (key: string) => {
+    setPage(key);
+    setMobileOpen(false);
+  };
+
   const renderPage = () => {
     switch (page) {
       case 'dashboard': return <Dashboard />;
+      case 'analytics': return <AnalyticsPage />;
+      case 'newsletter': return <NewsletterPage />;
       case 'posts': return <PostsList onEdit={(id) => { setEditId(id); setPage('post_edit'); }} onNew={() => setPage('post_new')} />;
       case 'post_new': return <PostForm onBack={() => setPage('posts')} />;
       case 'post_edit': return <PostForm postId={editId} onBack={() => setPage('posts')} />;
       case 'prices': return <PricesPage />;
+      case 'pages': return <PagesEditor />;
       case 'settings': return <SettingsPage />;
       default: return <Dashboard />;
     }
@@ -445,23 +956,45 @@ const AdminPage: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
-      <nav style={{ width: 250, background: '#222', color: '#fff', padding: '1.5rem 0', flexShrink: 0 }}>
-        <h2 style={{ padding: '0 1.5rem', marginBottom: '2rem', fontSize: '1.2rem', color: '#b08d6e' }}>Bianco Admin</h2>
-        {menu.map(m => (
-          <a
-            key={m.key}
-            onClick={() => setPage(m.key)}
-            style={{ display: 'block', padding: '.7rem 1.5rem', color: page === m.key ? '#fff' : '#ccc', background: page === m.key ? '#333' : 'transparent', textDecoration: 'none', fontSize: '.95rem', cursor: 'pointer' }}
-          >
-            {m.label}
+      {/* Sidebar */}
+      <nav style={{ width: 220, background: '#1a1a1a', color: '#fff', padding: '1.5rem 0', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+        <h2 style={{ padding: '0 1.2rem', marginBottom: '2rem', fontSize: '1.1rem', color: '#b08d6e', letterSpacing: '.05em' }}>Bianco Admin</h2>
+        <div style={{ flex: 1 }}>
+          {menu.map(m => (
+            <a
+              key={m.key}
+              onClick={() => navigate(m.key)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '.6rem',
+                padding: '.65rem 1.2rem',
+                color: page === m.key || (page === 'post_edit' && m.key === 'posts') ? '#fff' : '#aaa',
+                background: page === m.key || (page === 'post_edit' && m.key === 'posts') ? 'rgba(176,141,110,.2)' : 'transparent',
+                borderLeft: page === m.key ? '3px solid #b08d6e' : '3px solid transparent',
+                textDecoration: 'none',
+                fontSize: '.9rem',
+                cursor: 'pointer',
+                transition: 'all .15s',
+              }}
+            >
+              <span style={{ width: 16, textAlign: 'center', opacity: .7 }}>{m.icon}</span>
+              {m.label}
+            </a>
+          ))}
+        </div>
+        <div style={{ borderTop: '1px solid #333', paddingTop: '1rem' }}>
+          <a onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: '.6rem', padding: '.65rem 1.2rem', color: '#aaa', textDecoration: 'none', cursor: 'pointer', fontSize: '.9rem' }}>
+            <span style={{ width: 16, textAlign: 'center', opacity: .7 }}>⏎</span>Deconnexion
           </a>
-        ))}
-        <div style={{ marginTop: '2rem', borderTop: '1px solid #444', paddingTop: '1rem' }}>
-          <a onClick={logout} style={{ display: 'block', padding: '.7rem 1.5rem', color: '#ccc', textDecoration: 'none', cursor: 'pointer' }}>Deconnexion</a>
-          <a href="/" style={{ display: 'block', padding: '.7rem 1.5rem', color: '#888', textDecoration: 'none', fontSize: '.85rem' }}>Retour au site</a>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '.6rem', padding: '.65rem 1.2rem', color: '#666', textDecoration: 'none', fontSize: '.85rem' }}>
+            <span style={{ width: 16, textAlign: 'center', opacity: .7 }}>↗</span>Voir le site
+          </a>
         </div>
       </nav>
-      <div style={{ flex: 1, padding: '2rem 3rem', background: '#f5f5f5' }}>
+
+      {/* Main content */}
+      <div style={{ flex: 1, padding: '2rem 2.5rem', background: '#f5f5f5', overflowY: 'auto' }}>
         {renderPage()}
       </div>
     </div>
@@ -472,7 +1005,7 @@ const AdminPage: React.FC = () => {
 // Styles
 // ============================================================
 const styles: Record<string, React.CSSProperties> = {
-  title: { fontSize: '1.8rem', marginBottom: '1.5rem', color: '#222' },
+  title: { fontSize: '1.8rem', marginBottom: '1.5rem', color: '#222', fontWeight: 700 },
   card: { background: '#fff', padding: '1.5rem', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,.06)', marginBottom: '1.5rem' },
   btn: { display: 'inline-block', padding: '.6rem 1.2rem', background: '#b08d6e', color: '#fff', border: 'none', borderRadius: 8, fontSize: '.9rem', fontWeight: 600, cursor: 'pointer', textDecoration: 'none' },
   btnSm: { padding: '.4rem .8rem', fontSize: '.85rem' },

@@ -52,7 +52,7 @@ export async function ensureDefaults(): Promise<void> {
       site_name: 'Bianco Esthetique',
       site_description: 'Institut de beaute a Hyeres',
       admin_username: 'admin',
-      admin_password_hash: '$2b$10$JVrJuYAtO4WntgmePN0uY.jkEfT8RqU.s6DB3z/esywIL3jErr.bO',
+      admin_password_hash: '$2b$10$lkVGz0vprgGuUhyEoJbDTOdgVay5rQwAoD3fxpVlSmZUBDivg3Q7i',
     });
   }
   const posts = await readJson('posts.json');
