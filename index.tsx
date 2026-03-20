@@ -20,6 +20,7 @@ const LegalPage = React.lazy(() => import('./LegalPage'));
 const PrivacyPage = React.lazy(() => import('./PrivacyPage'));
 const CookiesPage = React.lazy(() => import('./CookiesPage'));
 const SEOGeoPage = React.lazy(() => import('./SEOGeoPage'));
+const EpilationPasserellePage = React.lazy(() => import('./EpilationPasserellePage'));
 const NotFoundPage = React.lazy(() => import('./NotFoundPage'));
 const AdminPage = React.lazy(() => import('./components/AdminPage'));
 
@@ -70,6 +71,7 @@ const appTree = (
           <Route path="/massage-californien-hyeres" element={<SEOPrestationPage pageSlug="massage-californien-hyeres" />} />
           <Route path="/callus-peeling-hyeres" element={<SEOPrestationPage pageSlug="callus-peeling-hyeres" />} />
           <Route path="/soin-visage-toulon" element={<SEOPrestationPage pageSlug="soin-visage-toulon" />} />
+          <Route path="/apres-epilation-soins-hyeres" element={<EpilationPasserellePage />} />
           <Route path="/blog" element={<BlogListPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/mentions-legales" element={<LegalPage />} />

@@ -27,6 +27,8 @@ function getStaticPaths() {
     { path: '/mentions-legales', lastmod: '2026-01-15' },
     { path: '/confidentialite', lastmod: '2026-01-15' },
     { path: '/cookies', lastmod: '2026-01-15' },
+    // Page passerelle
+    { path: '/apres-epilation-soins-hyeres', lastmod: today },
     // SEO Prestation pages
     { path: '/institut-beaute-hyeres', lastmod: SITE_LAUNCH_DATE },
     { path: '/soin-visage-hyeres', lastmod: SITE_LAUNCH_DATE },
