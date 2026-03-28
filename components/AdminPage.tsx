@@ -483,8 +483,15 @@ const PagesEditor: React.FC = () => {
     setTimeout(() => setMsg(''), 3000);
   };
 
+  const handleDelete = (url: string) => {
+    if (!confirm('Supprimer cette page ?')) return;
+    const updated = pages.filter(p => p.url !== url);
+    setPages(updated);
+    api('/pages', { method: 'PUT', body: JSON.stringify({ pages: updated }) });
+  };
+
   const handleAdd = () => {
-    const newPage = { url: '/nouvelle-page', title: 'Nouvelle page', keywords: [], description: '' };
+    const newPage = { url: '/nouvelle-page', title: 'Nouvelle page', keywords: [], description: '', meta_title: '', h1: '', subtitle: '', og_title: '', og_description: '' };
     setPages(p => [...p, newPage]);
     setEditing(newPage);
   };
@@ -501,23 +508,53 @@ const PagesEditor: React.FC = () => {
           <h1 style={{ ...styles.title, marginBottom: 0, fontSize: '1.4rem' }}>Editer : {editing.url}</h1>
         </div>
         {msg && <div style={styles.success}>{msg}</div>}
+
+        {/* Maillage interne */}
         <div style={styles.card}>
+          <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Identite de la page</h3>
           <label style={styles.label}>URL</label>
           <input style={styles.input} value={editing.url} onChange={e => updateField('url', e.target.value)} />
 
-          <label style={styles.label}>Titre</label>
+          <label style={styles.label}>Titre (maillage interne)</label>
           <input style={styles.input} value={editing.title || ''} onChange={e => updateField('title', e.target.value)} />
-
-          <label style={styles.label}>Description</label>
-          <textarea style={{ ...styles.input, minHeight: 80 }} value={editing.description || ''} onChange={e => updateField('description', e.target.value)} />
 
           <label style={styles.label}>Mots-cles (virgules)</label>
           <input style={styles.input} value={(editing.keywords || []).join(', ')} onChange={e => updateField('keywords', e.target.value)} />
+        </div>
 
-          <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
-            <button onClick={handleSave} disabled={saving} style={styles.btn}>{saving ? 'Enregistrement...' : 'Enregistrer'}</button>
-            <button onClick={() => { setEditing(null); load(); }} style={{ ...styles.btn, background: '#888' }}>Annuler</button>
-          </div>
+        {/* Parametres texte SEO */}
+        <div style={styles.card}>
+          <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Parametres texte & SEO</h3>
+
+          <label style={styles.label}>Meta title <span style={{ fontWeight: 400, color: '#999' }}>(balise &lt;title&gt; — 60 car. max)</span></label>
+          <input style={styles.input} value={editing.meta_title || ''} onChange={e => updateField('meta_title', e.target.value)} maxLength={70} placeholder={editing.title || 'Titre de la page'} />
+          <div style={{ fontSize: '.75rem', color: (editing.meta_title || '').length > 60 ? '#e74c3c' : '#999', marginTop: 2 }}>{(editing.meta_title || '').length}/60</div>
+
+          <label style={styles.label}>Meta description <span style={{ fontWeight: 400, color: '#999' }}>(160 car. max)</span></label>
+          <textarea style={{ ...styles.input, minHeight: 70 }} value={editing.description || ''} onChange={e => updateField('description', e.target.value)} maxLength={165} placeholder="Description de la page pour Google" />
+          <div style={{ fontSize: '.75rem', color: (editing.description || '').length > 160 ? '#e74c3c' : '#999', marginTop: 2 }}>{(editing.description || '').length}/160</div>
+
+          <label style={styles.label}>H1 <span style={{ fontWeight: 400, color: '#999' }}>(titre principal visible)</span></label>
+          <input style={styles.input} value={editing.h1 || ''} onChange={e => updateField('h1', e.target.value)} placeholder="Titre principal de la page" />
+
+          <label style={styles.label}>Sous-titre / intro</label>
+          <textarea style={{ ...styles.input, minHeight: 80 }} value={editing.subtitle || ''} onChange={e => updateField('subtitle', e.target.value)} placeholder="Paragraphe d'introduction sous le H1" />
+        </div>
+
+        {/* Open Graph */}
+        <div style={styles.card}>
+          <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Reseaux sociaux (Open Graph)</h3>
+
+          <label style={styles.label}>OG Title <span style={{ fontWeight: 400, color: '#999' }}>(partage Facebook/LinkedIn — vide = meta title)</span></label>
+          <input style={styles.input} value={editing.og_title || ''} onChange={e => updateField('og_title', e.target.value)} placeholder={editing.meta_title || editing.title || ''} />
+
+          <label style={styles.label}>OG Description <span style={{ fontWeight: 400, color: '#999' }}>(vide = meta description)</span></label>
+          <textarea style={{ ...styles.input, minHeight: 70 }} value={editing.og_description || ''} onChange={e => updateField('og_description', e.target.value)} placeholder={editing.description || ''} />
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+          <button onClick={handleSave} disabled={saving} style={styles.btn}>{saving ? 'Enregistrement...' : 'Enregistrer'}</button>
+          <button onClick={() => { setEditing(null); load(); }} style={{ ...styles.btn, background: '#888' }}>Annuler</button>
         </div>
       </div>
     );
@@ -530,7 +567,7 @@ const PagesEditor: React.FC = () => {
         <button onClick={handleAdd} style={styles.btn}>+ Ajouter</button>
       </div>
       <p style={{ color: '#888', marginBottom: '1rem', fontSize: '.9rem' }}>
-        {pages.length} pages enregistrees — utilisees pour le maillage interne du blog
+        {pages.length} pages — maillage interne + parametres texte & SEO
       </p>
 
       <input
@@ -546,18 +583,22 @@ const PagesEditor: React.FC = () => {
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr>{['URL', 'Titre', 'Mots-cles', 'Actions'].map(h => <th key={h} style={styles.th}>{h}</th>)}</tr>
+              <tr>{['URL', 'Titre', 'Meta title', 'H1', 'Actions'].map(h => <th key={h} style={styles.th}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {filtered.map(p => (
                 <tr key={p.url}>
                   <td style={styles.td}><code style={{ fontSize: '.85rem' }}>{p.url}</code></td>
                   <td style={styles.td}>{p.title}</td>
-                  <td style={{ ...styles.td, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
-                    {(p.keywords || []).join(', ')}
+                  <td style={{ ...styles.td, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const, color: p.meta_title ? '#222' : '#ccc' }}>
+                    {p.meta_title || '—'}
+                  </td>
+                  <td style={{ ...styles.td, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const, color: p.h1 ? '#222' : '#ccc' }}>
+                    {p.h1 || '—'}
                   </td>
                   <td style={styles.td}>
-                    <button onClick={() => setEditing({ ...p })} style={{ ...styles.btn, ...styles.btnSm }}>Modifier</button>
+                    <button onClick={() => setEditing({ ...p })} style={{ ...styles.btn, ...styles.btnSm, marginRight: '.5rem' }}>Modifier</button>
+                    <button onClick={() => handleDelete(p.url)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>Supprimer</button>
                   </td>
                 </tr>
               ))}
@@ -650,30 +691,44 @@ const PostsList: React.FC<{ onEdit: (id: string) => void; onNew: () => void }> =
         <button onClick={onNew} style={styles.btn}>+ Nouveau</button>
       </div>
       {msg && <div style={styles.success}>{msg}</div>}
-      <div style={styles.card}>
-        {posts.length === 0 ? (
-          <p>Aucun article pour le moment.</p>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>{['Titre', 'Date', 'Tags', 'Actions'].map(h => <th key={h} style={styles.th}>{h}</th>)}</tr>
-            </thead>
-            <tbody>
-              {posts.map(p => (
-                <tr key={p.id}>
-                  <td style={styles.td}>{p.title}</td>
-                  <td style={styles.td}>{p.date}</td>
-                  <td style={styles.td}>{(p.tags || []).join(', ')}</td>
-                  <td style={styles.td}>
-                    <button onClick={() => onEdit(p.id)} style={{ ...styles.btn, ...styles.btnSm, marginRight: '.5rem' }}>Modifier</button>
-                    <button onClick={() => handleDelete(p.id)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>Supprimer</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+
+      {posts.length === 0 ? (
+        <div style={styles.card}><p>Aucun article pour le moment.</p></div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.2rem' }}>
+          {posts.map(p => {
+            const thumb = p.images?.[0];
+            const thumbUrl = thumb?.url || (thumb?.file ? `/admin/uploads/blog/${thumb.file}` : null);
+            return (
+              <div key={p.id} style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,.06)', overflow: 'hidden' }}>
+                {/* Thumbnail */}
+                <div style={{ height: 160, background: '#eee', position: 'relative' }}>
+                  {thumbUrl ? (
+                    <img src={thumbUrl} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: '.9rem' }}>Aucune photo</div>
+                  )}
+                  <div style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,.6)', color: '#fff', fontSize: '.75rem', padding: '2px 8px', borderRadius: 12 }}>
+                    {(p.images || []).length} photo{(p.images || []).length !== 1 ? 's' : ''}
+                  </div>
+                </div>
+                {/* Info */}
+                <div style={{ padding: '1rem 1.2rem' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 600, marginBottom: '.3rem', color: '#222' }}>{p.title}</h3>
+                  <div style={{ fontSize: '.8rem', color: '#999', marginBottom: '.6rem' }}>
+                    {p.date} {(p.tags || []).length > 0 && <span>— {(p.tags || []).join(', ')}</span>}
+                  </div>
+                  {p.excerpt && <p style={{ fontSize: '.85rem', color: '#666', lineHeight: 1.5, marginBottom: '.8rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>{p.excerpt}</p>}
+                  <div style={{ display: 'flex', gap: '.5rem' }}>
+                    <button onClick={() => onEdit(p.id)} style={{ ...styles.btn, ...styles.btnSm, flex: 1 }}>Modifier</button>
+                    <button onClick={() => handleDelete(p.id)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>Suppr.</button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
@@ -685,6 +740,8 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
   const [form, setForm] = useState({ title: '', excerpt: '', content: '', tags: '', meta_desc: '', date: new Date().toISOString().slice(0, 10), images: [] as any[] });
   const [saving, setSaving] = useState(false);
   const [files, setFiles] = useState<FileList | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const replaceRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     if (postId) {
@@ -696,6 +753,18 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
     }
   }, [postId]);
 
+  const uploadFile = async (file: File): Promise<{ file: string; url: string } | null> => {
+    const fname = 'img-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6) + '.' + (file.name.split('.').pop() || 'jpg');
+    const token = getToken();
+    const uploadRes = await fetch(API + '/upload?filename=' + encodeURIComponent(fname), {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: file,
+    });
+    const uploadData = await uploadRes.json();
+    return uploadData.url ? { file: fname, url: uploadData.url } : null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -704,18 +773,8 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
 
     if (files) {
       for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fname = 'img-' + Date.now() + '-' + i + '.' + (file.name.split('.').pop() || 'jpg');
-        const token = getToken();
-        const uploadRes = await fetch(API + '/upload?filename=' + encodeURIComponent(fname), {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-          body: file,
-        });
-        const uploadData = await uploadRes.json();
-        if (uploadData.url) {
-          images.push({ file: fname, url: uploadData.url, caption: '' });
-        }
+        const result = await uploadFile(files[i]);
+        if (result) images.push({ ...result, caption: '' });
       }
     }
 
@@ -734,11 +793,43 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
     setForm(f => ({ ...f, images: f.images.filter((_, i) => i !== idx) }));
   };
 
+  const updateCaption = (idx: number, caption: string) => {
+    setForm(f => ({ ...f, images: f.images.map((img, i) => i === idx ? { ...img, caption } : img) }));
+  };
+
+  const moveImage = (idx: number, dir: -1 | 1) => {
+    const target = idx + dir;
+    setForm(f => {
+      const imgs = [...f.images];
+      if (target < 0 || target >= imgs.length) return f;
+      [imgs[idx], imgs[target]] = [imgs[target], imgs[idx]];
+      return { ...f, images: imgs };
+    });
+  };
+
+  const replaceImage = async (idx: number, file: File) => {
+    setUploading(true);
+    const result = await uploadFile(file);
+    if (result) {
+      setForm(f => ({
+        ...f,
+        images: f.images.map((img, i) => i === idx ? { ...result, caption: img.caption || '' } : img),
+      }));
+    }
+    setUploading(false);
+  };
+
   return (
     <div>
-      <h1 style={styles.title}>{postId ? "Modifier l'article" : 'Nouvel article'}</h1>
-      <div style={styles.card}>
-        <form onSubmit={handleSubmit}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+        <button type="button" onClick={onBack} style={{ ...styles.btn, background: '#888' }}>← Retour</button>
+        <h1 style={{ ...styles.title, marginBottom: 0 }}>{postId ? "Modifier l'article" : 'Nouvel article'}</h1>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        {/* Texte */}
+        <div style={styles.card}>
+          <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Contenu</h3>
           <label style={styles.label}>Titre</label>
           <input style={styles.input} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} required />
 
@@ -749,37 +840,87 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
           <textarea style={{ ...styles.input, minHeight: 80 }} value={form.excerpt} onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))} />
 
           <label style={styles.label}>Contenu (HTML)</label>
-          <textarea style={{ ...styles.input, minHeight: 200 }} value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} />
+          <textarea style={{ ...styles.input, minHeight: 200, fontFamily: 'monospace', fontSize: '.9rem' }} value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} />
 
           <label style={styles.label}>Tags (virgules)</label>
           <input style={styles.input} value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))} />
 
           <label style={styles.label}>Meta description SEO</label>
           <input style={styles.input} value={form.meta_desc} onChange={e => setForm(f => ({ ...f, meta_desc: e.target.value }))} maxLength={160} />
+          <div style={{ fontSize: '.75rem', color: (form.meta_desc || '').length > 155 ? '#e74c3c' : '#999', marginTop: 2 }}>{(form.meta_desc || '').length}/160</div>
+        </div>
 
-          {form.images.length > 0 && (
-            <>
-              <label style={styles.label}>Images existantes</label>
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '.5rem' }}>
-                {form.images.map((img: any, i: number) => (
-                  <div key={i} style={{ textAlign: 'center' }}>
-                    <img src={img.url || `/admin/uploads/blog/${img.file}`} alt={img.caption || ''} style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8 }} />
-                    <div><button type="button" onClick={() => removeImage(i)} style={{ fontSize: '.8rem', color: '#e74c3c', background: 'none', border: 'none', cursor: 'pointer' }}>Retirer</button></div>
+        {/* Photos */}
+        <div style={styles.card}>
+          <h3 style={{ marginBottom: '.5rem', color: '#444', fontWeight: 600 }}>
+            Photos <span style={{ fontWeight: 400, color: '#999' }}>({form.images.length})</span>
+          </h3>
+          {uploading && <p style={{ color: '#b08d6e', fontSize: '.9rem', marginBottom: '.5rem' }}>Remplacement en cours...</p>}
+
+          {form.images.length > 0 ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem', marginTop: '.5rem' }}>
+              {form.images.map((img: any, i: number) => {
+                const src = img.url || `/admin/uploads/blog/${img.file}`;
+                return (
+                  <div key={i} style={{ background: '#fafafa', borderRadius: 10, border: '1px solid #eee', overflow: 'hidden' }}>
+                    {/* Image preview */}
+                    <div style={{ position: 'relative', height: 140 }}>
+                      <img src={src} alt={img.caption || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', top: 6, left: 6, background: 'rgba(0,0,0,.6)', color: '#fff', fontSize: '.7rem', padding: '2px 8px', borderRadius: 10 }}>
+                        {i + 1}/{form.images.length}
+                      </div>
+                    </div>
+                    {/* Controls */}
+                    <div style={{ padding: '.6rem .8rem' }}>
+                      <input
+                        style={{ ...styles.input, fontSize: '.85rem', padding: '.4rem .6rem', marginBottom: '.5rem' }}
+                        value={img.caption || ''}
+                        onChange={e => updateCaption(i, e.target.value)}
+                        placeholder="Legende de la photo..."
+                      />
+                      <div style={{ display: 'flex', gap: '.3rem', flexWrap: 'wrap' }}>
+                        <button type="button" onClick={() => moveImage(i, -1)} disabled={i === 0} style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', fontSize: '.75rem', opacity: i === 0 ? .3 : 1 }}>← </button>
+                        <button type="button" onClick={() => moveImage(i, 1)} disabled={i === form.images.length - 1} style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', fontSize: '.75rem', opacity: i === form.images.length - 1 ? .3 : 1 }}>→</button>
+                        <button
+                          type="button"
+                          onClick={() => replaceRefs.current[i]?.click()}
+                          style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', fontSize: '.75rem', background: '#3498db' }}
+                        >
+                          Remplacer
+                        </button>
+                        <input
+                          ref={el => { replaceRefs.current[i] = el; }}
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={e => { if (e.target.files?.[0]) replaceImage(i, e.target.files[0]); }}
+                        />
+                        <button type="button" onClick={() => removeImage(i)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.3rem .5rem', fontSize: '.75rem', marginLeft: 'auto' }}>Supprimer</button>
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
-            </>
+                );
+              })}
+            </div>
+          ) : (
+            <p style={{ color: '#aaa', fontSize: '.9rem', marginTop: '.5rem' }}>Aucune photo. Ajoutez-en ci-dessous.</p>
           )}
 
-          <label style={styles.label}>Nouvelles images</label>
-          <input type="file" multiple accept="image/*" onChange={e => setFiles(e.target.files)} style={{ marginTop: '.3rem' }} />
-
-          <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
-            <button type="submit" disabled={saving} style={styles.btn}>{saving ? 'Enregistrement...' : postId ? 'Mettre a jour' : 'Publier'}</button>
-            <button type="button" onClick={onBack} style={{ ...styles.btn, background: '#888' }}>Annuler</button>
+          <div style={{ marginTop: '1.2rem', padding: '1rem', border: '2px dashed #ddd', borderRadius: 10, textAlign: 'center' }}>
+            <label style={{ ...styles.label, cursor: 'pointer', color: '#b08d6e', display: 'inline-block', marginTop: 0 }}>
+              + Ajouter des photos
+              <input type="file" multiple accept="image/*" onChange={e => setFiles(e.target.files)} style={{ display: 'none' }} />
+            </label>
+            {files && <p style={{ fontSize: '.85rem', color: '#666', marginTop: '.3rem' }}>{files.length} fichier(s) selectionne(s) — sera(ont) uploade(s) a l'enregistrement</p>}
           </div>
-        </form>
-      </div>
+        </div>
+
+        {/* Actions */}
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+          <button type="submit" disabled={saving || uploading} style={styles.btn}>{saving ? 'Enregistrement...' : postId ? 'Mettre a jour' : 'Publier'}</button>
+          <button type="button" onClick={onBack} style={{ ...styles.btn, background: '#888' }}>Annuler</button>
+        </div>
+      </form>
     </div>
   );
 };
@@ -954,49 +1095,84 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  const sidebarContent = (
+    <>
+      <h2 style={{ padding: '0 1.2rem', marginBottom: '2rem', fontSize: '1.1rem', color: '#b08d6e', letterSpacing: '.05em' }}>Bianco Admin</h2>
+      <div style={{ flex: 1 }}>
+        {menu.map(m => (
+          <a
+            key={m.key}
+            onClick={() => navigate(m.key)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '.6rem',
+              padding: '.65rem 1.2rem',
+              color: page === m.key || (page === 'post_edit' && m.key === 'posts') ? '#fff' : '#aaa',
+              background: page === m.key || (page === 'post_edit' && m.key === 'posts') ? 'rgba(176,141,110,.2)' : 'transparent',
+              borderLeft: page === m.key ? '3px solid #b08d6e' : '3px solid transparent',
+              textDecoration: 'none',
+              fontSize: '.9rem',
+              cursor: 'pointer',
+              transition: 'all .15s',
+            }}
+          >
+            <span style={{ width: 16, textAlign: 'center', opacity: .7 }}>{m.icon}</span>
+            {m.label}
+          </a>
+        ))}
+      </div>
+      <div style={{ borderTop: '1px solid #333', paddingTop: '1rem' }}>
+        <a onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: '.6rem', padding: '.65rem 1.2rem', color: '#aaa', textDecoration: 'none', cursor: 'pointer', fontSize: '.9rem' }}>
+          <span style={{ width: 16, textAlign: 'center', opacity: .7 }}>⏎</span>Deconnexion
+        </a>
+        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '.6rem', padding: '.65rem 1.2rem', color: '#666', textDecoration: 'none', fontSize: '.85rem' }}>
+          <span style={{ width: 16, textAlign: 'center', opacity: .7 }}>↗</span>Voir le site
+        </a>
+      </div>
+    </>
+  );
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
-      {/* Sidebar */}
-      <nav style={{ width: 220, background: '#1a1a1a', color: '#fff', padding: '1.5rem 0', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
-        <h2 style={{ padding: '0 1.2rem', marginBottom: '2rem', fontSize: '1.1rem', color: '#b08d6e', letterSpacing: '.05em' }}>Bianco Admin</h2>
-        <div style={{ flex: 1 }}>
-          {menu.map(m => (
-            <a
-              key={m.key}
-              onClick={() => navigate(m.key)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '.6rem',
-                padding: '.65rem 1.2rem',
-                color: page === m.key || (page === 'post_edit' && m.key === 'posts') ? '#fff' : '#aaa',
-                background: page === m.key || (page === 'post_edit' && m.key === 'posts') ? 'rgba(176,141,110,.2)' : 'transparent',
-                borderLeft: page === m.key ? '3px solid #b08d6e' : '3px solid transparent',
-                textDecoration: 'none',
-                fontSize: '.9rem',
-                cursor: 'pointer',
-                transition: 'all .15s',
-              }}
-            >
-              <span style={{ width: 16, textAlign: 'center', opacity: .7 }}>{m.icon}</span>
-              {m.label}
-            </a>
-          ))}
-        </div>
-        <div style={{ borderTop: '1px solid #333', paddingTop: '1rem' }}>
-          <a onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: '.6rem', padding: '.65rem 1.2rem', color: '#aaa', textDecoration: 'none', cursor: 'pointer', fontSize: '.9rem' }}>
-            <span style={{ width: 16, textAlign: 'center', opacity: .7 }}>⏎</span>Deconnexion
-          </a>
-          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '.6rem', padding: '.65rem 1.2rem', color: '#666', textDecoration: 'none', fontSize: '.85rem' }}>
-            <span style={{ width: 16, textAlign: 'center', opacity: .7 }}>↗</span>Voir le site
-          </a>
-        </div>
+      {/* Mobile top bar */}
+      <div style={{ display: 'none', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, background: '#1a1a1a', padding: '.8rem 1.2rem', alignItems: 'center', justifyContent: 'space-between' }} className="admin-mobile-bar">
+        <span style={{ color: '#b08d6e', fontWeight: 600, fontSize: '1rem' }}>Bianco Admin</span>
+        <button onClick={() => setMobileOpen(o => !o)} style={{ background: 'none', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer', padding: '0 .3rem' }}>
+          {mobileOpen ? '✕' : '☰'}
+        </button>
+      </div>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div onClick={() => setMobileOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.5)', zIndex: 40 }} className="admin-mobile-overlay" />
+      )}
+
+      {/* Sidebar — desktop: static, mobile: slide-over */}
+      <nav style={{ width: 220, background: '#1a1a1a', color: '#fff', padding: '1.5rem 0', flexShrink: 0, display: 'flex', flexDirection: 'column', transition: 'transform .25s ease' }} className={`admin-sidebar ${mobileOpen ? 'open' : ''}`}>
+        {sidebarContent}
       </nav>
 
       {/* Main content */}
-      <div style={{ flex: 1, padding: '2rem 2.5rem', background: '#f5f5f5', overflowY: 'auto' }}>
+      <div style={{ flex: 1, padding: '2rem 2.5rem', background: '#f5f5f5', overflowY: 'auto' }} className="admin-main">
         {renderPage()}
       </div>
+
+      {/* Responsive styles */}
+      <style>{`
+        @media (max-width: 768px) {
+          .admin-mobile-bar { display: flex !important; }
+          .admin-sidebar {
+            position: fixed !important;
+            top: 0; bottom: 0; left: 0;
+            z-index: 45;
+            transform: translateX(-100%);
+            box-shadow: 4px 0 24px rgba(0,0,0,.3);
+          }
+          .admin-sidebar.open { transform: translateX(0) !important; }
+          .admin-main { padding: 1rem !important; padding-top: 4rem !important; }
+        }
+      `}</style>
     </div>
   );
 };
