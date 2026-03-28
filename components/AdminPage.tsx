@@ -1358,53 +1358,31 @@ const PLANITY_CATALOG = [
 ];
 
 const PricesPage: React.FC = () => {
-  const [sections, setSections] = useState<any[]>([]);
+  const [extras, setExtras] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
-  const [showCatalog, setShowCatalog] = useState<number | null>(null);
 
   useEffect(() => {
-    api('/prices').then(d => setSections(d?.sections || []));
+    api('/prices').then(d => setExtras(d?.sections || []));
   }, []);
 
-  const addSection = () => setSections(s => [...s, { id: 'section_' + Date.now(), title: '', items: [] }]);
-
-  const addSectionFromCatalog = (catLabel: string) => {
-    const existing = sections.find(s => s.title === catLabel);
-    if (existing) return;
-    setSections(s => [...s, { id: 'section_' + Date.now(), title: catLabel, items: [] }]);
-  };
-
-  const addItem = (si: number) => {
-    setSections(s => s.map((sec, i) => i === si ? { ...sec, items: [...sec.items, { id: 'item_' + Date.now(), label: '', price: '', duration: '', unit: '\u20ac', description: '' }] } : sec));
-  };
-
-  const addItemFromCatalog = (si: number, itemLabel: string) => {
-    setSections(s => s.map((sec, i) => i === si ? { ...sec, items: [...sec.items, { id: 'item_' + Date.now(), label: itemLabel, price: '', duration: '', unit: '\u20ac', description: '' }] } : sec));
-    setShowCatalog(null);
-  };
-
-  const updateSection = (si: number, title: string) => setSections(s => s.map((sec, i) => i === si ? { ...sec, title } : sec));
-  const updateItem = (si: number, ii: number, field: string, value: string) => setSections(s => s.map((sec, i) => i === si ? { ...sec, items: sec.items.map((item: any, j: number) => j === ii ? { ...item, [field]: value } : item) } : sec));
-  const removeItem = (si: number, ii: number) => setSections(s => s.map((sec, i) => i === si ? { ...sec, items: sec.items.filter((_: any, j: number) => j !== ii) } : sec));
-  const removeSection = (si: number) => { if (confirm('Supprimer cette section ?')) setSections(s => s.filter((_, i) => i !== si)); };
-  const moveSection = (si: number, dir: -1 | 1) => {
-    const t = si + dir;
-    setSections(s => { const a = [...s]; if (t < 0 || t >= a.length) return s; [a[si], a[t]] = [a[t], a[si]]; return a; });
-  };
+  // Extra items management (admin-only items, NOT Planity duplicates)
+  const addExtraSection = (title?: string) => setExtras(s => [...s, { id: 'section_' + Date.now(), title: title || '', items: [] }]);
+  const addExtraItem = (si: number) => setExtras(s => s.map((sec, i) => i === si ? { ...sec, items: [...sec.items, { id: 'item_' + Date.now(), label: '', price: '', duration: '' }] } : sec));
+  const updateExtraSection = (si: number, title: string) => setExtras(s => s.map((sec, i) => i === si ? { ...sec, title } : sec));
+  const updateExtraItem = (si: number, ii: number, field: string, value: string) => setExtras(s => s.map((sec, i) => i === si ? { ...sec, items: sec.items.map((item: any, j: number) => j === ii ? { ...item, [field]: value } : item) } : sec));
+  const removeExtraItem = (si: number, ii: number) => setExtras(s => s.map((sec, i) => i === si ? { ...sec, items: sec.items.filter((_: any, j: number) => j !== ii) } : sec));
+  const removeExtraSection = (si: number) => { if (confirm('Supprimer ?')) setExtras(s => s.filter((_, i) => i !== si)); };
 
   const handleSave = async () => {
     setSaving(true);
-    await api('/prices', { method: 'PUT', body: JSON.stringify({ sections }) });
-    setMsg('Tarifs enregistres et page mise a jour !');
+    // Only save extras that have items
+    const toSave = extras.filter(s => s.items.length > 0);
+    await api('/prices', { method: 'PUT', body: JSON.stringify({ sections: toSave }) });
+    setExtras(toSave);
+    setMsg('Tarifs supplementaires enregistres !');
     setSaving(false);
     setTimeout(() => setMsg(''), 4000);
-  };
-
-  // Get catalog items for current section title
-  const getCatalogItems = (sectionTitle: string) => {
-    const cat = PLANITY_CATALOG.find(c => sectionTitle.toLowerCase().includes(c.cat.toLowerCase().slice(0, 8)));
-    return cat?.items || [];
   };
 
   return (
@@ -1412,81 +1390,63 @@ const PricesPage: React.FC = () => {
       <h1 style={styles.title}>Gestion des tarifs</h1>
       {msg && <div style={styles.success}>{msg}</div>}
 
-      {/* Explanation */}
-      <div style={{ ...styles.card, background: '#f0f7ff', borderLeft: '3px solid #3498db', marginBottom: '1.5rem' }}>
-        <p style={{ fontSize: '.9rem', color: '#555', lineHeight: 1.6, margin: 0 }}>
-          <strong>Les tarifs Planity sont toujours affiches sur la page publique.</strong><br />
-          Ici, ajoutez des prestations supplementaires ou des nouvelles categories. Elles s'ajouteront a cote des tarifs Planity existants sans les remplacer.
-        </p>
+      {/* Planity tarifs (read-only view) */}
+      <div style={{ ...styles.card, background: '#fafafa', marginBottom: '1.5rem' }}>
+        <h3 style={{ marginBottom: '.8rem', color: '#444', fontWeight: 600 }}>Tarifs Planity (automatiques)</h3>
+        <p style={{ fontSize: '.85rem', color: '#888', marginBottom: '1rem' }}>Ces tarifs viennent du fichier Planity et sont toujours affiches sur la page publique. Pour les modifier, mettez-les a jour sur Planity.</p>
+        {PLANITY_CATALOG.map(cat => (
+          <details key={cat.cat} style={{ marginBottom: '.5rem' }}>
+            <summary style={{ cursor: 'pointer', fontWeight: 600, color: '#555', fontSize: '.9rem', padding: '.3rem 0' }}>{cat.cat} ({cat.items.length} prestations)</summary>
+            <div style={{ padding: '.5rem 0 .5rem 1rem' }}>
+              {cat.items.map((item, i) => (
+                <div key={i} style={{ fontSize: '.85rem', color: '#888', padding: '.15rem 0' }}>{item}</div>
+              ))}
+            </div>
+          </details>
+        ))}
       </div>
 
-      {/* Quick add from catalog */}
-      <div style={{ ...styles.card, marginBottom: '1.5rem' }}>
-        <h3 style={{ marginBottom: '.8rem', color: '#444', fontWeight: 600, fontSize: '.95rem' }}>Ajouter dans une categorie existante</h3>
-        <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
-          {PLANITY_CATALOG.map(c => (
-            <button key={c.cat} type="button" onClick={() => addSectionFromCatalog(c.cat)}
-              style={{ padding: '.4rem .8rem', borderRadius: 16, border: '1px solid #ddd', background: sections.some(s => s.title === c.cat) ? '#e8e8e8' : '#fff', color: sections.some(s => s.title === c.cat) ? '#aaa' : '#333', fontSize: '.8rem', cursor: sections.some(s => s.title === c.cat) ? 'default' : 'pointer' }}
-              disabled={sections.some(s => s.title === c.cat)}
-            >
-              {c.cat} {sections.some(s => s.title === c.cat) ? '✓' : '+'}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Extra tarifs (editable) */}
+      <div style={{ ...styles.card, borderLeft: '3px solid #b08d6e', marginBottom: '1.5rem' }}>
+        <h3 style={{ marginBottom: '.5rem', color: '#444', fontWeight: 600 }}>Tarifs supplementaires</h3>
+        <p style={{ fontSize: '.85rem', color: '#888', marginBottom: '1rem' }}>Ajoutez ici des prestations qui ne sont pas sur Planity. Elles s'afficheront en plus sur la page tarifs.</p>
 
-      {/* Sections */}
-      {sections.map((sec, si) => {
-        const catalogItems = getCatalogItems(sec.title);
-        return (
-          <div key={sec.id} style={{ ...styles.card, border: '1px solid #e0e0e0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '1rem' }}>
-              <button type="button" onClick={() => moveSection(si, -1)} disabled={si === 0} style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', opacity: si === 0 ? .3 : 1 }}>↑</button>
-              <button type="button" onClick={() => moveSection(si, 1)} disabled={si === sections.length - 1} style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', opacity: si === sections.length - 1 ? .3 : 1 }}>↓</button>
-              <input style={{ ...styles.input, fontWeight: 700, fontSize: '1.05rem', flex: 1 }} value={sec.title} onChange={e => updateSection(si, e.target.value)} placeholder="Nom de la categorie" />
-              <button type="button" onClick={() => removeSection(si)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>Supprimer</button>
+        {extras.length === 0 && <p style={{ color: '#aaa', fontSize: '.9rem' }}>Aucun tarif supplementaire. Cliquez ci-dessous pour en ajouter.</p>}
+
+        {extras.map((sec, si) => (
+          <div key={sec.id} style={{ border: '1px solid #eee', borderRadius: 10, padding: '1rem', marginBottom: '1rem', background: '#fff' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.8rem' }}>
+              <input style={{ ...styles.input, fontWeight: 700, fontSize: '1rem', flex: 1 }} value={sec.title} onChange={e => updateExtraSection(si, e.target.value)} placeholder="Nom de la categorie" />
+              <button type="button" onClick={() => removeExtraSection(si)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>Supprimer</button>
             </div>
 
-            {/* Items */}
             {sec.items.map((item: any, ii: number) => (
               <div key={item.id} style={{ display: 'grid', gridTemplateColumns: '1fr 90px 90px 40px', gap: '.4rem', marginBottom: '.4rem', alignItems: 'center' }}>
-                <input style={{ ...styles.input, fontSize: '.9rem' }} value={item.label} onChange={e => updateItem(si, ii, 'label', e.target.value)} placeholder="Prestation" />
-                <input style={{ ...styles.input, fontSize: '.9rem' }} value={item.duration || ''} onChange={e => updateItem(si, ii, 'duration', e.target.value)} placeholder="Duree" />
-                <input style={{ ...styles.input, fontSize: '.9rem', fontWeight: 600 }} value={item.price} onChange={e => updateItem(si, ii, 'price', e.target.value)} placeholder="Prix" />
-                <button type="button" onClick={() => removeItem(si, ii)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.3rem' }}>X</button>
+                <input style={{ ...styles.input, fontSize: '.9rem' }} value={item.label} onChange={e => updateExtraItem(si, ii, 'label', e.target.value)} placeholder="Nom de la prestation" />
+                <input style={{ ...styles.input, fontSize: '.9rem' }} value={item.duration || ''} onChange={e => updateExtraItem(si, ii, 'duration', e.target.value)} placeholder="Duree" />
+                <input style={{ ...styles.input, fontSize: '.9rem', fontWeight: 600 }} value={item.price} onChange={e => updateExtraItem(si, ii, 'price', e.target.value)} placeholder="Prix" />
+                <button type="button" onClick={() => removeExtraItem(si, ii)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.3rem' }}>X</button>
               </div>
             ))}
 
-            {/* Add item */}
-            <div style={{ display: 'flex', gap: '.5rem', marginTop: '.8rem', flexWrap: 'wrap', alignItems: 'center' }}>
-              <button type="button" onClick={() => addItem(si)} style={{ ...styles.btn, ...styles.btnSm }}>+ Prestation libre</button>
-              {catalogItems.length > 0 && (
-                <>
-                  <button type="button" onClick={() => setShowCatalog(showCatalog === si ? null : si)} style={{ ...styles.btn, ...styles.btnSm, background: '#3498db' }}>
-                    {showCatalog === si ? 'Fermer catalogue' : 'Choisir depuis Planity'}
-                  </button>
-                  {showCatalog === si && (
-                    <div style={{ width: '100%', display: 'flex', gap: '.3rem', flexWrap: 'wrap', marginTop: '.3rem', padding: '.5rem', background: '#f8f9fa', borderRadius: 8 }}>
-                      {catalogItems.map(label => (
-                        <button key={label} type="button" onClick={() => addItemFromCatalog(si, label)}
-                          style={{ padding: '.3rem .6rem', borderRadius: 12, border: '1px solid #ddd', background: '#fff', fontSize: '.8rem', cursor: 'pointer', color: '#333' }}
-                        >
-                          + {label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+            <button type="button" onClick={() => addExtraItem(si)} style={{ ...styles.btn, ...styles.btnSm, marginTop: '.5rem' }}>+ Prestation</button>
           </div>
-        );
-      })}
+        ))}
 
-      <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-        <button type="button" onClick={addSection} style={{ ...styles.btn, background: '#888' }}>+ Section personnalisee</button>
-        <button onClick={handleSave} disabled={saving} style={{ ...styles.btn, padding: '.8rem 2rem' }}>{saving ? 'Enregistrement...' : 'Enregistrer les tarifs'}</button>
+        <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+          <button type="button" onClick={() => addExtraSection()} style={{ ...styles.btn, ...styles.btnSm }}>+ Nouvelle categorie</button>
+          {PLANITY_CATALOG.map(c => (
+            <button key={c.cat} type="button" onClick={() => addExtraSection(c.cat)}
+              style={{ ...styles.btn, ...styles.btnSm, background: '#3498db', fontSize: '.8rem' }}
+              disabled={extras.some(s => s.title === c.cat)}
+            >
+              + dans {c.cat}
+            </button>
+          )).filter((_, i) => !extras.some(s => s.title === PLANITY_CATALOG[i].cat))}
+        </div>
       </div>
+
+      <button onClick={handleSave} disabled={saving} style={{ ...styles.btn, padding: '.8rem 2rem' }}>{saving ? 'Enregistrement...' : 'Enregistrer'}</button>
     </div>
   );
 };
