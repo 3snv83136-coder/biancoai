@@ -483,9 +483,82 @@ const NewsletterPage: React.FC = () => {
 // ============================================================
 type PageTab = 'texte' | 'photos' | 'faq' | 'jsonld';
 
+// Catalogue complet de toutes les pages existantes du site
+const ALL_SITE_PAGES: { url: string; title: string; category: string }[] = [
+  // Pages principales
+  { url: '/', title: 'Accueil', category: 'Principales' },
+  { url: '/services', title: 'Nos services', category: 'Principales' },
+  { url: '/tarifs', title: 'Tarifs', category: 'Principales' },
+  { url: '/a-propos', title: "L'Institut", category: 'Principales' },
+  { url: '/blog', title: 'Blog', category: 'Principales' },
+  { url: '/head-spa-hyeres', title: 'Head Spa Hyeres', category: 'Principales' },
+  // SEO Prestations
+  { url: '/institut-beaute-hyeres', title: 'Institut beaute Hyeres', category: 'SEO Prestations' },
+  { url: '/soin-visage-hyeres', title: 'Soin visage Hyeres', category: 'SEO Prestations' },
+  { url: '/manucure-ongles-gel-hyeres', title: 'Manucure & ongles gel', category: 'SEO Prestations' },
+  { url: '/extensions-cils-hyeres', title: 'Extensions de cils', category: 'SEO Prestations' },
+  { url: '/massage-californien-hyeres', title: 'Massage californien', category: 'SEO Prestations' },
+  { url: '/callus-peeling-hyeres', title: 'Callus peeling & pieds', category: 'SEO Prestations' },
+  { url: '/soin-visage-toulon', title: 'Soin visage Toulon', category: 'SEO Prestations' },
+  { url: '/apres-epilation-soins-hyeres', title: 'Soins apres epilation', category: 'SEO Prestations' },
+  // Massages
+  { url: '/massage-relaxant-hyeres', title: 'Massage relaxant', category: 'Massages' },
+  { url: '/massage-dos-nuque-hyeres', title: 'Massage dos & nuque', category: 'Massages' },
+  { url: '/massage-bien-etre-hyeres', title: 'Massage bien-etre', category: 'Massages' },
+  { url: '/massage-kobido-hyeres', title: 'Massage Kobido', category: 'Massages' },
+  { url: '/massage-femme-enceinte-hyeres', title: 'Massage femme enceinte', category: 'Massages' },
+  // Drainage
+  { url: '/drainage-lymphatique-jambes-lourdes-hyeres', title: 'Drainage jambes lourdes', category: 'Drainage' },
+  { url: '/drainage-lymphatique-minceur-hyeres', title: 'Drainage minceur', category: 'Drainage' },
+  { url: '/drainage-lymphatique-apres-accouchement-hyeres', title: 'Drainage post-accouchement', category: 'Drainage' },
+  { url: '/drainage-lymphatique-prix-hyeres', title: 'Drainage prix', category: 'Drainage' },
+  { url: '/journee-beaute-hyeres', title: 'Journee beaute', category: 'Drainage' },
+  // Soins visage
+  { url: '/soin-visage-anti-age-hyeres', title: 'Soin anti-age', category: 'Soins visage' },
+  { url: '/soin-visage-eclat-hyeres', title: 'Soin eclat', category: 'Soins visage' },
+  { url: '/soin-visage-peau-sensible-hyeres', title: 'Soin peau sensible', category: 'Soins visage' },
+  { url: '/soin-visage-homme-hyeres', title: 'Soin visage homme', category: 'Soins visage' },
+  { url: '/microdermabrasion-hyeres', title: 'Microdermabrasion', category: 'Soins visage' },
+  // Head Spa
+  { url: '/head-spa-cadeau-hyeres', title: 'Head Spa cadeau', category: 'Head Spa' },
+  { url: '/head-spa-duo-hyeres', title: 'Head Spa duo', category: 'Head Spa' },
+  { url: '/head-spa-prix-hyeres', title: 'Head Spa prix', category: 'Head Spa' },
+  // Ongles & Regard
+  { url: '/pose-ongles-gel-hyeres', title: 'Pose ongles gel', category: 'Ongles & Regard' },
+  { url: '/nail-art-hyeres', title: 'Nail art', category: 'Ongles & Regard' },
+  { url: '/rehaussement-cils-hyeres', title: 'Rehaussement cils', category: 'Ongles & Regard' },
+  // Occasions
+  { url: '/cadeau-beaute-hyeres', title: 'Cadeau beaute', category: 'Occasions' },
+  { url: '/beaute-mariage-hyeres', title: 'Beaute mariage', category: 'Occasions' },
+  { url: '/soins-peau-apres-soleil-hyeres', title: 'Soins apres-soleil', category: 'Occasions' },
+  { url: '/preparer-peau-ete-hyeres', title: 'Preparer peau ete', category: 'Occasions' },
+  // SEO Geo
+  { url: '/institut-beaute-centre-ville-hyeres', title: 'Centre-ville Hyeres', category: 'SEO Geo' },
+  { url: '/institut-beaute-costebelle-hyeres', title: 'Costebelle Hyeres', category: 'SEO Geo' },
+  { url: '/institut-beaute-les-palmiers-hyeres', title: 'Les Palmiers Hyeres', category: 'SEO Geo' },
+  { url: '/institut-beaute-port-hyeres', title: 'Port Hyeres', category: 'SEO Geo' },
+  { url: '/institut-beaute-almanarre-hyeres', title: 'Almanarre Hyeres', category: 'SEO Geo' },
+  { url: '/institut-beaute-giens-hyeres', title: 'Giens Hyeres', category: 'SEO Geo' },
+  { url: '/institut-beaute-toulon', title: 'Toulon', category: 'SEO Geo' },
+  { url: '/institut-beaute-la-garde', title: 'La Garde', category: 'SEO Geo' },
+  { url: '/institut-beaute-carqueiranne', title: 'Carqueiranne', category: 'SEO Geo' },
+  { url: '/institut-beaute-le-pradet', title: 'Le Pradet', category: 'SEO Geo' },
+  { url: '/institut-beaute-la-crau', title: 'La Crau', category: 'SEO Geo' },
+  { url: '/institut-beaute-la-londe-les-maures', title: 'La Londe-les-Maures', category: 'SEO Geo' },
+  { url: '/institut-beaute-bormes-les-mimosas', title: 'Bormes-les-Mimosas', category: 'SEO Geo' },
+  { url: '/institut-beaute-la-valette-du-var', title: 'La Valette-du-Var', category: 'SEO Geo' },
+  { url: '/institut-beaute-sollies-pont', title: 'Sollies-Pont', category: 'SEO Geo' },
+  { url: '/institut-beaute-cuers', title: 'Cuers', category: 'SEO Geo' },
+  // Legal
+  { url: '/mentions-legales', title: 'Mentions legales', category: 'Legal' },
+  { url: '/confidentialite', title: 'Confidentialite', category: 'Legal' },
+  { url: '/cookies', title: 'Cookies', category: 'Legal' },
+];
+
 const PagesEditor: React.FC = () => {
   const [pages, setPages] = useState<any[]>([]);
   const [search, setSearch] = useState('');
+  const [catFilter, setCatFilter] = useState<string>('all');
   const [editing, setEditing] = useState<any | null>(null);
   const [originalUrl, setOriginalUrl] = useState('');
   const [saving, setSaving] = useState(false);
@@ -496,15 +569,34 @@ const PagesEditor: React.FC = () => {
   const replaceRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const load = useCallback(() => {
-    api('/pages').then(d => setPages(d?.pages || []));
+    api('/pages').then(d => {
+      const apiPages: any[] = d?.pages || [];
+      // Merge: start with all site pages, override with API data if exists
+      const merged: any[] = ALL_SITE_PAGES.map(sp => {
+        const apiMatch = apiPages.find(ap => ap.url === sp.url);
+        return apiMatch
+          ? { ...apiMatch, _category: sp.category, _fixed: true }
+          : { url: sp.url, title: sp.title, keywords: [], description: '', meta_title: '', h1: '', subtitle: '', sections: [], images: [], faq: [], published: true, _category: sp.category, _fixed: true };
+      });
+      // Add API-only pages (dynamic pages created in admin)
+      for (const ap of apiPages) {
+        if (!ALL_SITE_PAGES.some(sp => sp.url === ap.url)) {
+          merged.push({ ...ap, _category: 'Pages dynamiques', _fixed: false });
+        }
+      }
+      setPages(merged);
+    });
   }, []);
 
   useEffect(() => { load(); }, [load]);
 
-  const filtered = pages.filter(p =>
-    p.url?.toLowerCase().includes(search.toLowerCase()) ||
-    p.title?.toLowerCase().includes(search.toLowerCase())
-  );
+  const categories = ['all', ...Array.from(new Set(pages.map(p => p._category || 'Autre')))];
+
+  const filtered = pages.filter(p => {
+    const matchSearch = !search || p.url?.toLowerCase().includes(search.toLowerCase()) || p.title?.toLowerCase().includes(search.toLowerCase());
+    const matchCat = catFilter === 'all' || p._category === catFilter;
+    return matchSearch && matchCat;
+  });
 
   const handleSave = async () => {
     setSaving(true);
@@ -521,11 +613,20 @@ const PagesEditor: React.FC = () => {
       }
       setFiles(null);
     }
-    const updated = pages.map(p => p.url === originalUrl ? { ...editing, images } : p);
-    await api('/pages', { method: 'PUT', body: JSON.stringify({ pages: updated }) });
-    setPages(updated);
+    // Update in local state
+    const editedPage = { ...editing, images };
+    delete editedPage._category;
+    delete editedPage._fixed;
+    const updatedLocal = pages.map(p => p.url === originalUrl ? { ...editedPage, _category: p._category, _fixed: p._fixed } : p);
+    setPages(updatedLocal);
     setEditing((e: any) => ({ ...e, images }));
-    setMsg('Page sauvegardee ! Le sitemap sera mis a jour automatiquement.');
+    // Save to API: only pages that have been edited (have content beyond defaults)
+    const toSave = updatedLocal.map(p => {
+      const { _category, _fixed, ...clean } = p;
+      return clean;
+    });
+    await api('/pages', { method: 'PUT', body: JSON.stringify({ pages: toSave }) });
+    setMsg('Page sauvegardee ! Sitemap mis a jour.');
     setSaving(false);
     setTimeout(() => setMsg(''), 4000);
   };
@@ -630,8 +731,12 @@ const PagesEditor: React.FC = () => {
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
           <button onClick={() => { setEditing(null); setFiles(null); load(); }} style={{ ...styles.btn, background: '#888' }}>← Retour</button>
-          <h1 style={{ ...styles.title, marginBottom: 0, fontSize: '1.3rem', flex: 1 }}>{editing.title || 'Nouvelle page'}</h1>
-          <a href={editing.url} target="_blank" rel="noopener noreferrer" style={{ ...styles.btn, ...styles.btnSm, background: '#3498db', textDecoration: 'none' }}>Voir la page ↗</a>
+          <div style={{ flex: 1 }}>
+            <h1 style={{ ...styles.title, marginBottom: 0, fontSize: '1.3rem' }}>{editing.title || 'Nouvelle page'}</h1>
+            {editing._fixed && <span style={{ fontSize: '.75rem', color: '#888' }}>Page fixe — le contenu est dans le code, mais vous pouvez modifier le SEO, les photos et la FAQ</span>}
+            {editing._category && <span style={{ fontSize: '.7rem', background: '#e8e8e8', padding: '2px 8px', borderRadius: 8, color: '#666', marginLeft: '.5rem' }}>{editing._category}</span>}
+          </div>
+          <a href={editing.url} target="_blank" rel="noopener noreferrer" style={{ ...styles.btn, ...styles.btnSm, background: '#3498db', textDecoration: 'none' }}>Voir ↗</a>
           <button onClick={handleSave} disabled={saving || uploading} style={styles.btn}>{saving ? 'Enregistrement...' : 'Sauvegarder'}</button>
         </div>
         {msg && <div style={styles.success}>{msg}</div>}
@@ -646,7 +751,7 @@ const PagesEditor: React.FC = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={styles.label}>URL de la page *</label>
-                  <input style={styles.input} value={editing.url} onChange={e => updateField('url', e.target.value)} placeholder="/mon-url" />
+                  <input style={{ ...styles.input, ...(editing._fixed ? { background: '#f0f0f0', color: '#888' } : {}) }} value={editing.url} onChange={e => updateField('url', e.target.value)} placeholder="/mon-url" disabled={!!editing._fixed} />
                 </div>
                 <div>
                   <label style={styles.label}>Titre interne</label>
@@ -803,17 +908,28 @@ const PagesEditor: React.FC = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <h1 style={{ ...styles.title, marginBottom: 0 }}>Pages du site</h1>
         <button onClick={handleAdd} style={styles.btn}>+ Nouvelle page</button>
+        <span style={{ fontSize: '.85rem', color: '#888' }}>{pages.length} pages</span>
       </div>
-      <p style={{ color: '#888', marginBottom: '1rem', fontSize: '.9rem' }}>
-        {pages.length} pages — editez le contenu, les photos, la FAQ et le JSON-LD de chaque page. Les nouvelles pages sont accessibles sur <code>/p/slug</code>.
-      </p>
 
-      <input
-        style={{ ...styles.input, marginBottom: '1rem', maxWidth: 400 }}
-        placeholder="Rechercher par URL ou titre..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-      />
+      {/* Search + Category filter */}
+      <div style={{ display: 'flex', gap: '.8rem', marginBottom: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <input
+          style={{ ...styles.input, maxWidth: 300, flex: '1 1 200px' }}
+          placeholder="Rechercher..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        <div style={{ display: 'flex', gap: '.3rem', flexWrap: 'wrap' }}>
+          {categories.map(cat => (
+            <button key={cat} onClick={() => setCatFilter(cat)} style={{
+              padding: '.35rem .8rem', borderRadius: 16, border: 'none', cursor: 'pointer', fontSize: '.75rem', fontWeight: catFilter === cat ? 700 : 400,
+              background: catFilter === cat ? '#b08d6e' : '#e8e8e8', color: catFilter === cat ? '#fff' : '#666',
+            }}>
+              {cat === 'all' ? `Toutes (${pages.length})` : `${cat} (${pages.filter(p => p._category === cat).length})`}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {filtered.length === 0 ? (
         <div style={styles.card}><p style={{ color: '#aaa' }}>Aucune page trouvee.</p></div>
@@ -826,27 +942,33 @@ const PagesEditor: React.FC = () => {
             return (
               <div key={p.url} style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,.06)', overflow: 'hidden', border: p.published === false ? '2px dashed #e0e0e0' : '1px solid #eee' }}>
                 {/* Thumb */}
-                <div style={{ height: 100, background: '#eee', position: 'relative' }}>
+                <div style={{ height: 80, background: '#f0f0f0', position: 'relative' }}>
                   {thumb?.url ? (
                     <img src={thumb.url} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc', fontSize: '2rem' }}>⊞</div>
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc', fontSize: '1.5rem' }}>
+                      {p._fixed ? '◈' : '⊞'}
+                    </div>
                   )}
-                  {p.published === false && <div style={{ position: 'absolute', top: 6, right: 6, background: '#e74c3c', color: '#fff', fontSize: '.7rem', padding: '2px 8px', borderRadius: 10 }}>Brouillon</div>}
-                </div>
-                <div style={{ padding: '1rem' }}>
-                  <code style={{ fontSize: '.75rem', color: '#b08d6e' }}>{p.url}</code>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: '.3rem 0', color: '#222' }}>{p.title}</h3>
-                  <div style={{ display: 'flex', gap: '.3rem', flexWrap: 'wrap', marginBottom: '.6rem' }}>
-                    {hasContent && <span style={{ fontSize: '.7rem', padding: '2px 6px', borderRadius: 8, background: '#d4edda', color: '#155724' }}>Contenu</span>}
-                    {(p.images || []).length > 0 && <span style={{ fontSize: '.7rem', padding: '2px 6px', borderRadius: 8, background: '#cce5ff', color: '#004085' }}>{(p.images || []).length} photos</span>}
-                    {hasFaq && <span style={{ fontSize: '.7rem', padding: '2px 6px', borderRadius: 8, background: '#fff3cd', color: '#856404' }}>{(p.faq || []).length} FAQ</span>}
-                    {p.meta_title && <span style={{ fontSize: '.7rem', padding: '2px 6px', borderRadius: 8, background: '#e8e8e8', color: '#555' }}>SEO</span>}
+                  <div style={{ position: 'absolute', top: 6, left: 6, background: p._fixed ? 'rgba(0,0,0,.5)' : '#3498db', color: '#fff', fontSize: '.65rem', padding: '2px 8px', borderRadius: 10 }}>
+                    {p._fixed ? 'Page fixe' : 'Dynamique'}
                   </div>
-                  <div style={{ display: 'flex', gap: '.4rem' }}>
-                    <button onClick={() => { setOriginalUrl(p.url); setEditing({ ...p }); setTab('texte'); }} style={{ ...styles.btn, ...styles.btnSm, flex: 1 }}>Modifier</button>
-                    <button onClick={() => handleDuplicate(p)} style={{ ...styles.btn, ...styles.btnSm, background: '#3498db' }}>Dupliquer</button>
-                    <button onClick={() => handleDelete(p.url)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>X</button>
+                  {p.published === false && <div style={{ position: 'absolute', top: 6, right: 6, background: '#e74c3c', color: '#fff', fontSize: '.65rem', padding: '2px 8px', borderRadius: 10 }}>Brouillon</div>}
+                </div>
+                <div style={{ padding: '.8rem' }}>
+                  <code style={{ fontSize: '.7rem', color: '#b08d6e', display: 'block', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{p.url}</code>
+                  <h3 style={{ fontSize: '.95rem', fontWeight: 600, margin: '.2rem 0', color: '#222', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{p.title}</h3>
+                  <div style={{ fontSize: '.7rem', color: '#999', marginBottom: '.4rem' }}>{p._category}</div>
+                  <div style={{ display: 'flex', gap: '.25rem', flexWrap: 'wrap', marginBottom: '.5rem' }}>
+                    {hasContent && <span style={{ fontSize: '.65rem', padding: '1px 5px', borderRadius: 6, background: '#d4edda', color: '#155724' }}>Contenu</span>}
+                    {(p.images || []).length > 0 && <span style={{ fontSize: '.65rem', padding: '1px 5px', borderRadius: 6, background: '#cce5ff', color: '#004085' }}>{(p.images || []).length} photos</span>}
+                    {hasFaq && <span style={{ fontSize: '.65rem', padding: '1px 5px', borderRadius: 6, background: '#fff3cd', color: '#856404' }}>{(p.faq || []).length} FAQ</span>}
+                    {p.meta_title && <span style={{ fontSize: '.65rem', padding: '1px 5px', borderRadius: 6, background: '#e8e8e8', color: '#555' }}>SEO</span>}
+                  </div>
+                  <div style={{ display: 'flex', gap: '.3rem' }}>
+                    <button onClick={() => { setOriginalUrl(p.url); setEditing({ ...p }); setTab('texte'); }} style={{ ...styles.btn, ...styles.btnSm, flex: 1, fontSize: '.8rem' }}>Modifier</button>
+                    {!p._fixed && <button onClick={() => handleDuplicate(p)} style={{ ...styles.btn, ...styles.btnSm, background: '#3498db', fontSize: '.8rem' }}>Dup.</button>}
+                    {!p._fixed && <button onClick={() => handleDelete(p.url)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, fontSize: '.8rem' }}>X</button>}
                   </div>
                 </div>
               </div>
