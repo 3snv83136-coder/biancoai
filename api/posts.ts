@@ -46,6 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       images: body.images || [],
       meta_desc: body.meta_desc || '',
       date: body.date || new Date().toISOString().slice(0, 10),
+      faq: Array.isArray(body.faq) ? body.faq.filter((f: any) => f.q && f.a) : [],
     };
 
     posts.push(newPost);
@@ -75,6 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       images: body.images ?? posts[index].images,
       meta_desc: body.meta_desc ?? posts[index].meta_desc,
       date: body.date ?? posts[index].date,
+      faq: body.faq !== undefined ? (Array.isArray(body.faq) ? body.faq.filter((f: any) => f.q && f.a) : []) : (posts[index].faq || []),
     };
 
     await writeJson('posts.json', { posts });

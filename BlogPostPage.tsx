@@ -15,6 +15,7 @@ interface ApiPost {
   tags: string[];
   meta_desc: string;
   images: { file: string; url?: string; caption?: string }[];
+  faq?: { q: string; a: string }[];
 }
 
 const BlogPostPage: React.FC = () => {
@@ -84,6 +85,7 @@ const BlogPostPage: React.FC = () => {
 
   // JSON-LD (inline for SSR visibility)
   const activePost = staticPost || apiPost;
+  const faqItems = apiPost?.faq?.filter(f => f.q && f.a) || [];
   const blogJsonLd = activePost ? {
     '@context': 'https://schema.org',
     '@graph': [
@@ -106,6 +108,14 @@ const BlogPostPage: React.FC = () => {
           { '@type': 'ListItem', position: 3, name: activePost.title, item: `https://www.bianco-esthetique.fr/blog/${staticPost ? staticPost.slug : (apiPost?.slug || apiPost?.id)}` },
         ],
       },
+      ...(faqItems.length > 0 ? [{
+        '@type': 'FAQPage',
+        mainEntity: faqItems.map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      }] : []),
     ],
   } : null;
 
@@ -196,6 +206,21 @@ const BlogPostPage: React.FC = () => {
               className="space-y-6 text-gray-600 font-light leading-relaxed text-sm md:text-base prose max-w-none"
               dangerouslySetInnerHTML={{ __html: apiPost.content }}
             />
+
+            {/* FAQ Section */}
+            {faqItems.length > 0 && (
+              <section className="mt-12 pt-8 border-t border-gray-100">
+                <h2 className="text-2xl serif text-dark mb-6">Questions fréquentes</h2>
+                <div className="space-y-4">
+                  {faqItems.map((fq, i) => (
+                    <details key={i} className="bg-white rounded-2xl border border-gray-100 px-5 py-4 shadow-sm">
+                      <summary className="cursor-pointer font-semibold text-dark text-sm md:text-base">{fq.q}</summary>
+                      <p className="mt-3 text-gray-500 font-light text-sm leading-relaxed">{fq.a}</p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         </article>
         <Footer />

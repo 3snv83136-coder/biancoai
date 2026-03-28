@@ -126,9 +126,19 @@ const AnalyticsPage: React.FC = () => {
     return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
   };
 
+  const avgPerDay = filter === 'today' ? (data?.today ?? 0) : filter === 'week' ? Math.round((data?.week ?? 0) / 7) : Math.round((data?.month ?? 0) / 30);
+
   return (
     <div>
-      <h1 style={styles.title}>Visites</h1>
+      <h1 style={styles.title}>Visites du site</h1>
+
+      {/* Status indicator */}
+      <div style={{ ...styles.card, display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', padding: '1rem 1.5rem' }}>
+        <div style={{ width: 10, height: 10, borderRadius: '50%', background: data ? '#2ecc71' : '#e74c3c', boxShadow: data ? '0 0 8px #2ecc71' : '0 0 8px #e74c3c' }} />
+        <span style={{ fontSize: '.9rem', color: '#555' }}>
+          {loading ? 'Connexion au serveur...' : data ? 'Tracking actif — les visites sont enregistrees automatiquement' : 'Pas de donnees — verifiez que le site est en ligne'}
+        </span>
+      </div>
 
       {/* Filter tabs */}
       <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.5rem' }}>
@@ -153,15 +163,23 @@ const AnalyticsPage: React.FC = () => {
       </div>
 
       {loading ? (
-        <p style={{ color: '#888' }}>Chargement...</p>
+        <p style={{ color: '#888' }}>Chargement des statistiques...</p>
+      ) : !data ? (
+        <div style={styles.card}>
+          <p style={{ color: '#e74c3c' }}>Impossible de charger les statistiques. L'API analytics est peut-etre inactive.</p>
+          <p style={{ color: '#888', fontSize: '.85rem', marginTop: '.5rem' }}>
+            Le tracking est integre dans chaque page du site. Les visites sont enregistrees automatiquement des que le site est en ligne sur Vercel.
+          </p>
+        </div>
       ) : (
         <>
           {/* Summary cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-            <StatCard number={data?.today ?? 0} label="Aujourd'hui" highlight={filter === 'today'} />
-            <StatCard number={data?.week ?? 0} label="7 jours" highlight={filter === 'week'} />
-            <StatCard number={data?.month ?? 0} label="30 jours" highlight={filter === 'month'} />
-            <StatCard number={data?.total ?? 0} label="Total" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+            <StatCard number={data.today ?? 0} label="Aujourd'hui" highlight={filter === 'today'} />
+            <StatCard number={data.week ?? 0} label="7 jours" highlight={filter === 'week'} />
+            <StatCard number={data.month ?? 0} label="30 jours" highlight={filter === 'month'} />
+            <StatCard number={avgPerDay} label="Moy. / jour" />
+            <StatCard number={data.total ?? 0} label="Total cumule" />
           </div>
 
           {/* Bar chart */}
@@ -170,7 +188,7 @@ const AnalyticsPage: React.FC = () => {
               Visites — {filter === 'today' ? "aujourd'hui" : filter === 'week' ? '7 derniers jours' : '30 derniers jours'}
             </h3>
             {daily.length === 0 ? (
-              <p style={{ color: '#aaa' }}>Aucune donnee</p>
+              <p style={{ color: '#aaa' }}>Aucune visite enregistree sur cette periode</p>
             ) : (
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: 180, overflowX: 'auto' }}>
                 {daily.map(d => (
@@ -179,10 +197,9 @@ const AnalyticsPage: React.FC = () => {
                     <div
                       style={{
                         width: '100%',
-                        background: '#b08d6e',
+                        background: d.count > 0 ? '#b08d6e' : '#e0e0e0',
                         borderRadius: '4px 4px 0 0',
                         height: Math.max(4, Math.round((d.count / maxVal) * 140)),
-                        opacity: d.count === 0 ? 0.2 : 1,
                       }}
                     />
                     <span style={{ fontSize: '.65rem', color: '#888', marginTop: 4, transform: 'rotate(-40deg)', transformOrigin: 'top left', whiteSpace: 'nowrap' }}>{formatDate(d.date)}</span>
@@ -193,7 +210,7 @@ const AnalyticsPage: React.FC = () => {
           </div>
 
           {/* Top pages */}
-          {data?.topPages?.length > 0 && (
+          {data.topPages?.length > 0 && (
             <div style={styles.card}>
               <h3 style={{ marginBottom: '1rem', color: '#444', fontSize: '1rem', fontWeight: 600 }}>Pages les plus visitees (30 jours)</h3>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -201,6 +218,7 @@ const AnalyticsPage: React.FC = () => {
                   <tr>
                     <th style={styles.th}>Page</th>
                     <th style={{ ...styles.th, textAlign: 'right' as const }}>Visites</th>
+                    <th style={{ ...styles.th, textAlign: 'right' as const }}>% du trafic</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -208,12 +226,20 @@ const AnalyticsPage: React.FC = () => {
                     <tr key={p.path}>
                       <td style={styles.td}><code style={{ fontSize: '.85rem' }}>{p.path}</code></td>
                       <td style={{ ...styles.td, textAlign: 'right' as const, fontWeight: 700, color: '#b08d6e' }}>{p.count}</td>
+                      <td style={{ ...styles.td, textAlign: 'right' as const, color: '#999' }}>{data.month > 0 ? Math.round((p.count / data.month) * 100) : 0}%</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           )}
+
+          <div style={{ ...styles.card, background: '#fafafa', borderLeft: '3px solid #b08d6e' }}>
+            <p style={{ fontSize: '.85rem', color: '#666', lineHeight: 1.6 }}>
+              <strong>Comment ca marche :</strong> chaque page du site envoie automatiquement une visite au serveur quand un visiteur arrive.
+              Les donnees sont stockees sur Vercel Blob et conservees (max 50 000 entrees). Le graphique montre les pages vues, pas les visiteurs uniques.
+            </p>
+          </div>
         </>
       )}
     </div>
@@ -737,17 +763,18 @@ const PostsList: React.FC<{ onEdit: (id: string) => void; onNew: () => void }> =
 // Post Form
 // ============================================================
 const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, onBack }) => {
-  const [form, setForm] = useState({ title: '', excerpt: '', content: '', tags: '', meta_desc: '', date: new Date().toISOString().slice(0, 10), images: [] as any[] });
+  const [form, setForm] = useState({ title: '', excerpt: '', content: '', tags: '', meta_desc: '', date: new Date().toISOString().slice(0, 10), images: [] as any[], faq: [] as { q: string; a: string }[] });
   const [saving, setSaving] = useState(false);
   const [files, setFiles] = useState<FileList | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState(false);
   const replaceRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     if (postId) {
       api('/posts?id=' + encodeURIComponent(postId)).then(p => {
         if (p && !p.error) {
-          setForm({ ...p, tags: (p.tags || []).join(', '), images: p.images || [] });
+          setForm({ ...p, tags: (p.tags || []).join(', '), images: p.images || [], faq: p.faq || [] });
         }
       });
     }
@@ -765,6 +792,17 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
     return uploadData.url ? { file: fname, url: uploadData.url } : null;
   };
 
+  // Auto-generate excerpt + meta_desc from content if empty
+  const autoFill = () => {
+    const plainText = form.content.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    if (!form.excerpt && plainText) setForm(f => ({ ...f, excerpt: plainText.slice(0, 200) + (plainText.length > 200 ? '...' : '') }));
+    if (!form.meta_desc && plainText) setForm(f => ({ ...f, meta_desc: plainText.slice(0, 155) }));
+    if (!form.tags && form.title) {
+      const autoTags = form.title.toLowerCase().replace(/[^a-zàâéèêëïîôùûüÿç\s]/g, '').split(/\s+/).filter(w => w.length > 3).slice(0, 4).join(', ');
+      setForm(f => ({ ...f, tags: autoTags }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -778,7 +816,7 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
       }
     }
 
-    const body = { ...form, images };
+    const body = { ...form, images, faq: form.faq.filter(f => f.q.trim() && f.a.trim()) };
     if (postId) {
       await api('/posts?id=' + encodeURIComponent(postId), { method: 'PUT', body: JSON.stringify(body) });
     } else {
@@ -789,138 +827,172 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
     onBack();
   };
 
-  const removeImage = (idx: number) => {
-    setForm(f => ({ ...f, images: f.images.filter((_, i) => i !== idx) }));
-  };
-
-  const updateCaption = (idx: number, caption: string) => {
-    setForm(f => ({ ...f, images: f.images.map((img, i) => i === idx ? { ...img, caption } : img) }));
-  };
-
+  const removeImage = (idx: number) => setForm(f => ({ ...f, images: f.images.filter((_, i) => i !== idx) }));
+  const updateCaption = (idx: number, caption: string) => setForm(f => ({ ...f, images: f.images.map((img, i) => i === idx ? { ...img, caption } : img) }));
   const moveImage = (idx: number, dir: -1 | 1) => {
     const target = idx + dir;
-    setForm(f => {
-      const imgs = [...f.images];
-      if (target < 0 || target >= imgs.length) return f;
-      [imgs[idx], imgs[target]] = [imgs[target], imgs[idx]];
-      return { ...f, images: imgs };
-    });
+    setForm(f => { const imgs = [...f.images]; if (target < 0 || target >= imgs.length) return f; [imgs[idx], imgs[target]] = [imgs[target], imgs[idx]]; return { ...f, images: imgs }; });
   };
-
   const replaceImage = async (idx: number, file: File) => {
     setUploading(true);
     const result = await uploadFile(file);
-    if (result) {
-      setForm(f => ({
-        ...f,
-        images: f.images.map((img, i) => i === idx ? { ...result, caption: img.caption || '' } : img),
-      }));
-    }
+    if (result) setForm(f => ({ ...f, images: f.images.map((img, i) => i === idx ? { ...result, caption: img.caption || '' } : img) }));
     setUploading(false);
   };
 
+  // FAQ helpers
+  const addFaq = () => setForm(f => ({ ...f, faq: [...f.faq, { q: '', a: '' }] }));
+  const updateFaq = (idx: number, field: 'q' | 'a', val: string) => setForm(f => ({ ...f, faq: f.faq.map((fq, i) => i === idx ? { ...fq, [field]: val } : fq) }));
+  const removeFaq = (idx: number) => setForm(f => ({ ...f, faq: f.faq.filter((_, i) => i !== idx) }));
+
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <button type="button" onClick={onBack} style={{ ...styles.btn, background: '#888' }}>← Retour</button>
-        <h1 style={{ ...styles.title, marginBottom: 0 }}>{postId ? "Modifier l'article" : 'Nouvel article'}</h1>
+        <h1 style={{ ...styles.title, marginBottom: 0, flex: 1 }}>{postId ? "Modifier l'article" : 'Nouvel article'}</h1>
+        <button type="button" onClick={() => setPreview(v => !v)} style={{ ...styles.btn, background: preview ? '#b08d6e' : '#3498db' }}>{preview ? 'Editer' : 'Apercu'}</button>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        {/* Texte */}
-        <div style={styles.card}>
-          <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Contenu</h3>
-          <label style={styles.label}>Titre</label>
-          <input style={styles.input} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} required />
-
-          <label style={styles.label}>Date</label>
-          <input style={styles.input} type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
-
-          <label style={styles.label}>Extrait</label>
-          <textarea style={{ ...styles.input, minHeight: 80 }} value={form.excerpt} onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))} />
-
-          <label style={styles.label}>Contenu (HTML)</label>
-          <textarea style={{ ...styles.input, minHeight: 200, fontFamily: 'monospace', fontSize: '.9rem' }} value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} />
-
-          <label style={styles.label}>Tags (virgules)</label>
-          <input style={styles.input} value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))} />
-
-          <label style={styles.label}>Meta description SEO</label>
-          <input style={styles.input} value={form.meta_desc} onChange={e => setForm(f => ({ ...f, meta_desc: e.target.value }))} maxLength={160} />
-          <div style={{ fontSize: '.75rem', color: (form.meta_desc || '').length > 155 ? '#e74c3c' : '#999', marginTop: 2 }}>{(form.meta_desc || '').length}/160</div>
+      {/* Info box */}
+      {!postId && (
+        <div style={{ ...styles.card, background: '#f0f7ff', borderLeft: '3px solid #3498db', marginBottom: '1.5rem' }}>
+          <p style={{ fontSize: '.85rem', color: '#555', lineHeight: 1.6, margin: 0 }}>
+            <strong>Workflow simplifie :</strong> Ajoutez une photo, collez votre texte (ou dictez-le), puis cliquez Publier.
+            Le JSON-LD, le sitemap et la page blog sont generes automatiquement. Remplissez la FAQ pour un meilleur SEO.
+          </p>
         </div>
+      )}
 
-        {/* Photos */}
+      {preview ? (
+        /* ===== APERCU ===== */
         <div style={styles.card}>
-          <h3 style={{ marginBottom: '.5rem', color: '#444', fontWeight: 600 }}>
-            Photos <span style={{ fontWeight: 400, color: '#999' }}>({form.images.length})</span>
-          </h3>
-          {uploading && <p style={{ color: '#b08d6e', fontSize: '.9rem', marginBottom: '.5rem' }}>Remplacement en cours...</p>}
-
-          {form.images.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem', marginTop: '.5rem' }}>
-              {form.images.map((img: any, i: number) => {
-                const src = img.url || `/admin/uploads/blog/${img.file}`;
-                return (
-                  <div key={i} style={{ background: '#fafafa', borderRadius: 10, border: '1px solid #eee', overflow: 'hidden' }}>
-                    {/* Image preview */}
-                    <div style={{ position: 'relative', height: 140 }}>
-                      <img src={src} alt={img.caption || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      <div style={{ position: 'absolute', top: 6, left: 6, background: 'rgba(0,0,0,.6)', color: '#fff', fontSize: '.7rem', padding: '2px 8px', borderRadius: 10 }}>
-                        {i + 1}/{form.images.length}
-                      </div>
-                    </div>
-                    {/* Controls */}
-                    <div style={{ padding: '.6rem .8rem' }}>
-                      <input
-                        style={{ ...styles.input, fontSize: '.85rem', padding: '.4rem .6rem', marginBottom: '.5rem' }}
-                        value={img.caption || ''}
-                        onChange={e => updateCaption(i, e.target.value)}
-                        placeholder="Legende de la photo..."
-                      />
-                      <div style={{ display: 'flex', gap: '.3rem', flexWrap: 'wrap' }}>
-                        <button type="button" onClick={() => moveImage(i, -1)} disabled={i === 0} style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', fontSize: '.75rem', opacity: i === 0 ? .3 : 1 }}>← </button>
-                        <button type="button" onClick={() => moveImage(i, 1)} disabled={i === form.images.length - 1} style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', fontSize: '.75rem', opacity: i === form.images.length - 1 ? .3 : 1 }}>→</button>
-                        <button
-                          type="button"
-                          onClick={() => replaceRefs.current[i]?.click()}
-                          style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', fontSize: '.75rem', background: '#3498db' }}
-                        >
-                          Remplacer
-                        </button>
-                        <input
-                          ref={el => { replaceRefs.current[i] = el; }}
-                          type="file"
-                          accept="image/*"
-                          style={{ display: 'none' }}
-                          onChange={e => { if (e.target.files?.[0]) replaceImage(i, e.target.files[0]); }}
-                        />
-                        <button type="button" onClick={() => removeImage(i)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.3rem .5rem', fontSize: '.75rem', marginLeft: 'auto' }}>Supprimer</button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+          <div style={{ borderBottom: '1px solid #eee', paddingBottom: '1rem', marginBottom: '1rem' }}>
+            <span style={{ fontSize: '.75rem', fontWeight: 700, color: '#b08d6e', textTransform: 'uppercase', letterSpacing: '.1em' }}>{form.date} {form.tags && '— ' + form.tags}</span>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#222', margin: '.5rem 0' }}>{form.title || 'Titre de l\'article'}</h2>
+            <p style={{ color: '#888', fontSize: '.9rem' }}>{form.excerpt || 'Extrait...'}</p>
+          </div>
+          {form.images[0] && <img src={form.images[0].url || ''} alt="" style={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 12, marginBottom: '1rem' }} />}
+          <div dangerouslySetInnerHTML={{ __html: form.content || '<p style="color:#aaa">Contenu de l\'article...</p>' }} style={{ lineHeight: 1.8, color: '#444' }} />
+          {form.faq.length > 0 && (
+            <div style={{ marginTop: '2rem', borderTop: '1px solid #eee', paddingTop: '1rem' }}>
+              <h3 style={{ fontWeight: 600, marginBottom: '1rem' }}>FAQ</h3>
+              {form.faq.filter(f => f.q && f.a).map((fq, i) => (
+                <div key={i} style={{ marginBottom: '.8rem' }}>
+                  <p style={{ fontWeight: 600, color: '#222' }}>{fq.q}</p>
+                  <p style={{ color: '#666', fontSize: '.9rem' }}>{fq.a}</p>
+                </div>
+              ))}
             </div>
-          ) : (
-            <p style={{ color: '#aaa', fontSize: '.9rem', marginTop: '.5rem' }}>Aucune photo. Ajoutez-en ci-dessous.</p>
           )}
-
-          <div style={{ marginTop: '1.2rem', padding: '1rem', border: '2px dashed #ddd', borderRadius: 10, textAlign: 'center' }}>
-            <label style={{ ...styles.label, cursor: 'pointer', color: '#b08d6e', display: 'inline-block', marginTop: 0 }}>
-              + Ajouter des photos
-              <input type="file" multiple accept="image/*" onChange={e => setFiles(e.target.files)} style={{ display: 'none' }} />
-            </label>
-            {files && <p style={{ fontSize: '.85rem', color: '#666', marginTop: '.3rem' }}>{files.length} fichier(s) selectionne(s) — sera(ont) uploade(s) a l'enregistrement</p>}
+          <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#f5f5f5', borderRadius: 8, fontSize: '.8rem', color: '#888' }}>
+            <strong>JSON-LD auto-genere :</strong> BlogPosting + BreadcrumbList{form.faq.length > 0 ? ' + FAQPage' : ''} — Sitemap mis a jour automatiquement
           </div>
         </div>
+      ) : (
+        /* ===== FORMULAIRE ===== */
+        <form onSubmit={handleSubmit}>
+          {/* Photo en premier */}
+          <div style={styles.card}>
+            <h3 style={{ marginBottom: '.5rem', color: '#444', fontWeight: 600 }}>
+              1. Photo{form.images.length > 1 ? 's' : ''} <span style={{ fontWeight: 400, color: '#999' }}>({form.images.length})</span>
+            </h3>
+            {uploading && <p style={{ color: '#b08d6e', fontSize: '.9rem' }}>Upload en cours...</p>}
 
-        {/* Actions */}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-          <button type="submit" disabled={saving || uploading} style={styles.btn}>{saving ? 'Enregistrement...' : postId ? 'Mettre a jour' : 'Publier'}</button>
-          <button type="button" onClick={onBack} style={{ ...styles.btn, background: '#888' }}>Annuler</button>
-        </div>
-      </form>
+            {form.images.length > 0 ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginTop: '.5rem' }}>
+                {form.images.map((img: any, i: number) => {
+                  const src = img.url || `/admin/uploads/blog/${img.file}`;
+                  return (
+                    <div key={i} style={{ background: '#fafafa', borderRadius: 10, border: '1px solid #eee', overflow: 'hidden' }}>
+                      <div style={{ position: 'relative', height: 130 }}>
+                        <img src={src} alt={img.caption || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div style={{ position: 'absolute', top: 6, left: 6, background: 'rgba(0,0,0,.6)', color: '#fff', fontSize: '.7rem', padding: '2px 8px', borderRadius: 10 }}>{i + 1}/{form.images.length}</div>
+                      </div>
+                      <div style={{ padding: '.5rem .6rem' }}>
+                        <input style={{ ...styles.input, fontSize: '.8rem', padding: '.3rem .5rem', marginBottom: '.4rem' }} value={img.caption || ''} onChange={e => updateCaption(i, e.target.value)} placeholder="Legende..." />
+                        <div style={{ display: 'flex', gap: '.25rem', flexWrap: 'wrap' }}>
+                          <button type="button" onClick={() => moveImage(i, -1)} disabled={i === 0} style={{ ...styles.btn, ...styles.btnSm, padding: '.2rem .4rem', fontSize: '.7rem', opacity: i === 0 ? .3 : 1 }}>←</button>
+                          <button type="button" onClick={() => moveImage(i, 1)} disabled={i === form.images.length - 1} style={{ ...styles.btn, ...styles.btnSm, padding: '.2rem .4rem', fontSize: '.7rem', opacity: i === form.images.length - 1 ? .3 : 1 }}>→</button>
+                          <button type="button" onClick={() => replaceRefs.current[i]?.click()} style={{ ...styles.btn, ...styles.btnSm, padding: '.2rem .4rem', fontSize: '.7rem', background: '#3498db' }}>Remplacer</button>
+                          <input ref={el => { replaceRefs.current[i] = el; }} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { if (e.target.files?.[0]) replaceImage(i, e.target.files[0]); }} />
+                          <button type="button" onClick={() => removeImage(i)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.2rem .4rem', fontSize: '.7rem', marginLeft: 'auto' }}>X</button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+
+            <div style={{ marginTop: '1rem', padding: '1.5rem', border: '2px dashed #ccc', borderRadius: 12, textAlign: 'center', background: '#fafafa' }}>
+              <label style={{ cursor: 'pointer', color: '#b08d6e', fontWeight: 600, fontSize: '.95rem' }}>
+                + Ajouter une photo
+                <input type="file" multiple accept="image/*" onChange={e => setFiles(e.target.files)} style={{ display: 'none' }} />
+              </label>
+              {files && <p style={{ fontSize: '.85rem', color: '#666', marginTop: '.3rem' }}>{files.length} fichier(s) — upload a l'enregistrement</p>}
+            </div>
+          </div>
+
+          {/* Texte */}
+          <div style={styles.card}>
+            <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>2. Texte</h3>
+            <label style={styles.label}>Titre de l'article *</label>
+            <input style={styles.input} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} required placeholder="Ex: Le Head Spa, un rituel venu du Japon" />
+
+            <label style={styles.label}>Date</label>
+            <input style={styles.input} type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
+
+            <label style={styles.label}>Texte de l'article <span style={{ fontWeight: 400, color: '#999' }}>(collez ou dictez votre texte — HTML accepte)</span></label>
+            <textarea
+              style={{ ...styles.input, minHeight: 250, lineHeight: 1.7 }}
+              value={form.content}
+              onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
+              placeholder="Collez votre texte ici... Vous pouvez utiliser du HTML (<p>, <h2>, <strong>...) ou simplement coller du texte brut."
+            />
+
+            <div style={{ display: 'flex', gap: '.5rem', marginTop: '.5rem', flexWrap: 'wrap' }}>
+              <button type="button" onClick={autoFill} style={{ ...styles.btn, ...styles.btnSm, background: '#3498db' }}>Auto-remplir extrait + meta + tags</button>
+            </div>
+
+            <label style={styles.label}>Extrait <span style={{ fontWeight: 400, color: '#999' }}>(resume court pour la liste du blog)</span></label>
+            <textarea style={{ ...styles.input, minHeight: 60 }} value={form.excerpt} onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))} placeholder="Genere automatiquement si vide" />
+
+            <label style={styles.label}>Tags (virgules)</label>
+            <input style={styles.input} value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))} placeholder="Generes automatiquement si vide" />
+
+            <label style={styles.label}>Meta description SEO</label>
+            <input style={styles.input} value={form.meta_desc} onChange={e => setForm(f => ({ ...f, meta_desc: e.target.value }))} maxLength={160} placeholder="Generee automatiquement si vide" />
+            <div style={{ fontSize: '.75rem', color: (form.meta_desc || '').length > 155 ? '#e74c3c' : '#999', marginTop: 2 }}>{(form.meta_desc || '').length}/160</div>
+          </div>
+
+          {/* FAQ */}
+          <div style={styles.card}>
+            <h3 style={{ marginBottom: '.5rem', color: '#444', fontWeight: 600 }}>
+              3. FAQ <span style={{ fontWeight: 400, color: '#999' }}>(optionnel — ameliore le SEO avec JSON-LD FAQPage)</span>
+            </h3>
+            {form.faq.length === 0 && <p style={{ color: '#aaa', fontSize: '.9rem', marginBottom: '.5rem' }}>Aucune question. Ajoutez-en pour enrichir le schema JSON-LD.</p>}
+            {form.faq.map((fq, i) => (
+              <div key={i} style={{ border: '1px solid #eee', borderRadius: 8, padding: '.8rem', marginBottom: '.8rem', background: '#fafafa' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.4rem' }}>
+                  <span style={{ fontSize: '.8rem', fontWeight: 600, color: '#b08d6e' }}>Q{i + 1}</span>
+                  <input style={{ ...styles.input, flex: 1 }} value={fq.q} onChange={e => updateFaq(i, 'q', e.target.value)} placeholder="Question..." />
+                  <button type="button" onClick={() => removeFaq(i)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.3rem .5rem' }}>X</button>
+                </div>
+                <textarea style={{ ...styles.input, minHeight: 50, fontSize: '.9rem' }} value={fq.a} onChange={e => updateFaq(i, 'a', e.target.value)} placeholder="Reponse..." />
+              </div>
+            ))}
+            <button type="button" onClick={addFaq} style={{ ...styles.btn, ...styles.btnSm }}>+ Ajouter une question</button>
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+            <button type="submit" disabled={saving || uploading} style={{ ...styles.btn, padding: '.8rem 2rem', fontSize: '1rem' }}>
+              {saving ? 'Publication en cours...' : postId ? 'Mettre a jour' : 'Publier l\'article'}
+            </button>
+            <button type="button" onClick={onBack} style={{ ...styles.btn, background: '#888' }}>Annuler</button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
@@ -928,71 +1000,139 @@ const PostForm: React.FC<{ postId?: string; onBack: () => void }> = ({ postId, o
 // ============================================================
 // Prices
 // ============================================================
+// Prestations Planity (catalogue existant) pour le dropdown
+const PLANITY_CATALOG = [
+  { cat: 'Soins corps', items: ['Soin 100% sur-mesure – 1H', 'Soin signature Indonesie ancestrale', 'Modelage relaxant', 'Modelage californien 1h', 'Modelage californien 1h30', 'Soin du dos', 'Gommage evasion 30min', 'Modelage evasion 50min'] },
+  { cat: 'Soins visage', items: ['Soin fondamental', 'Traitement intensif hydratant', 'Traitement intensif jeunesse', 'Soin eclat fraicheur bio', 'Soin saisonnier', 'Traitement defense eclat DX Glow'] },
+  { cat: 'Beaute des mains', items: ['Soin express ongles', 'Pose semi-permanent', 'Depose + pose semi', 'Soin des mains', 'Pose en gel', 'Remplissage gel 2 sem.', 'Remplissage gel 3 sem.', 'Gainage', 'French', 'Babyboomer', 'Nail Art'] },
+  { cat: 'Beaute des pieds', items: ['Soin express ongles pieds', 'Pose semi-permanent pieds', 'Soin des pieds', 'Calluspeeling'] },
+  { cat: 'Beaute du regard', items: ['Teinture cils', 'Epilation sourcils', 'Browlift', 'Teinture sourcils', 'Teinture + epilation', 'Browlift + teinture + epilation', 'Epilation levres'] },
+  { cat: 'Extensions de cils', items: ['Cil a cil – Pose complete', 'Cil a cil – Remplissage', 'Volume mixte – Pose', 'Volume mixte – Remplissage', 'Volume russe – Pose', 'Volume russe – Remplissage', 'Depose cils'] },
+  { cat: 'Drainage lymphatique', items: ['Drainage jambes', 'Drainage jambes + ventre', 'Drainage corps entier', 'Cure jambes (5+1)', 'Cure jambes+ventre (5+1)', 'Cure corps entier (5+1)'] },
+  { cat: 'Maquillage', items: ['Maquillage jour', 'Maquillage soir', 'Maquillage mariee'] },
+];
+
 const PricesPage: React.FC = () => {
   const [sections, setSections] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
+  const [showCatalog, setShowCatalog] = useState<number | null>(null);
 
   useEffect(() => {
     api('/prices').then(d => setSections(d?.sections || []));
   }, []);
 
-  const addSection = () => {
-    setSections(s => [...s, { id: 'section_' + Date.now(), title: '', items: [] }]);
+  const addSection = () => setSections(s => [...s, { id: 'section_' + Date.now(), title: '', items: [] }]);
+
+  const addSectionFromCatalog = (catLabel: string) => {
+    const existing = sections.find(s => s.title === catLabel);
+    if (existing) return;
+    setSections(s => [...s, { id: 'section_' + Date.now(), title: catLabel, items: [] }]);
   };
 
   const addItem = (si: number) => {
-    setSections(s => s.map((sec, i) => i === si ? { ...sec, items: [...sec.items, { id: 'item_' + Date.now(), label: '', price: '', unit: '\u20ac', description: '' }] } : sec));
+    setSections(s => s.map((sec, i) => i === si ? { ...sec, items: [...sec.items, { id: 'item_' + Date.now(), label: '', price: '', duration: '', unit: '\u20ac', description: '' }] } : sec));
   };
 
-  const updateSection = (si: number, title: string) => {
-    setSections(s => s.map((sec, i) => i === si ? { ...sec, title } : sec));
+  const addItemFromCatalog = (si: number, itemLabel: string) => {
+    setSections(s => s.map((sec, i) => i === si ? { ...sec, items: [...sec.items, { id: 'item_' + Date.now(), label: itemLabel, price: '', duration: '', unit: '\u20ac', description: '' }] } : sec));
+    setShowCatalog(null);
   };
 
-  const updateItem = (si: number, ii: number, field: string, value: string) => {
-    setSections(s => s.map((sec, i) => i === si ? { ...sec, items: sec.items.map((item: any, j: number) => j === ii ? { ...item, [field]: value } : item) } : sec));
-  };
-
-  const removeItem = (si: number, ii: number) => {
-    setSections(s => s.map((sec, i) => i === si ? { ...sec, items: sec.items.filter((_: any, j: number) => j !== ii) } : sec));
-  };
-
-  const removeSection = (si: number) => {
-    setSections(s => s.filter((_, i) => i !== si));
+  const updateSection = (si: number, title: string) => setSections(s => s.map((sec, i) => i === si ? { ...sec, title } : sec));
+  const updateItem = (si: number, ii: number, field: string, value: string) => setSections(s => s.map((sec, i) => i === si ? { ...sec, items: sec.items.map((item: any, j: number) => j === ii ? { ...item, [field]: value } : item) } : sec));
+  const removeItem = (si: number, ii: number) => setSections(s => s.map((sec, i) => i === si ? { ...sec, items: sec.items.filter((_: any, j: number) => j !== ii) } : sec));
+  const removeSection = (si: number) => { if (confirm('Supprimer cette section ?')) setSections(s => s.filter((_, i) => i !== si)); };
+  const moveSection = (si: number, dir: -1 | 1) => {
+    const t = si + dir;
+    setSections(s => { const a = [...s]; if (t < 0 || t >= a.length) return s; [a[si], a[t]] = [a[t], a[si]]; return a; });
   };
 
   const handleSave = async () => {
     setSaving(true);
     await api('/prices', { method: 'PUT', body: JSON.stringify({ sections }) });
-    setMsg('Tarifs enregistres.');
+    setMsg('Tarifs enregistres et page mise a jour !');
     setSaving(false);
+    setTimeout(() => setMsg(''), 4000);
+  };
+
+  // Get catalog items for current section title
+  const getCatalogItems = (sectionTitle: string) => {
+    const cat = PLANITY_CATALOG.find(c => sectionTitle.toLowerCase().includes(c.cat.toLowerCase().slice(0, 8)));
+    return cat?.items || [];
   };
 
   return (
     <div>
       <h1 style={styles.title}>Gestion des tarifs</h1>
       {msg && <div style={styles.success}>{msg}</div>}
-      <div style={styles.card}>
-        {sections.map((sec, si) => (
-          <div key={sec.id} style={{ border: '1px solid #eee', padding: '1rem', borderRadius: 8, marginBottom: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-              <input style={{ ...styles.input, fontWeight: 600 }} value={sec.title} onChange={e => updateSection(si, e.target.value)} placeholder="Nom de la section" />
-              <button type="button" onClick={() => removeSection(si)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>X</button>
+
+      {/* Quick add from catalog */}
+      <div style={{ ...styles.card, background: '#f0f7ff', borderLeft: '3px solid #3498db', marginBottom: '1.5rem' }}>
+        <h3 style={{ marginBottom: '.8rem', color: '#444', fontWeight: 600, fontSize: '.95rem' }}>Ajouter une categorie depuis le catalogue Planity</h3>
+        <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
+          {PLANITY_CATALOG.map(c => (
+            <button key={c.cat} type="button" onClick={() => addSectionFromCatalog(c.cat)}
+              style={{ padding: '.4rem .8rem', borderRadius: 16, border: '1px solid #ddd', background: sections.some(s => s.title === c.cat) ? '#e8e8e8' : '#fff', color: sections.some(s => s.title === c.cat) ? '#aaa' : '#333', fontSize: '.8rem', cursor: sections.some(s => s.title === c.cat) ? 'default' : 'pointer' }}
+              disabled={sections.some(s => s.title === c.cat)}
+            >
+              {c.cat} {sections.some(s => s.title === c.cat) ? '✓' : '+'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Sections */}
+      {sections.map((sec, si) => {
+        const catalogItems = getCatalogItems(sec.title);
+        return (
+          <div key={sec.id} style={{ ...styles.card, border: '1px solid #e0e0e0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '1rem' }}>
+              <button type="button" onClick={() => moveSection(si, -1)} disabled={si === 0} style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', opacity: si === 0 ? .3 : 1 }}>↑</button>
+              <button type="button" onClick={() => moveSection(si, 1)} disabled={si === sections.length - 1} style={{ ...styles.btn, ...styles.btnSm, padding: '.3rem .5rem', opacity: si === sections.length - 1 ? .3 : 1 }}>↓</button>
+              <input style={{ ...styles.input, fontWeight: 700, fontSize: '1.05rem', flex: 1 }} value={sec.title} onChange={e => updateSection(si, e.target.value)} placeholder="Nom de la categorie" />
+              <button type="button" onClick={() => removeSection(si)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>Supprimer</button>
             </div>
+
+            {/* Items */}
             {sec.items.map((item: any, ii: number) => (
-              <div key={item.id} style={{ display: 'grid', gridTemplateColumns: '1fr 100px 60px', gap: '.5rem', marginTop: '.5rem', alignItems: 'end' }}>
-                <input style={styles.input} value={item.label} onChange={e => updateItem(si, ii, 'label', e.target.value)} placeholder="Prestation" />
-                <input style={styles.input} value={item.price} onChange={e => updateItem(si, ii, 'price', e.target.value)} placeholder="Prix" />
-                <button type="button" onClick={() => removeItem(si, ii)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>X</button>
+              <div key={item.id} style={{ display: 'grid', gridTemplateColumns: '1fr 90px 90px 40px', gap: '.4rem', marginBottom: '.4rem', alignItems: 'center' }}>
+                <input style={{ ...styles.input, fontSize: '.9rem' }} value={item.label} onChange={e => updateItem(si, ii, 'label', e.target.value)} placeholder="Prestation" />
+                <input style={{ ...styles.input, fontSize: '.9rem' }} value={item.duration || ''} onChange={e => updateItem(si, ii, 'duration', e.target.value)} placeholder="Duree" />
+                <input style={{ ...styles.input, fontSize: '.9rem', fontWeight: 600 }} value={item.price} onChange={e => updateItem(si, ii, 'price', e.target.value)} placeholder="Prix" />
+                <button type="button" onClick={() => removeItem(si, ii)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.3rem' }}>X</button>
               </div>
             ))}
-            <button type="button" onClick={() => addItem(si)} style={{ ...styles.btn, ...styles.btnSm, marginTop: '.5rem' }}>+ Prestation</button>
+
+            {/* Add item */}
+            <div style={{ display: 'flex', gap: '.5rem', marginTop: '.8rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <button type="button" onClick={() => addItem(si)} style={{ ...styles.btn, ...styles.btnSm }}>+ Prestation libre</button>
+              {catalogItems.length > 0 && (
+                <>
+                  <button type="button" onClick={() => setShowCatalog(showCatalog === si ? null : si)} style={{ ...styles.btn, ...styles.btnSm, background: '#3498db' }}>
+                    {showCatalog === si ? 'Fermer catalogue' : 'Choisir depuis Planity'}
+                  </button>
+                  {showCatalog === si && (
+                    <div style={{ width: '100%', display: 'flex', gap: '.3rem', flexWrap: 'wrap', marginTop: '.3rem', padding: '.5rem', background: '#f8f9fa', borderRadius: 8 }}>
+                      {catalogItems.map(label => (
+                        <button key={label} type="button" onClick={() => addItemFromCatalog(si, label)}
+                          style={{ padding: '.3rem .6rem', borderRadius: 12, border: '1px solid #ddd', background: '#fff', fontSize: '.8rem', cursor: 'pointer', color: '#333' }}
+                        >
+                          + {label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
-        ))}
-        <button type="button" onClick={addSection} style={{ ...styles.btn, ...styles.btnSm, marginBottom: '1rem' }}>+ Section</button>
-        <div>
-          <button onClick={handleSave} disabled={saving} style={styles.btn}>{saving ? 'Enregistrement...' : 'Enregistrer les tarifs'}</button>
-        </div>
+        );
+      })}
+
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+        <button type="button" onClick={addSection} style={{ ...styles.btn, background: '#888' }}>+ Section personnalisee</button>
+        <button onClick={handleSave} disabled={saving} style={{ ...styles.btn, padding: '.8rem 2rem' }}>{saving ? 'Enregistrement...' : 'Enregistrer les tarifs'}</button>
       </div>
     </div>
   );

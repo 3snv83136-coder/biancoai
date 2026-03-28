@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -6,9 +6,35 @@ import Breadcrumb from './components/Breadcrumb';
 import { planityPrestations } from './planityPrestations';
 import { BUSINESS_INFO } from './constants';
 
+interface PriceItem {
+  id: string;
+  label: string;
+  price: string;
+  duration?: string;
+  unit?: string;
+  description?: string;
+}
+
+interface PriceSection {
+  id: string;
+  title: string;
+  items: PriceItem[];
+}
+
 const PricingPage: React.FC = () => {
+  const [apiSections, setApiSections] = useState<PriceSection[] | null>(null);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/prices')
+      .then(r => r.json())
+      .then(d => {
+        if (d?.sections?.length > 0) setApiSections(d.sections);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -25,7 +51,12 @@ const PricingPage: React.FC = () => {
     };
   }, []);
 
-  const offers = planityPrestations.flatMap(cat =>
+  // Use API sections if available, otherwise fall back to planityPrestations
+  const sections = apiSections
+    ? apiSections.map(s => ({ label: s.title, items: s.items.map(it => ({ title: it.label, duration: it.duration || '', price: it.price })) }))
+    : planityPrestations;
+
+  const offers = sections.flatMap(cat =>
     cat.items
       .filter(item => /^\d/.test(item.price))
       .map(item => ({
@@ -60,82 +91,96 @@ const PricingPage: React.FC = () => {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingJsonLd) }} />
       <Navbar onLinkClick={() => {}} />
       <section className="pt-32 pb-20 px-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <Breadcrumb items={[
             { label: 'Accueil', to: '/' },
             { label: 'Tarifs' },
           ]} />
-          <h1 className="text-4xl md:text-5xl serif text-dark mb-4">Nos prestations</h1>
-          <p className="text-gray-500 font-light mb-8 max-w-2xl">
-            Retrouvez l&apos;ensemble de nos prestations et leurs tarifs. Réservez en ligne selon vos disponibilités.
-          </p>
-          <div className="mb-10 rounded-2xl bg-white/80 shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-dark mb-3">Pages détaillées par prestation</h2>
-            <p className="text-sm text-gray-500 mb-4">
-              Consultez nos pages complètes pour découvrir chaque soin en détail avant de réserver.
-            </p>
-            <div className="grid gap-2 sm:grid-cols-2">
-              <Link to="/institut-beaute-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
-                Institut de beauté à Hyères
-              </Link>
-              <Link to="/soin-visage-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
-                Soin du visage à Hyères
-              </Link>
-              <Link to="/manucure-ongles-gel-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
-                Manucure &amp; ongles en gel à Hyères
-              </Link>
-              <Link to="/extensions-cils-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
-                Extensions de cils à Hyères
-              </Link>
-              <Link to="/massage-californien-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
-                Massage californien à Hyères
-              </Link>
-              <Link to="/callus-peeling-hyeres" className="text-sm text-primary hover:text-dark hover:underline">
-                Callus peeling &amp; soin des pieds à Hyères
-              </Link>
-              <Link to="/soin-visage-toulon" className="text-sm text-primary hover:text-dark hover:underline">
-                Soin du visage près de Toulon
-              </Link>
-            </div>
-          </div>
-          <a
-            href={BUSINESS_INFO.planityUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block mb-12 px-8 py-3 rounded-full bg-primary text-white text-sm font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors"
-          >
-            Réserver sur Planity
-          </a>
-          <div className="space-y-12">
-            {planityPrestations.map(({ label, items }) => (
-              <section key={label}>
-                <h2 className="text-2xl serif text-dark mb-6">{label}</h2>
-                <ul className="space-y-3">
-                  {items.map((item) => (
-                    <li
-                      key={item.title}
-                      className="flex flex-wrap items-baseline justify-between gap-2 py-2 border-b border-gray-100 last:border-0"
-                    >
-                      <span className="text-dark font-light">{item.title}</span>
-                      <span className="text-sm text-gray-500 shrink-0">
-                        {item.duration}
-                        <span className="mx-2">·</span>
-                        <span className="text-primary font-medium">{item.price}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </div>
-          <div className="mt-16 pt-8 border-t border-gray-200">
+
+          <div className="text-center mb-12">
+            <span className="text-primary font-bold tracking-ultra-wide uppercase text-xs montserrat block mb-4">La Maison Bianco</span>
+            <h1 className="text-4xl md:text-5xl serif text-dark mb-4">Nos Tarifs</h1>
             <a
               href={BUSINESS_INFO.planityUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-8 py-3 rounded-full bg-primary text-white text-sm font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors"
+              className="inline-block mt-4 px-8 py-3 rounded-full bg-primary text-white text-sm font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
             >
               Réserver sur Planity
+            </a>
+          </div>
+
+          {/* Modules par prestation */}
+          <div className="space-y-8">
+            {sections.map(({ label, items }) => (
+              <section
+                key={label}
+                className="bg-white rounded-[2rem] shadow-lg shadow-black/5 border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              >
+                {/* Header section */}
+                <div className="bg-gradient-to-r from-dark to-dark/90 px-8 py-5">
+                  <h2 className="text-xl md:text-2xl serif text-white">{label}</h2>
+                  <p className="text-white/50 text-xs montserrat mt-1">{items.length} prestation{items.length > 1 ? 's' : ''}</p>
+                </div>
+
+                {/* Items */}
+                <div className="divide-y divide-gray-50">
+                  {items.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex flex-wrap items-center justify-between gap-3 px-8 py-4 hover:bg-surface/50 transition-colors"
+                    >
+                      <div className="flex-1 min-w-[180px]">
+                        <span className="text-dark font-medium text-sm md:text-base">{item.title}</span>
+                      </div>
+                      {item.duration && (
+                        <span className="text-xs text-gray-400 montserrat shrink-0">{item.duration}</span>
+                      )}
+                      <span className="text-primary font-bold text-sm md:text-base shrink-0 min-w-[70px] text-right">
+                        {item.price}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA footer */}
+                <div className="px-8 py-4 bg-surface/30 border-t border-gray-50">
+                  <a
+                    href={BUSINESS_INFO.planityUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-bold uppercase tracking-widest text-primary hover:text-dark transition-colors"
+                  >
+                    Réserver un soin {label.toLowerCase()} →
+                  </a>
+                </div>
+              </section>
+            ))}
+          </div>
+
+          {/* Links */}
+          <div className="mt-12 bg-white rounded-[2rem] shadow-lg shadow-black/5 border border-gray-100 p-8">
+            <h2 className="text-lg font-semibold text-dark mb-4">Pages détaillées</h2>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <Link to="/institut-beaute-hyeres" className="text-sm text-primary hover:text-dark hover:underline transition-colors">Institut de beauté à Hyères</Link>
+              <Link to="/soin-visage-hyeres" className="text-sm text-primary hover:text-dark hover:underline transition-colors">Soin du visage à Hyères</Link>
+              <Link to="/manucure-ongles-gel-hyeres" className="text-sm text-primary hover:text-dark hover:underline transition-colors">Manucure &amp; ongles en gel</Link>
+              <Link to="/extensions-cils-hyeres" className="text-sm text-primary hover:text-dark hover:underline transition-colors">Extensions de cils</Link>
+              <Link to="/massage-californien-hyeres" className="text-sm text-primary hover:text-dark hover:underline transition-colors">Massage californien</Link>
+              <Link to="/head-spa-hyeres" className="text-sm text-primary hover:text-dark hover:underline transition-colors">Head Spa</Link>
+              <Link to="/callus-peeling-hyeres" className="text-sm text-primary hover:text-dark hover:underline transition-colors">Callus peeling &amp; pieds</Link>
+            </div>
+          </div>
+
+          {/* Bottom CTA */}
+          <div className="mt-12 text-center">
+            <a
+              href={BUSINESS_INFO.planityUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-10 py-4 rounded-full bg-primary text-white text-sm font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+            >
+              Prendre rendez-vous
             </a>
           </div>
         </div>
@@ -146,4 +191,3 @@ const PricingPage: React.FC = () => {
 };
 
 export default PricingPage;
-
