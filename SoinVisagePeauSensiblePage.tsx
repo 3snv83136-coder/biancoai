@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -123,6 +124,8 @@ const SoinVisagePeauSensiblePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/soin-visage-peau-sensible-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -141,10 +144,10 @@ const SoinVisagePeauSensiblePage: React.FC = () => {
                 Hyères — Soin Visage Peau Sensible
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Soin visage peau sensible à Hyères : enfin un soin qui ne réagit pas contre vous
+                {overrides?.h1 || 'Soin visage peau sensible à Hyères : enfin un soin qui ne réagit pas contre vous'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                La peau sensible, c'est une peau qui réagit trop — au froid, au soleil, aux cosmétiques, au stress. Elle rougit facilement, se dessèche vite, ne supporte pas n'importe quelle texture. Chez Bianco, Salomé travaille exclusivement avec des formules adaptées aux peaux réactives — sans parfum agressif, sans exfoliants mécaniques durs, sans protocoles standardisés qui ignorent vos spécificités.
+                {overrides?.subtitle || "La peau sensible, c'est une peau qui réagit trop — au froid, au soleil, aux cosmétiques, au stress. Elle rougit facilement, se dessèche vite, ne supporte pas n'importe quelle texture. Chez Bianco, Salomé travaille exclusivement avec des formules adaptées aux peaux réactives — sans parfum agressif, sans exfoliants mécaniques durs, sans protocoles standardisés qui ignorent vos spécificités."}
               </p>
             </header>
 

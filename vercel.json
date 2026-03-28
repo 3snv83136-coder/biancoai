@@ -28,7 +28,8 @@
     }
   ],
   "redirects": [
-    { "source": "/prestations", "destination": "/services", "statusCode": 301 }
+    { "source": "/prestations", "destination": "/prestation", "statusCode": 301 },
+    { "source": "/services", "destination": "/prestation", "statusCode": 301 }
   ],
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },

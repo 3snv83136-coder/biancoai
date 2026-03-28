@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const MassageFemmeEnceintePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/massage-femme-enceinte-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,13 +159,10 @@ const MassageFemmeEnceintePage: React.FC = () => {
                 Hyères — Soins Grossesse & Maternité
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Massage pour femme enceinte à Hyères : ce que Bianco peut faire pour vous
+                {overrides?.h1 || 'Massage pour femme enceinte à Hyères : ce que Bianco peut faire pour vous'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le massage prénatal spécialisé requiert une formation spécifique que nous ne pratiquons
-                pas chez Bianco. En revanche, plusieurs de nos soins sont parfaitement adaptés et très
-                bénéfiques pendant la grossesse — notamment à partir du 2e trimestre. Cette page est
-                là pour vous guider honnêtement.
+                {overrides?.subtitle || "Le massage prénatal spécialisé requiert une formation spécifique que nous ne pratiquons pas chez Bianco. En revanche, plusieurs de nos soins sont parfaitement adaptés et très bénéfiques pendant la grossesse — notamment à partir du 2e trimestre. Cette page est là pour vous guider honnêtement."}
               </p>
             </header>
 

@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -123,6 +124,8 @@ const MicrodermabrasionPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/microdermabrasion-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -141,10 +144,10 @@ const MicrodermabrasionPage: React.FC = () => {
                 Hyères — Exfoliation & Renouvellement Cutané
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Microdermabrasion à Hyères : ce que Bianco propose en alternative
+                {overrides?.h1 || 'Microdermabrasion à Hyères : ce que Bianco propose en alternative'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                La microdermabrasion est une technique médicale ou para-médicale qui utilise des micro-cristaux ou un disque diamanté pour abraser mécaniquement la surface de la peau. Bianco Esthétique ne dispose pas de cet équipement médical. En revanche, nous proposons des alternatives esthétiques très efficaces pour obtenir des résultats similaires : exfoliation profonde, renouvellement cellulaire accéléré et teint revitalisé.
+                {overrides?.subtitle || "La microdermabrasion est une technique médicale ou para-médicale qui utilise des micro-cristaux ou un disque diamanté pour abraser mécaniquement la surface de la peau. Bianco Esthétique ne dispose pas de cet équipement médical. En revanche, nous proposons des alternatives esthétiques très efficaces pour obtenir des résultats similaires : exfoliation profonde, renouvellement cellulaire accéléré et teint revitalisé."}
               </p>
             </header>
 

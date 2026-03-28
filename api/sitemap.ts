@@ -6,7 +6,7 @@ const SITE_URL = 'https://www.bianco-esthetique.fr';
 // Static pages with their priorities
 const STATIC_PAGES = [
   { url: '/', priority: '1.0', changefreq: 'weekly' },
-  { url: '/services', priority: '0.8', changefreq: 'monthly' },
+  { url: '/prestation', priority: '0.8', changefreq: 'monthly' },
   { url: '/tarifs', priority: '0.8', changefreq: 'monthly' },
   { url: '/a-propos', priority: '0.6', changefreq: 'monthly' },
   { url: '/blog', priority: '0.8', changefreq: 'weekly' },

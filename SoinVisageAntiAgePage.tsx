@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -117,11 +118,14 @@ const SoinVisageAntiAgePage: React.FC = () => {
       document.head.appendChild(canonical);
     }
     canonical.href = `${SITE_URL}/soin-visage-anti-age-hyeres`;
+
     return () => {
       document.title = prev;
       if (meta && prevDesc) meta.setAttribute('content', prevDesc);
     };
   }, []);
+
+  const overrides = usePageOverrides('/soin-visage-anti-age-hyeres');
 
   return (
     <div className="min-h-screen bg-surface">
@@ -141,10 +145,10 @@ const SoinVisageAntiAgePage: React.FC = () => {
                 Hyères — Soin Visage Anti-Âge
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Soin visage anti-âge à Hyères : ralentir le temps, sublimer votre peau
+                {overrides?.h1 || 'Soin visage anti-âge à Hyères : ralentir le temps, sublimer votre peau'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                À partir de 35 ans, la peau change : les premières rides s'installent, le teint se ternit, le contour se relâche légèrement. Ce n'est pas une fatalité — c'est une invitation à adapter ses soins. Chez Bianco, Salomé travaille avec des protocoles anti-âge personnalisés qui agissent sur plusieurs fronts à la fois : hydratation profonde, stimulation du collagène, drainage des poches et remodelage du contour.
+                {overrides?.subtitle || "À partir de 35 ans, la peau change : les premières rides s'installent, le teint se ternit, le contour se relâche légèrement. Ce n'est pas une fatalité — c'est une invitation à adapter ses soins. Chez Bianco, Salomé travaille avec des protocoles anti-âge personnalisés qui agissent sur plusieurs fronts à la fois : hydratation profonde, stimulation du collagène, drainage des poches et remodelage du contour."}
               </p>
             </header>
 

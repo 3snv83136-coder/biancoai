@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -123,6 +124,8 @@ const SoinVisageHommePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/soin-visage-homme-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -141,10 +144,10 @@ const SoinVisageHommePage: React.FC = () => {
                 Hyères — Soin Visage Homme
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Soin visage homme à Hyères : prendre soin de sa peau sans chichis
+                {overrides?.h1 || 'Soin visage homme à Hyères : prendre soin de sa peau sans chichis'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                La peau des hommes est différente — plus épaisse, plus grasse, soumise aux agressions du rasage quotidien. Et pourtant, elle souffre des mêmes problèmes que la peau des femmes : déshydratation, rides, teint terne. Chez Bianco, Salomé reçoit des hommes avec la même attention et les mêmes protocoles adaptés — efficaces, directs, sans superflu.
+                {overrides?.subtitle || "La peau des hommes est différente — plus épaisse, plus grasse, soumise aux agressions du rasage quotidien. Et pourtant, elle souffre des mêmes problèmes que la peau des femmes : déshydratation, rides, teint terne. Chez Bianco, Salomé reçoit des hommes avec la même attention et les mêmes protocoles adaptés — efficaces, directs, sans superflu."}
               </p>
             </header>
 

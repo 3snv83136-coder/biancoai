@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -128,6 +129,8 @@ const DrainageApresAccouchementPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/drainage-lymphatique-apres-accouchement-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -150,10 +153,10 @@ const DrainageApresAccouchementPage: React.FC = () => {
                 Hyères — Post-Partum & Bien-Être
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Drainage après accouchement à Hyères&nbsp;: reprendre soin de vous en douceur
+                {overrides?.h1 || 'Drainage après accouchement à Hyères\u00a0: reprendre soin de vous en douceur'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Les semaines qui suivent un accouchement sont une période de transformation intense. Le corps est en récupération — et il mérite une attention particulière. Le drainage lymphatique post-partum est l'un des soins les plus bénéfiques que vous puissiez vous offrir après 6 semaines, avec l'accord de votre médecin ou sage-femme.
+                {overrides?.subtitle || "Les semaines qui suivent un accouchement sont une période de transformation intense. Le corps est en récupération — et il mérite une attention particulière. Le drainage lymphatique post-partum est l'un des soins les plus bénéfiques que vous puissiez vous offrir après 6 semaines, avec l'accord de votre médecin ou sage-femme."}
               </p>
             </header>
 

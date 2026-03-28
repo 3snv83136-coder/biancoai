@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -134,6 +135,8 @@ const HeadSpaPrixPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/head-spa-prix-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,10 +159,10 @@ const HeadSpaPrixPage: React.FC = () => {
                 Hyères — Tarifs Head Spa
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Prix du Head Spa à Hyères&nbsp;: ce que propose Bianco en 2026
+                {overrides?.h1 || 'Prix du Head Spa à Hyères\u00a0: ce que propose Bianco en 2026'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Combien coûte un Head Spa à Hyères&nbsp;? C'est une des premières questions qu'on nous pose. Cette page répond honnêtement&nbsp;: les tarifs, ce qu'ils comprennent, et pourquoi ce soin vaut chaque euro.
+                {overrides?.subtitle || "Combien coûte un Head Spa à Hyères\u00a0? C'est une des premières questions qu'on nous pose. Cette page répond honnêtement\u00a0: les tarifs, ce qu'ils comprennent, et pourquoi ce soin vaut chaque euro."}
               </p>
             </header>
 

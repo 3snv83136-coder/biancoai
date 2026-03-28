@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const MassageRelaxantPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/massage-relaxant-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,13 +159,10 @@ const MassageRelaxantPage: React.FC = () => {
                 Hyères — Massage & Bien-Être
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Le massage relaxant à Hyères qui rend vraiment légère
+                {overrides?.h1 || 'Le massage relaxant à Hyères qui rend vraiment légère'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le massage relaxant, c'est l'une de nos spécialités chez Bianco. Que vous cherchiez
-                à décompresser après une semaine chargée, à soulager des tensions dans le dos ou
-                simplement à vous offrir une heure rien que pour vous, Salomé adapte chaque séance
-                à votre état du moment. Pas de protocole figé — un soin vivant, qui écoute votre corps.
+                {overrides?.subtitle || "Le massage relaxant, c'est l'une de nos spécialités chez Bianco. Que vous cherchiez à décompresser après une semaine chargée, à soulager des tensions dans le dos ou simplement à vous offrir une heure rien que pour vous, Salomé adapte chaque séance à votre état du moment. Pas de protocole figé — un soin vivant, qui écoute votre corps."}
               </p>
             </header>
 

@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -134,6 +135,8 @@ const HeadSpaCadeauPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/head-spa-cadeau-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,10 +159,10 @@ const HeadSpaCadeauPage: React.FC = () => {
                 Hyères — Head Spa Cadeau
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Offrir un Head Spa à Hyères&nbsp;: le cadeau beauté qui change vraiment
+                {overrides?.h1 || 'Offrir un Head Spa à Hyères\u00a0: le cadeau beauté qui change vraiment'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le Head Spa, c'est l'expérience que la plupart des gens ne s'offrent jamais eux-mêmes — mais qu'ils adorent quand quelqu'un d'autre leur offre. Massage profond du cuir chevelu, soin nourrissant des cheveux, détente totale de la tête au cou&nbsp;: c'est le cadeau beauté le plus surprenant et le plus mémorable que vous puissiez faire.
+                {overrides?.subtitle || "Le Head Spa, c'est l'expérience que la plupart des gens ne s'offrent jamais eux-mêmes — mais qu'ils adorent quand quelqu'un d'autre leur offre. Massage profond du cuir chevelu, soin nourrissant des cheveux, détente totale de la tête au cou\u00a0: c'est le cadeau beauté le plus surprenant et le plus mémorable que vous puissiez faire."}
               </p>
             </header>
 

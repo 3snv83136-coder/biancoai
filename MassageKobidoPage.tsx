@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const MassageKobidoPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/massage-kobido-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,14 +159,10 @@ const MassageKobidoPage: React.FC = () => {
                 Hyères — Soin Visage & Modelage
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Vous cherchez un massage Kobido à Hyères ? Voici ce que Bianco vous propose
+                {overrides?.h1 || 'Vous cherchez un massage Kobido à Hyères ? Voici ce que Bianco vous propose'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Bianco Esthétique ne pratique pas le Kobido au sens strict du terme — cette technique
-                japonaise requiert une formation spécifique et longue. Mais nous proposons des soins
-                visage modelants aux résultats très comparables : remodelage du contour, drainage des
-                poches, stimulation du collagène et éclat immédiat. Si vous cherchiez le Kobido,
-                restez sur cette page — vous trouverez peut-être exactement ce dont vous avez besoin.
+                {overrides?.subtitle || "Bianco Esthétique ne pratique pas le Kobido au sens strict du terme — cette technique japonaise requiert une formation spécifique et longue. Mais nous proposons des soins visage modelants aux résultats très comparables : remodelage du contour, drainage des poches, stimulation du collagène et éclat immédiat. Si vous cherchiez le Kobido, restez sur cette page — vous trouverez peut-être exactement ce dont vous avez besoin."}
               </p>
             </header>
 

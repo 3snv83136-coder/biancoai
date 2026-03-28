@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const SoinsApressoleilPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/soins-peau-apres-soleil-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -155,10 +158,10 @@ const SoinsApressoleilPage: React.FC = () => {
                 Hyères — Soins Après Soleil &amp; Réparation
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Soins peau après soleil à Hyères&nbsp;: réparer, hydrater, retrouver l'éclat
+                {overrides?.h1 || "Soins peau après soleil à Hyères\u00a0: réparer, hydrater, retrouver l'éclat"}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                L'été dans le Var, c'est magnifique — et brutal pour la peau. Soleil intense, eau salée, chlore, chaleur&nbsp;: la peau encaisse. En septembre, beaucoup de nos clientes nous arrivent avec une peau déshydratée, le teint irrégulier, parfois des taches brunes naissantes. C'est le bon moment pour une cure de réparation intensive.
+                {overrides?.subtitle || "L'été dans le Var, c'est magnifique — et brutal pour la peau. Soleil intense, eau salée, chlore, chaleur\u00a0: la peau encaisse. En septembre, beaucoup de nos clientes nous arrivent avec une peau déshydratée, le teint irrégulier, parfois des taches brunes naissantes. C'est le bon moment pour une cure de réparation intensive."}
               </p>
             </header>
 

@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -134,6 +135,8 @@ const HeadSpaDuoPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/head-spa-duo-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,10 +159,10 @@ const HeadSpaDuoPage: React.FC = () => {
                 Hyères — Head Spa Duo
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Head Spa duo à Hyères&nbsp;: partager l'expérience la plus détente qui soit
+                {overrides?.h1 || "Head Spa duo à Hyères\u00a0: partager l'expérience la plus détente qui soit"}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le Head Spa est déjà une expérience en soi — mais le vivre à deux (mère-fille, deux amies, en couple) lui donne une dimension supplémentaire. Vous partagez le même état de détente absolue, la même sensation de légèreté en sortant. C'est un moment de complicité rare, et les souvenirs durent longtemps.
+                {overrides?.subtitle || "Le Head Spa est déjà une expérience en soi — mais le vivre à deux (mère-fille, deux amies, en couple) lui donne une dimension supplémentaire. Vous partagez le même état de détente absolue, la même sensation de légèreté en sortant. C'est un moment de complicité rare, et les souvenirs durent longtemps."}
               </p>
             </header>
 

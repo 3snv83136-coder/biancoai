@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const RehaussementCilsPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/rehaussement-cils-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -155,10 +158,10 @@ const RehaussementCilsPage: React.FC = () => {
                 Hyères — Extensions &amp; Soin du Regard
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Rehaussement de cils à Hyères&nbsp;: ce que Bianco propose pour votre regard
+                {overrides?.h1 || 'Rehaussement de cils à Hyères\u00a0: ce que Bianco propose pour votre regard'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le rehaussement de cils (ou lift de cils) est une technique de kératinisation qui courbe les cils naturels de l'intérieur. Bianco Esthétique ne pratique pas actuellement le rehaussement. En revanche, nous proposons les extensions de cils — une technique différente mais souvent plus adaptée à celles qui veulent un regard intensément transformé. Cette page vous aide à comprendre la différence et à choisir.
+                {overrides?.subtitle || "Le rehaussement de cils (ou lift de cils) est une technique de kératinisation qui courbe les cils naturels de l'intérieur. Bianco Esthétique ne pratique pas actuellement le rehaussement. En revanche, nous proposons les extensions de cils — une technique différente mais souvent plus adaptée à celles qui veulent un regard intensément transformé. Cette page vous aide à comprendre la différence et à choisir."}
               </p>
             </header>
 

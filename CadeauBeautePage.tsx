@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const CadeauBeautePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/cadeau-beaute-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -155,10 +158,10 @@ const CadeauBeautePage: React.FC = () => {
                 Hyères — Bon Cadeau Institut Beauté
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Bon cadeau beauté à Hyères&nbsp;: offrez plus qu'un cadeau
+                {overrides?.h1 || "Bon cadeau beauté à Hyères\u00a0: offrez plus qu'un cadeau"}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Un bon cadeau chez Bianco, c'est offrir une expérience — pas un objet qui s'oublie dans un tiroir. Massage californien, soin visage, Head Spa, drainage lymphatique, manucure&nbsp;: chaque soin devient un moment unique que la personne que vous aimez vivra en pensant à votre attention.
+                {overrides?.subtitle || "Un bon cadeau chez Bianco, c'est offrir une expérience — pas un objet qui s'oublie dans un tiroir. Massage californien, soin visage, Head Spa, drainage lymphatique, manucure\u00a0: chaque soin devient un moment unique que la personne que vous aimez vivra en pensant à votre attention."}
               </p>
             </header>
 

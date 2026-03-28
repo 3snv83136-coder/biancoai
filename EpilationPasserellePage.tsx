@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -121,6 +122,8 @@ const EpilationPasserellePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/apres-epilation-soins-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -144,14 +147,10 @@ const EpilationPasserellePage: React.FC = () => {
                 Hyères — Journée Beauté
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Vous cherchez une épilation à Hyères&nbsp;? Découvrez ce que Bianco fait de votre journée beauté
+                {overrides?.h1 || 'Vous cherchez une épilation à Hyères\u00a0? Découvrez ce que Bianco fait de votre journée beauté'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Bianco Esthétique ne propose pas l'épilation. Nous avons fait le choix de nous
-                concentrer sur ce que nous faisons de mieux&nbsp;: les soins visage, le massage,
-                les ongles et le bien-être global. Mais nous savons que beaucoup de nos clientes
-                combinent leur séance d'épilation chez une consœur avec un passage chez nous.
-                Cette page est là pour vous aider à organiser votre journée beauté à Hyères.
+                {overrides?.subtitle || "Bianco Esthétique ne propose pas l'épilation. Nous avons fait le choix de nous concentrer sur ce que nous faisons de mieux\u00a0: les soins visage, le massage, les ongles et le bien-être global. Mais nous savons que beaucoup de nos clientes combinent leur séance d'épilation chez une consœur avec un passage chez nous. Cette page est là pour vous aider à organiser votre journée beauté à Hyères."}
               </p>
             </header>
 

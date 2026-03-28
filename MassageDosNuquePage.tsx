@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const MassageDosNuquePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/massage-dos-nuque-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,13 +159,10 @@ const MassageDosNuquePage: React.FC = () => {
                 Hyères — Massage Ciblé
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Massage dos et nuque à Hyères : enfin libérer les tensions qui s'accumulent
+                {overrides?.h1 || "Massage dos et nuque à Hyères : enfin libérer les tensions qui s'accumulent"}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                La nuque et le dos concentrent la majorité des tensions que le corps accumule au
-                quotidien — écrans, stress, postures assises prolongées. Chez Bianco, le massage
-                dos/nuque est un soin ciblé et efficace, pensé pour aller chercher exactement là
-                où ça bloque.
+                {overrides?.subtitle || "La nuque et le dos concentrent la majorité des tensions que le corps accumule au quotidien — écrans, stress, postures assises prolongées. Chez Bianco, le massage dos/nuque est un soin ciblé et efficace, pensé pour aller chercher exactement là où ça bloque."}
               </p>
             </header>
 

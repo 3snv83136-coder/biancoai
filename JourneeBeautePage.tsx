@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -128,6 +129,8 @@ const JourneeBeautePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/journee-beaute-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -150,10 +153,10 @@ const JourneeBeautePage: React.FC = () => {
                 Hyères — Journée Beauté Sur-Mesure
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                La journée beauté à Hyères&nbsp;: composez votre programme chez Bianco
+                {overrides?.h1 || 'La journée beauté à Hyères\u00a0: composez votre programme chez Bianco'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                La journée beauté, c'est l'idée simple que prendre soin de soi ne devrait pas être une exception mais une habitude. Chez Bianco, on la construit avec vous&nbsp;: en fonction de ce dont votre corps et votre peau ont besoin, de ce que vous avez envie de vivre, et du temps que vous avez devant vous.
+                {overrides?.subtitle || "La journée beauté, c'est l'idée simple que prendre soin de soi ne devrait pas être une exception mais une habitude. Chez Bianco, on la construit avec vous\u00a0: en fonction de ce dont votre corps et votre peau ont besoin, de ce que vous avez envie de vivre, et du temps que vous avez devant vous."}
               </p>
             </header>
 

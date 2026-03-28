@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const PreparerPeauEtePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/preparer-peau-ete-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -155,10 +158,10 @@ const PreparerPeauEtePage: React.FC = () => {
                 Hyères — Beauté Avant l'Été
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Préparer sa peau pour l'été à Hyères&nbsp;: tout ce que fait Bianco avant la saison
+                {overrides?.h1 || "Préparer sa peau pour l'été à Hyères\u00a0: tout ce que fait Bianco avant la saison"}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                À Hyères, l'été commence dès avril. La saison balnéaire, les terrasses, les week-ends à Porquerolles — tout invite à se montrer sous son meilleur jour. Chez Bianco, le mois de mars-avril est notre période de préparation intensive&nbsp;: on prépare les peaux pour les mois à venir, et nos clientes repartent prêtes pour l'été.
+                {overrides?.subtitle || "À Hyères, l'été commence dès avril. La saison balnéaire, les terrasses, les week-ends à Porquerolles — tout invite à se montrer sous son meilleur jour. Chez Bianco, le mois de mars-avril est notre période de préparation intensive\u00a0: on prépare les peaux pour les mois à venir, et nos clientes repartent prêtes pour l'été."}
               </p>
             </header>
 

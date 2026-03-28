@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -128,6 +129,8 @@ const DrainageJambesLourdesPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/drainage-lymphatique-jambes-lourdes-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -150,10 +153,10 @@ const DrainageJambesLourdesPage: React.FC = () => {
                 Hyères — Drainage Lymphatique
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Drainage lymphatique jambes lourdes à Hyères&nbsp;: la méthode brésilienne qui soulage vraiment
+                {overrides?.h1 || 'Drainage lymphatique jambes lourdes à Hyères\u00a0: la méthode brésilienne qui soulage vraiment'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Les jambes lourdes touchent la majorité des femmes, surtout dans le Var où la chaleur s'étale sur 6 mois par an. Chez Bianco, le drainage lymphatique des jambes par méthode brésilienne est l'un de nos soins phares — celui dont nos clientes parlent à toutes leurs amies. Le résultat est immédiat&nbsp;: légèreté, jambes dégonflées, circulation relancée.
+                {overrides?.subtitle || "Les jambes lourdes touchent la majorité des femmes, surtout dans le Var où la chaleur s'étale sur 6 mois par an. Chez Bianco, le drainage lymphatique des jambes par méthode brésilienne est l'un de nos soins phares — celui dont nos clientes parlent à toutes leurs amies. Le résultat est immédiat\u00a0: légèreté, jambes dégonflées, circulation relancée."}
               </p>
             </header>
 

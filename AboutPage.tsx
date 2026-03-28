@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const AboutPage: React.FC = () => {
   useEffect(() => {
@@ -23,6 +24,8 @@ const AboutPage: React.FC = () => {
       if (m && defaultDesc) m.setAttribute('content', defaultDesc);
     };
   }, []);
+
+  const overrides = usePageOverrides('/a-propos');
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -44,7 +47,7 @@ const AboutPage: React.FC = () => {
             { label: 'À propos' },
           ]} />
 
-          <h1 className="text-4xl md:text-5xl serif text-dark mb-12">À propos – Bianco Esthétique</h1>
+          <h1 className="text-4xl md:text-5xl serif text-dark mb-12">{overrides?.h1 || 'À propos – Bianco Esthétique'}</h1>
 
           <div className="prose prose-lg max-w-none space-y-16 text-dark">
             <section>
@@ -243,7 +246,7 @@ const AboutPage: React.FC = () => {
               Accueil
             </Link>
             <Link
-              to="/services"
+              to="/prestation"
               className="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs px-5 py-3 rounded-full border-2 border-primary hover:bg-primary hover:text-white transition-all"
             >
               Nos services

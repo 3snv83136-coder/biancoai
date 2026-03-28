@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -123,6 +124,8 @@ const SoinVisageEclatPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/soin-visage-eclat-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -141,10 +144,10 @@ const SoinVisageEclatPage: React.FC = () => {
                 Hyères — Soin Visage Éclat
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Soin visage éclat à Hyères : retrouvez la luminosité que vous avez perdue
+                {overrides?.h1 || 'Soin visage éclat à Hyères : retrouvez la luminosité que vous avez perdue'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le teint terne, c'est l'ennemi n°1. Fatigue, stress, manque d'hydratation, exposition au soleil — la peau accumule et perd de sa luminosité naturelle. Le soin visage éclat chez Bianco travaille sur toutes ces causes à la fois : nettoyage en profondeur, exfoliation douce, hydratation intensive et massage drainant pour un résultat qui parle de lui-même.
+                {overrides?.subtitle || "Le teint terne, c'est l'ennemi n°1. Fatigue, stress, manque d'hydratation, exposition au soleil — la peau accumule et perd de sa luminosité naturelle. Le soin visage éclat chez Bianco travaille sur toutes ces causes à la fois : nettoyage en profondeur, exfoliation douce, hydratation intensive et massage drainant pour un résultat qui parle de lui-même."}
               </p>
             </header>
 

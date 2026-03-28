@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const MassageBienEtrePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/massage-bien-etre-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,13 +159,10 @@ const MassageBienEtrePage: React.FC = () => {
                 Hyères — Bien-Être & Relaxation
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Massage bien-être à Hyères : une heure qui remet tout à sa place
+                {overrides?.h1 || 'Massage bien-être à Hyères : une heure qui remet tout à sa place'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le massage bien-être n'est pas qu'un luxe — c'est une nécessité. Chez Bianco, nous
-                le pratiquons comme un soin global qui agit sur le corps et l'esprit : la tension
-                musculaire se relâche, la respiration s'approfondit, le mental décélère. Chaque
-                séance est unique parce que vous n'arrivez jamais deux fois dans le même état.
+                {overrides?.subtitle || "Le massage bien-être n'est pas qu'un luxe — c'est une nécessité. Chez Bianco, nous le pratiquons comme un soin global qui agit sur le corps et l'esprit : la tension musculaire se relâche, la respiration s'approfondit, le mental décélère. Chaque séance est unique parce que vous n'arrivez jamais deux fois dans le même état."}
               </p>
             </header>
 

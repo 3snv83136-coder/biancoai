@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -128,6 +129,8 @@ const DrainagePrixPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/drainage-lymphatique-prix-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -150,10 +153,10 @@ const DrainagePrixPage: React.FC = () => {
                 Hyères — Tarifs Drainage Lymphatique
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Prix du drainage lymphatique à Hyères en 2026&nbsp;: ce que propose Bianco
+                {overrides?.h1 || 'Prix du drainage lymphatique à Hyères en 2026\u00a0: ce que propose Bianco'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Beaucoup de clientes nous contactent en se demandant combien coûte un drainage lymphatique à Hyères — et si c'est vraiment justifié. Cette page est là pour répondre honnêtement à ces questions. Nos tarifs, ce qu'ils comprennent, et pourquoi le prix varie selon les séances.
+                {overrides?.subtitle || "Beaucoup de clientes nous contactent en se demandant combien coûte un drainage lymphatique à Hyères — et si c'est vraiment justifié. Cette page est là pour répondre honnêtement à ces questions. Nos tarifs, ce qu'ils comprennent, et pourquoi le prix varie selon les séances."}
               </p>
             </header>
 

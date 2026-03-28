@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const HeadSpaPage: React.FC = () => {
   useEffect(() => {
@@ -37,6 +38,8 @@ const HeadSpaPage: React.FC = () => {
       if (m && prevDesc) m.setAttribute('content', prevDesc);
     };
   }, []);
+
+  const overrides = usePageOverrides('/head-spa-hyeres');
 
   const headSpaJsonLd = {
     '@context': 'https://schema.org',
@@ -142,11 +145,10 @@ const HeadSpaPage: React.FC = () => {
                 Rituel bien-être à Hyères
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl serif text-dark mb-4">
-                Head Spa à Hyères
+                {overrides?.h1 || 'Head Spa à Hyères'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base max-w-2xl">
-                Un soin dédié au cuir chevelu et à la nuque, inspiré des rituels japonais, pour relâcher les tensions et retrouver une
-                sensation de légèreté profonde.
+                {overrides?.subtitle || 'Un soin dédié au cuir chevelu et à la nuque, inspiré des rituels japonais, pour relâcher les tensions et retrouver une sensation de légèreté profonde.'}
               </p>
             </header>
 

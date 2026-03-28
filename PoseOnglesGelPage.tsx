@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -134,6 +135,8 @@ const PoseOnglesGelPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/pose-ongles-gel-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,10 +159,10 @@ const PoseOnglesGelPage: React.FC = () => {
                 Hyères — Ongles Gel &amp; Résine
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Pose d'ongles gel à Hyères&nbsp;: des ongles parfaits qui tiennent vraiment
+                {overrides?.h1 || "Pose d'ongles gel à Hyères\u00a0: des ongles parfaits qui tiennent vraiment"}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                La pose d'ongles gel, c'est l'art de construire des ongles beaux et résistants — qu'ils soient naturels ou en extension. Chez Bianco, Salomé maîtrise les techniques de gel UV, de résine et de capsules avec une précision qui se voit dans chaque finition. Des ongles qui tiennent 3 à 4 semaines sans se casser, sans se lever, sans laisser de traces.
+                {overrides?.subtitle || "La pose d'ongles gel, c'est l'art de construire des ongles beaux et résistants — qu'ils soient naturels ou en extension. Chez Bianco, Salomé maîtrise les techniques de gel UV, de résine et de capsules avec une précision qui se voit dans chaque finition. Des ongles qui tiennent 3 à 4 semaines sans se casser, sans se lever, sans laisser de traces."}
               </p>
             </header>
 

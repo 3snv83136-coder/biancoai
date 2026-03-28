@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -133,6 +134,8 @@ const BeauteMariagePage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/beaute-mariage-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -155,10 +158,10 @@ const BeauteMariagePage: React.FC = () => {
                 Hyères — Beauté Mariage &amp; Événement
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Beauté mariage à Hyères&nbsp;: Salomé prépare votre peau pour le jour J
+                {overrides?.h1 || 'Beauté mariage à Hyères\u00a0: Salomé prépare votre peau pour le jour J'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le jour de votre mariage, vous voulez être la meilleure version de vous-même. Pas transformée — sublimée. Chez Bianco, on ne prétend pas être un studio de maquillage mariage. On prend en charge ce que le maquillage ne peut pas faire à lui seul&nbsp;: une peau parfaitement préparée, des ongles impeccables, des cils qui n'ont pas besoin de mascara.
+                {overrides?.subtitle || "Le jour de votre mariage, vous voulez être la meilleure version de vous-même. Pas transformée — sublimée. Chez Bianco, on ne prétend pas être un studio de maquillage mariage. On prend en charge ce que le maquillage ne peut pas faire à lui seul\u00a0: une peau parfaitement préparée, des ongles impeccables, des cils qui n'ont pas besoin de mascara."}
               </p>
             </header>
 

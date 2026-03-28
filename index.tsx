@@ -104,8 +104,9 @@ const appTree = (
         <React.Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<App />} />
-          <Route path="/prestations" element={<Navigate to="/services" replace />} />
-          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/prestations" element={<Navigate to="/prestation" replace />} />
+          <Route path="/services" element={<Navigate to="/prestation" replace />} />
+          <Route path="/prestation" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/tarifs" element={<PricingPage />} />

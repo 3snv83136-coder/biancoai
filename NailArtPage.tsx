@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -134,6 +135,8 @@ const NailArtPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/nail-art-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -156,10 +159,10 @@ const NailArtPage: React.FC = () => {
                 Hyères — Nail Art &amp; Décoration
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Nail art à Hyères&nbsp;: des ongles qui racontent quelque chose
+                {overrides?.h1 || 'Nail art à Hyères\u00a0: des ongles qui racontent quelque chose'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le nail art, ce n'est pas qu'une tendance — c'est une façon d'exprimer quelque chose sur soi sans un mot. Une french revisitée, un dégradé chromé, un motif floral discret ou des ongles monochromes ultra-nets&nbsp;: chaque choix dit quelque chose. Chez Bianco, Salomé transforme les idées en ongles.{' '}
+                {overrides?.subtitle || "Le nail art, ce n'est pas qu'une tendance — c'est une façon d'exprimer quelque chose sur soi sans un mot. Une french revisitée, un dégradé chromé, un motif floral discret ou des ongles monochromes ultra-nets\u00a0: chaque choix dit quelque chose. Chez Bianco, Salomé transforme les idées en ongles."}{' '}
                 <Link to="/manucure-ongles-gel-hyeres" className="text-primary font-semibold hover:underline">
                   Découvrez aussi notre manucure →
                 </Link>

@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
 import { BUSINESS_INFO } from './constants';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const SITE_URL = 'https://www.bianco-esthetique.fr';
 
@@ -128,6 +129,8 @@ const DrainageMinceurPage: React.FC = () => {
     };
   }, []);
 
+  const overrides = usePageOverrides('/drainage-lymphatique-minceur-hyeres');
+
   return (
     <div className="min-h-screen bg-surface">
       <script
@@ -150,10 +153,10 @@ const DrainageMinceurPage: React.FC = () => {
                 Hyères — Drainage Minceur & Remodelage
               </span>
               <h1 className="text-4xl md:text-5xl serif text-dark mb-6 leading-tight">
-                Drainage lymphatique minceur à Hyères&nbsp;: remodelage et légèreté en une séance
+                {overrides?.h1 || 'Drainage lymphatique minceur à Hyères\u00a0: remodelage et légèreté en une séance'}
               </h1>
               <p className="text-gray-500 font-light text-sm md:text-base leading-relaxed">
-                Le drainage lymphatique minceur va plus loin que le simple soulagement des jambes lourdes&nbsp;: il agit sur l'ensemble de la silhouette, élimine les toxines stockées, réduit la rétention d'eau et affine le contour. Chez Bianco, c'est la méthode brésilienne — reconnue pour son efficacité sur la cellulite dite aqueuse — qui est utilisée.
+                {overrides?.subtitle || "Le drainage lymphatique minceur va plus loin que le simple soulagement des jambes lourdes\u00a0: il agit sur l'ensemble de la silhouette, élimine les toxines stockées, réduit la rétention d'eau et affine le contour. Chez Bianco, c'est la méthode brésilienne — reconnue pour son efficacité sur la cellulite dite aqueuse — qui est utilisée."}
               </p>
             </header>
 

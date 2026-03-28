@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import { BUSINESS_INFO, SERVICES, REVIEWS, FAQ_ITEMS, FALLBACK_WELLNESS_TIPS } from './constants';
 import { servicesIndex as SEO_SERVICES } from './servicesIndex';
 import type { WellnessTip } from './types';
+import { usePageOverrides } from './components/usePageOverrides';
 
 const FAQAccordionItem: React.FC<{ question: string; answer: string; isOpen: boolean; onClick: () => void }> = ({ question, answer, isOpen, onClick }) => {
   return (
@@ -37,6 +38,7 @@ const App: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('Regard');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [wellnessTips] = useState<WellnessTip[]>(FALLBACK_WELLNESS_TIPS);
+  const overrides = usePageOverrides('/');
 
   useEffect(() => {
     const id = hash?.replace('#', '');
@@ -255,10 +257,10 @@ const App: React.FC = () => {
             </span>
           </div>
           <h1 className="text-5xl md:text-7xl lg:text-8xl text-white serif mb-10 leading-[1.05] md:leading-[1]">
-            Votre bien‑être,<br /> <span className="italic font-light">tout simplement</span>
+            {overrides?.h1 || <>Votre bien‑être,<br /> <span className="italic font-light">tout simplement</span></>}
           </h1>
           <p className="text-white/90 text-base md:text-2xl mb-12 max-w-2xl mx-auto font-light leading-relaxed montserrat">
-            Maison de Beauté à Hyères. L'expertise du drainage lymphatique brésilien et l'art du regard.
+            {overrides?.subtitle || "Maison de Beauté à Hyères. L'expertise du drainage lymphatique brésilien et l'art du regard."}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a
@@ -286,13 +288,19 @@ const App: React.FC = () => {
       {/* Intro géo-ciblée */}
       <section id="main-content" className="py-16 md:py-20 bg-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl serif mb-6">Institut de Beauté à Hyères</h2>
-          <p className="text-gray-600 font-light leading-relaxed mb-4">
-            Bianco Esthétique est votre institut de beauté de référence à <strong className="font-medium text-dark">Hyères (83400)</strong>, dans le département du <strong className="font-medium text-dark">Var</strong>. Salomé vous accueille dans un espace chaleureux pour des soins du visage, du drainage lymphatique méthode brésilienne, des extensions de cils, des manucures et des massages sur mesure.
-          </p>
-          <p className="text-gray-500 font-light leading-relaxed text-sm">
-            À quelques minutes de <strong>Toulon</strong>, <strong>Carqueiranne</strong>, <strong>La Garde</strong>, <strong>Le Pradet</strong> et <strong>La Londe-les-Maures</strong>, l'institut est facilement accessible depuis toute la presqu'île de Giens et les communes voisines du Var.
-          </p>
+          <h2 className="text-3xl md:text-4xl serif mb-6">{overrides?.sections?.[0]?.heading || 'Institut de Beauté à Hyères'}</h2>
+          {overrides?.sections?.[0]?.body ? (
+            <div className="text-gray-600 font-light leading-relaxed" dangerouslySetInnerHTML={{ __html: overrides.sections[0].body }} />
+          ) : (
+            <>
+              <p className="text-gray-600 font-light leading-relaxed mb-4">
+                Bianco Esthétique est votre institut de beauté de référence à <strong className="font-medium text-dark">Hyères (83400)</strong>, dans le département du <strong className="font-medium text-dark">Var</strong>. Salomé vous accueille dans un espace chaleureux pour des soins du visage, du drainage lymphatique méthode brésilienne, des extensions de cils, des manucures et des massages sur mesure.
+              </p>
+              <p className="text-gray-500 font-light leading-relaxed text-sm">
+                À quelques minutes de <strong>Toulon</strong>, <strong>Carqueiranne</strong>, <strong>La Garde</strong>, <strong>Le Pradet</strong> et <strong>La Londe-les-Maures</strong>, l'institut est facilement accessible depuis toute la presqu'île de Giens et les communes voisines du Var.
+              </p>
+            </>
+          )}
         </div>
       </section>
 

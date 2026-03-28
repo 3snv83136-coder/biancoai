@@ -487,7 +487,7 @@ type PageTab = 'texte' | 'photos' | 'faq' | 'jsonld';
 const ALL_SITE_PAGES: { url: string; title: string; category: string; h1?: string; subtitle?: string }[] = [
   // Pages principales
   { url: '/', title: 'Accueil', category: 'Principales', h1: 'Votre bien-etre, tout simplement', subtitle: 'Maison de Beaute a Hyeres. L\'expertise du drainage lymphatique bresilien et l\'art du regard.' },
-  { url: '/services', title: 'Nos services', category: 'Principales', h1: 'Nos Prestations Sur-Mesure' },
+  { url: '/prestation', title: 'Nos prestations', category: 'Principales', h1: 'Nos Prestations', subtitle: 'Retrouvez en un coup d\'oeil l\'ensemble des prestations proposees a Hyeres. Chaque soin est personnalise selon vos besoins.' },
   { url: '/tarifs', title: 'Tarifs', category: 'Principales', h1: 'Nos Tarifs' },
   { url: '/a-propos', title: "L'Institut", category: 'Principales', h1: 'L\'Institut Bianco', subtitle: 'Bianco Esthetique, c\'est avant tout l\'histoire de Salome. Diplomee Meilleure Apprentie de France, elle a fonde son institut a Hyeres pour offrir des soins d\'exception dans un cadre chaleureux.' },
   { url: '/blog', title: 'Blog', category: 'Principales', h1: 'Le journal Bianco', subtitle: 'Articles courts, concrets et inspires de la cabine pour mieux comprendre nos soins a Hyeres.' },
