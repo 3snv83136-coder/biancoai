@@ -51,10 +51,26 @@ const PricingPage: React.FC = () => {
     };
   }, []);
 
-  // Use API sections if available, otherwise fall back to planityPrestations
-  const sections = apiSections
-    ? apiSections.map(s => ({ label: s.title, items: s.items.map(it => ({ title: it.label, duration: it.duration || '', price: it.price })) }))
-    : planityPrestations;
+  // Merge: always show planityPrestations + append any admin-added sections
+  const baseSections = planityPrestations.map(cat => ({ label: cat.label, items: [...cat.items] }));
+  if (apiSections) {
+    for (const apiSec of apiSections) {
+      const normalized = { label: apiSec.title, items: apiSec.items.map(it => ({ title: it.label, duration: it.duration || '', price: it.price })) };
+      const existing = baseSections.find(s => s.label.toLowerCase() === normalized.label.toLowerCase());
+      if (existing) {
+        // Add API items that don't already exist in the static list
+        for (const item of normalized.items) {
+          if (!existing.items.some(e => e.title.toLowerCase() === item.title.toLowerCase())) {
+            existing.items.push(item);
+          }
+        }
+      } else {
+        // New section from admin — append
+        baseSections.push(normalized);
+      }
+    }
+  }
+  const sections = baseSections;
 
   const offers = sections.flatMap(cat =>
     cat.items
