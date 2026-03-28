@@ -31,8 +31,10 @@
     { "source": "/prestations", "destination": "/services", "statusCode": 301 }
   ],
   "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/services/:slug", "destination": "/index.html" },
-    { "source": "/blog/:slug", "destination": "/index.html" }
+    { "source": "/blog/:slug", "destination": "/index.html" },
+    { "source": "/p/:slug", "destination": "/index.html" }
   ]
 }

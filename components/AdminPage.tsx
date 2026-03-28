@@ -481,12 +481,19 @@ const NewsletterPage: React.FC = () => {
 // ============================================================
 // Pages Editor
 // ============================================================
+type PageTab = 'texte' | 'photos' | 'faq' | 'jsonld';
+
 const PagesEditor: React.FC = () => {
   const [pages, setPages] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<any | null>(null);
+  const [originalUrl, setOriginalUrl] = useState('');
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
+  const [tab, setTab] = useState<PageTab>('texte');
+  const [uploading, setUploading] = useState(false);
+  const [files, setFiles] = useState<FileList | null>(null);
+  const replaceRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const load = useCallback(() => {
     api('/pages').then(d => setPages(d?.pages || []));
@@ -501,12 +508,26 @@ const PagesEditor: React.FC = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    const updated = pages.map(p => p.url === editing.url ? editing : p);
+    // Upload pending files
+    let images = [...(editing.images || [])];
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fname = 'page-' + Date.now() + '-' + i + '.' + (file.name.split('.').pop() || 'jpg');
+        const token = getToken();
+        const uploadRes = await fetch(API + '/upload?filename=' + encodeURIComponent(fname), { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: file });
+        const uploadData = await uploadRes.json();
+        if (uploadData.url) images.push({ file: fname, url: uploadData.url, caption: '' });
+      }
+      setFiles(null);
+    }
+    const updated = pages.map(p => p.url === originalUrl ? { ...editing, images } : p);
     await api('/pages', { method: 'PUT', body: JSON.stringify({ pages: updated }) });
     setPages(updated);
-    setMsg('Page sauvegardee !');
+    setEditing((e: any) => ({ ...e, images }));
+    setMsg('Page sauvegardee ! Le sitemap sera mis a jour automatiquement.');
     setSaving(false);
-    setTimeout(() => setMsg(''), 3000);
+    setTimeout(() => setMsg(''), 4000);
   };
 
   const handleDelete = (url: string) => {
@@ -517,83 +538,274 @@ const PagesEditor: React.FC = () => {
   };
 
   const handleAdd = () => {
-    const newPage = { url: '/nouvelle-page', title: 'Nouvelle page', keywords: [], description: '', meta_title: '', h1: '', subtitle: '', og_title: '', og_description: '' };
+    const slug = 'nouvelle-page-' + Date.now();
+    const newPage = {
+      url: '/' + slug, title: 'Nouvelle page', keywords: [], description: '',
+      meta_title: '', h1: '', subtitle: '', og_title: '', og_description: '',
+      sections: [{ heading: '', body: '' }],
+      images: [],
+      faq: [],
+      published: true,
+    };
     setPages(p => [...p, newPage]);
+    setOriginalUrl('/' + slug);
     setEditing(newPage);
+    setTab('texte');
   };
 
-  const updateField = (field: string, value: string) => {
-    setEditing((e: any) => ({ ...e, [field]: field === 'keywords' ? value.split(',').map((k: string) => k.trim()).filter(Boolean) : value }));
+  const handleDuplicate = (p: any) => {
+    const slug = p.url.replace(/^\//, '') + '-copie-' + Date.now();
+    const dup = { ...JSON.parse(JSON.stringify(p)), url: '/' + slug, title: p.title + ' (copie)' };
+    setPages(ps => [...ps, dup]);
+    setOriginalUrl('/' + slug);
+    setEditing(dup);
+    setTab('texte');
   };
 
+  const updateField = (field: string, value: any) => {
+    setEditing((e: any) => ({
+      ...e,
+      [field]: field === 'keywords' ? (typeof value === 'string' ? value.split(',').map((k: string) => k.trim()).filter(Boolean) : value) : value,
+    }));
+  };
+
+  // Section helpers
+  const addSection = () => setEditing((e: any) => ({ ...e, sections: [...(e.sections || []), { heading: '', body: '' }] }));
+  const updateSection = (idx: number, field: string, val: string) => setEditing((e: any) => ({ ...e, sections: (e.sections || []).map((s: any, i: number) => i === idx ? { ...s, [field]: val } : s) }));
+  const removeSection = (idx: number) => setEditing((e: any) => ({ ...e, sections: (e.sections || []).filter((_: any, i: number) => i !== idx) }));
+  const moveSection = (idx: number, dir: -1 | 1) => setEditing((e: any) => { const s = [...(e.sections || [])]; const t = idx + dir; if (t < 0 || t >= s.length) return e; [s[idx], s[t]] = [s[t], s[idx]]; return { ...e, sections: s }; });
+
+  // FAQ helpers
+  const addFaq = () => setEditing((e: any) => ({ ...e, faq: [...(e.faq || []), { q: '', a: '' }] }));
+  const updateFaq = (idx: number, field: 'q' | 'a', val: string) => setEditing((e: any) => ({ ...e, faq: (e.faq || []).map((f: any, i: number) => i === idx ? { ...f, [field]: val } : f) }));
+  const removeFaq = (idx: number) => setEditing((e: any) => ({ ...e, faq: (e.faq || []).filter((_: any, i: number) => i !== idx) }));
+
+  // Image helpers
+  const removeImage = (idx: number) => setEditing((e: any) => ({ ...e, images: (e.images || []).filter((_: any, i: number) => i !== idx) }));
+  const updateCaption = (idx: number, caption: string) => setEditing((e: any) => ({ ...e, images: (e.images || []).map((img: any, i: number) => i === idx ? { ...img, caption } : img) }));
+  const moveImage = (idx: number, dir: -1 | 1) => setEditing((e: any) => { const imgs = [...(e.images || [])]; const t = idx + dir; if (t < 0 || t >= imgs.length) return e; [imgs[idx], imgs[t]] = [imgs[t], imgs[idx]]; return { ...e, images: imgs }; });
+  const replaceImage = async (idx: number, file: File) => {
+    setUploading(true);
+    const fname = 'page-' + Date.now() + '-r.' + (file.name.split('.').pop() || 'jpg');
+    const token = getToken();
+    const res = await fetch(API + '/upload?filename=' + encodeURIComponent(fname), { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: file });
+    const data = await res.json();
+    if (data.url) setEditing((e: any) => ({ ...e, images: (e.images || []).map((img: any, i: number) => i === idx ? { file: fname, url: data.url, caption: img.caption || '' } : img) }));
+    setUploading(false);
+  };
+
+  // Tab bar renderer
+  const TabBar = () => (
+    <div style={{ display: 'flex', gap: '0', marginBottom: '1.5rem', borderBottom: '2px solid #eee' }}>
+      {([['texte', 'Texte & SEO'], ['photos', 'Photos'], ['faq', 'FAQ'], ['jsonld', 'JSON-LD']] as [PageTab, string][]).map(([k, label]) => (
+        <button key={k} onClick={() => setTab(k)} style={{
+          padding: '.7rem 1.5rem', border: 'none', cursor: 'pointer', fontWeight: tab === k ? 700 : 400,
+          background: 'transparent', color: tab === k ? '#b08d6e' : '#888', fontSize: '.9rem',
+          borderBottom: tab === k ? '3px solid #b08d6e' : '3px solid transparent', marginBottom: '-2px',
+        }}>{label}</button>
+      ))}
+    </div>
+  );
+
+  // JSON-LD preview
+  const buildJsonLd = () => {
+    if (!editing) return '';
+    const faqItems = (editing.faq || []).filter((f: any) => f.q && f.a);
+    const jsonLd: any = { '@context': 'https://schema.org', '@graph': [
+      { '@type': 'WebPage', name: editing.meta_title || editing.title, description: editing.description || '', url: 'https://www.bianco-esthetique.fr' + editing.url,
+        mainEntity: { '@type': 'BeautySalon', name: 'Bianco Esthetique', url: 'https://www.bianco-esthetique.fr' },
+        breadcrumb: { '@type': 'BreadcrumbList', itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.bianco-esthetique.fr' },
+          { '@type': 'ListItem', position: 2, name: editing.title, item: 'https://www.bianco-esthetique.fr' + editing.url },
+        ]},
+      },
+    ]};
+    if (faqItems.length > 0) jsonLd['@graph'].push({ '@type': 'FAQPage', mainEntity: faqItems.map((f: any) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) });
+    return JSON.stringify(jsonLd, null, 2);
+  };
+
+  // ===== EDITING MODE =====
   if (editing) {
     return (
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-          <button onClick={() => { setEditing(null); load(); }} style={{ ...styles.btn, background: '#888' }}>← Retour</button>
-          <h1 style={{ ...styles.title, marginBottom: 0, fontSize: '1.4rem' }}>Editer : {editing.url}</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+          <button onClick={() => { setEditing(null); setFiles(null); load(); }} style={{ ...styles.btn, background: '#888' }}>← Retour</button>
+          <h1 style={{ ...styles.title, marginBottom: 0, fontSize: '1.3rem', flex: 1 }}>{editing.title || 'Nouvelle page'}</h1>
+          <a href={editing.url} target="_blank" rel="noopener noreferrer" style={{ ...styles.btn, ...styles.btnSm, background: '#3498db', textDecoration: 'none' }}>Voir la page ↗</a>
+          <button onClick={handleSave} disabled={saving || uploading} style={styles.btn}>{saving ? 'Enregistrement...' : 'Sauvegarder'}</button>
         </div>
         {msg && <div style={styles.success}>{msg}</div>}
 
-        {/* Maillage interne */}
-        <div style={styles.card}>
-          <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Identite de la page</h3>
-          <label style={styles.label}>URL</label>
-          <input style={styles.input} value={editing.url} onChange={e => updateField('url', e.target.value)} />
+        <TabBar />
 
-          <label style={styles.label}>Titre (maillage interne)</label>
-          <input style={styles.input} value={editing.title || ''} onChange={e => updateField('title', e.target.value)} />
+        {/* ===== TAB TEXTE ===== */}
+        {tab === 'texte' && (
+          <>
+            <div style={styles.card}>
+              <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Identite & SEO</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={styles.label}>URL de la page *</label>
+                  <input style={styles.input} value={editing.url} onChange={e => updateField('url', e.target.value)} placeholder="/mon-url" />
+                </div>
+                <div>
+                  <label style={styles.label}>Titre interne</label>
+                  <input style={styles.input} value={editing.title || ''} onChange={e => updateField('title', e.target.value)} />
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={styles.label}>Meta title (60 car.)</label>
+                  <input style={styles.input} value={editing.meta_title || ''} onChange={e => updateField('meta_title', e.target.value)} maxLength={70} />
+                  <div style={{ fontSize: '.7rem', color: (editing.meta_title || '').length > 60 ? '#e74c3c' : '#999' }}>{(editing.meta_title || '').length}/60</div>
+                </div>
+                <div>
+                  <label style={styles.label}>Mots-cles (virgules)</label>
+                  <input style={styles.input} value={(editing.keywords || []).join(', ')} onChange={e => updateField('keywords', e.target.value)} />
+                </div>
+              </div>
+              <label style={styles.label}>Meta description (160 car.)</label>
+              <textarea style={{ ...styles.input, minHeight: 60 }} value={editing.description || ''} onChange={e => updateField('description', e.target.value)} maxLength={165} />
+              <div style={{ fontSize: '.7rem', color: (editing.description || '').length > 160 ? '#e74c3c' : '#999' }}>{(editing.description || '').length}/160</div>
+            </div>
 
-          <label style={styles.label}>Mots-cles (virgules)</label>
-          <input style={styles.input} value={(editing.keywords || []).join(', ')} onChange={e => updateField('keywords', e.target.value)} />
-        </div>
+            <div style={styles.card}>
+              <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Contenu visible</h3>
+              <label style={styles.label}>H1 (titre principal)</label>
+              <input style={styles.input} value={editing.h1 || ''} onChange={e => updateField('h1', e.target.value)} placeholder="Titre principal affiche sur la page" />
 
-        {/* Parametres texte SEO */}
-        <div style={styles.card}>
-          <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Parametres texte & SEO</h3>
+              <label style={styles.label}>Introduction</label>
+              <textarea style={{ ...styles.input, minHeight: 80 }} value={editing.subtitle || ''} onChange={e => updateField('subtitle', e.target.value)} placeholder="Paragraphe d'accroche sous le H1" />
+            </div>
 
-          <label style={styles.label}>Meta title <span style={{ fontWeight: 400, color: '#999' }}>(balise &lt;title&gt; — 60 car. max)</span></label>
-          <input style={styles.input} value={editing.meta_title || ''} onChange={e => updateField('meta_title', e.target.value)} maxLength={70} placeholder={editing.title || 'Titre de la page'} />
-          <div style={{ fontSize: '.75rem', color: (editing.meta_title || '').length > 60 ? '#e74c3c' : '#999', marginTop: 2 }}>{(editing.meta_title || '').length}/60</div>
+            <div style={styles.card}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <h3 style={{ color: '#444', fontWeight: 600, margin: 0 }}>Sections de contenu ({(editing.sections || []).length})</h3>
+                <button type="button" onClick={addSection} style={{ ...styles.btn, ...styles.btnSm }}>+ Section</button>
+              </div>
+              {(editing.sections || []).length === 0 && <p style={{ color: '#aaa', fontSize: '.9rem' }}>Aucune section. Cliquez "+" pour ajouter du contenu.</p>}
+              {(editing.sections || []).map((sec: any, i: number) => (
+                <div key={i} style={{ border: '1px solid #eee', borderRadius: 10, padding: '1rem', marginBottom: '.8rem', background: '#fafafa' }}>
+                  <div style={{ display: 'flex', gap: '.3rem', alignItems: 'center', marginBottom: '.5rem' }}>
+                    <span style={{ fontSize: '.8rem', fontWeight: 700, color: '#b08d6e', minWidth: 30 }}>H2</span>
+                    <input style={{ ...styles.input, flex: 1, fontWeight: 600 }} value={sec.heading} onChange={e => updateSection(i, 'heading', e.target.value)} placeholder="Titre de section (H2)" />
+                    <button type="button" onClick={() => moveSection(i, -1)} disabled={i === 0} style={{ ...styles.btn, ...styles.btnSm, padding: '.2rem .4rem', opacity: i === 0 ? .3 : 1 }}>↑</button>
+                    <button type="button" onClick={() => moveSection(i, 1)} disabled={i === (editing.sections || []).length - 1} style={{ ...styles.btn, ...styles.btnSm, padding: '.2rem .4rem', opacity: i === (editing.sections || []).length - 1 ? .3 : 1 }}>↓</button>
+                    <button type="button" onClick={() => removeSection(i)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.2rem .4rem' }}>X</button>
+                  </div>
+                  <textarea style={{ ...styles.input, minHeight: 100, lineHeight: 1.7 }} value={sec.body} onChange={e => updateSection(i, 'body', e.target.value)} placeholder="Contenu texte (HTML accepte, ou texte simple)..." />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
-          <label style={styles.label}>Meta description <span style={{ fontWeight: 400, color: '#999' }}>(160 car. max)</span></label>
-          <textarea style={{ ...styles.input, minHeight: 70 }} value={editing.description || ''} onChange={e => updateField('description', e.target.value)} maxLength={165} placeholder="Description de la page pour Google" />
-          <div style={{ fontSize: '.75rem', color: (editing.description || '').length > 160 ? '#e74c3c' : '#999', marginTop: 2 }}>{(editing.description || '').length}/160</div>
+        {/* ===== TAB PHOTOS ===== */}
+        {tab === 'photos' && (
+          <div style={styles.card}>
+            <h3 style={{ marginBottom: '.5rem', color: '#444', fontWeight: 600 }}>Photos ({(editing.images || []).length})</h3>
+            {uploading && <p style={{ color: '#b08d6e', fontSize: '.9rem' }}>Upload en cours...</p>}
 
-          <label style={styles.label}>H1 <span style={{ fontWeight: 400, color: '#999' }}>(titre principal visible)</span></label>
-          <input style={styles.input} value={editing.h1 || ''} onChange={e => updateField('h1', e.target.value)} placeholder="Titre principal de la page" />
+            {(editing.images || []).length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginTop: '.5rem' }}>
+                {(editing.images || []).map((img: any, i: number) => (
+                  <div key={i} style={{ background: '#fafafa', borderRadius: 10, border: '1px solid #eee', overflow: 'hidden' }}>
+                    <div style={{ position: 'relative', height: 130 }}>
+                      <img src={img.url || ''} alt={img.caption || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', top: 6, left: 6, background: 'rgba(0,0,0,.6)', color: '#fff', fontSize: '.7rem', padding: '2px 8px', borderRadius: 10 }}>{i + 1}</div>
+                    </div>
+                    <div style={{ padding: '.5rem .6rem' }}>
+                      <input style={{ ...styles.input, fontSize: '.8rem', padding: '.3rem .5rem', marginBottom: '.4rem' }} value={img.caption || ''} onChange={e => updateCaption(i, e.target.value)} placeholder="Legende..." />
+                      <div style={{ display: 'flex', gap: '.25rem', flexWrap: 'wrap' }}>
+                        <button type="button" onClick={() => moveImage(i, -1)} disabled={i === 0} style={{ ...styles.btn, ...styles.btnSm, padding: '.2rem .4rem', fontSize: '.7rem', opacity: i === 0 ? .3 : 1 }}>←</button>
+                        <button type="button" onClick={() => moveImage(i, 1)} disabled={i === (editing.images || []).length - 1} style={{ ...styles.btn, ...styles.btnSm, padding: '.2rem .4rem', fontSize: '.7rem', opacity: i === (editing.images || []).length - 1 ? .3 : 1 }}>→</button>
+                        <button type="button" onClick={() => replaceRefs.current[i]?.click()} style={{ ...styles.btn, ...styles.btnSm, padding: '.2rem .4rem', fontSize: '.7rem', background: '#3498db' }}>Remplacer</button>
+                        <input ref={el => { replaceRefs.current[i] = el; }} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { if (e.target.files?.[0]) replaceImage(i, e.target.files[0]); }} />
+                        <button type="button" onClick={() => removeImage(i)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.2rem .4rem', fontSize: '.7rem', marginLeft: 'auto' }}>X</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
-          <label style={styles.label}>Sous-titre / intro</label>
-          <textarea style={{ ...styles.input, minHeight: 80 }} value={editing.subtitle || ''} onChange={e => updateField('subtitle', e.target.value)} placeholder="Paragraphe d'introduction sous le H1" />
-        </div>
+            <div style={{ marginTop: '1rem', padding: '1.5rem', border: '2px dashed #ccc', borderRadius: 12, textAlign: 'center', background: '#fafafa' }}>
+              <label style={{ cursor: 'pointer', color: '#b08d6e', fontWeight: 600 }}>
+                + Ajouter des photos
+                <input type="file" multiple accept="image/*" onChange={e => setFiles(e.target.files)} style={{ display: 'none' }} />
+              </label>
+              {files && <p style={{ fontSize: '.85rem', color: '#666', marginTop: '.3rem' }}>{files.length} fichier(s) — upload a la sauvegarde</p>}
+            </div>
+          </div>
+        )}
 
-        {/* Open Graph */}
-        <div style={styles.card}>
-          <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>Reseaux sociaux (Open Graph)</h3>
+        {/* ===== TAB FAQ ===== */}
+        {tab === 'faq' && (
+          <div style={styles.card}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <h3 style={{ color: '#444', fontWeight: 600, margin: 0 }}>FAQ ({(editing.faq || []).length} questions)</h3>
+              <button type="button" onClick={addFaq} style={{ ...styles.btn, ...styles.btnSm }}>+ Question</button>
+            </div>
+            <p style={{ color: '#888', fontSize: '.85rem', marginBottom: '1rem' }}>Les questions/reponses generent automatiquement un schema JSON-LD FAQPage pour le SEO.</p>
+            {(editing.faq || []).length === 0 && <p style={{ color: '#aaa', fontSize: '.9rem' }}>Aucune FAQ. Ajoutez des questions pour enrichir le SEO.</p>}
+            {(editing.faq || []).map((fq: any, i: number) => (
+              <div key={i} style={{ border: '1px solid #eee', borderRadius: 8, padding: '.8rem', marginBottom: '.8rem', background: '#fafafa' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.4rem' }}>
+                  <span style={{ fontSize: '.8rem', fontWeight: 600, color: '#b08d6e' }}>Q{i + 1}</span>
+                  <input style={{ ...styles.input, flex: 1 }} value={fq.q} onChange={e => updateFaq(i, 'q', e.target.value)} placeholder="Question..." />
+                  <button type="button" onClick={() => removeFaq(i)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger, padding: '.3rem .5rem' }}>X</button>
+                </div>
+                <textarea style={{ ...styles.input, minHeight: 60, fontSize: '.9rem' }} value={fq.a} onChange={e => updateFaq(i, 'a', e.target.value)} placeholder="Reponse..." />
+              </div>
+            ))}
+          </div>
+        )}
 
-          <label style={styles.label}>OG Title <span style={{ fontWeight: 400, color: '#999' }}>(partage Facebook/LinkedIn — vide = meta title)</span></label>
-          <input style={styles.input} value={editing.og_title || ''} onChange={e => updateField('og_title', e.target.value)} placeholder={editing.meta_title || editing.title || ''} />
+        {/* ===== TAB JSON-LD ===== */}
+        {tab === 'jsonld' && (
+          <div style={styles.card}>
+            <h3 style={{ marginBottom: '1rem', color: '#444', fontWeight: 600 }}>JSON-LD (genere automatiquement)</h3>
+            <p style={{ color: '#888', fontSize: '.85rem', marginBottom: '1rem' }}>
+              Ce schema est genere automatiquement a partir des champs Texte et FAQ. Il est injecte dans la page pour Google et les moteurs de recherche.
+            </p>
+            <pre style={{ background: '#1a1a1a', color: '#e0e0e0', padding: '1.5rem', borderRadius: 10, fontSize: '.8rem', overflow: 'auto', maxHeight: 500, lineHeight: 1.5 }}>
+              {buildJsonLd()}
+            </pre>
+            <div style={{ marginTop: '1rem' }}>
+              <h4 style={{ fontWeight: 600, color: '#444', marginBottom: '.5rem' }}>Schemas inclus :</h4>
+              <ul style={{ fontSize: '.85rem', color: '#666', paddingLeft: '1.5rem' }}>
+                <li>WebPage (titre, description, URL, breadcrumb)</li>
+                <li>BeautySalon (entite principale)</li>
+                <li>BreadcrumbList (fil d'Ariane)</li>
+                {(editing.faq || []).filter((f: any) => f.q && f.a).length > 0 && <li>FAQPage ({(editing.faq || []).filter((f: any) => f.q && f.a).length} questions)</li>}
+              </ul>
+            </div>
+          </div>
+        )}
 
-          <label style={styles.label}>OG Description <span style={{ fontWeight: 400, color: '#999' }}>(vide = meta description)</span></label>
-          <textarea style={{ ...styles.input, minHeight: 70 }} value={editing.og_description || ''} onChange={e => updateField('og_description', e.target.value)} placeholder={editing.description || ''} />
-        </div>
-
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-          <button onClick={handleSave} disabled={saving} style={styles.btn}>{saving ? 'Enregistrement...' : 'Enregistrer'}</button>
-          <button onClick={() => { setEditing(null); load(); }} style={{ ...styles.btn, background: '#888' }}>Annuler</button>
+        {/* Bottom save bar */}
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', position: 'sticky', bottom: 0, background: '#f5f5f5', padding: '1rem 0', borderTop: '1px solid #ddd' }}>
+          <button onClick={handleSave} disabled={saving || uploading} style={{ ...styles.btn, padding: '.8rem 2rem' }}>{saving ? 'Enregistrement...' : 'Sauvegarder la page'}</button>
+          <button onClick={() => { setEditing(null); setFiles(null); load(); }} style={{ ...styles.btn, background: '#888' }}>Annuler</button>
+          <div style={{ flex: 1 }} />
+          <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.85rem', color: '#555' }}>
+            <input type="checkbox" checked={editing.published !== false} onChange={e => updateField('published', e.target.checked)} />
+            Publiee
+          </label>
         </div>
       </div>
     );
   }
 
+  // ===== LIST MODE =====
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <h1 style={{ ...styles.title, marginBottom: 0 }}>Pages du site</h1>
-        <button onClick={handleAdd} style={styles.btn}>+ Ajouter</button>
+        <button onClick={handleAdd} style={styles.btn}>+ Nouvelle page</button>
       </div>
       <p style={{ color: '#888', marginBottom: '1rem', fontSize: '.9rem' }}>
-        {pages.length} pages — maillage interne + parametres texte & SEO
+        {pages.length} pages — editez le contenu, les photos, la FAQ et le JSON-LD de chaque page. Les nouvelles pages sont accessibles sur <code>/p/slug</code>.
       </p>
 
       <input
@@ -603,35 +815,45 @@ const PagesEditor: React.FC = () => {
         onChange={e => setSearch(e.target.value)}
       />
 
-      <div style={styles.card}>
-        {filtered.length === 0 ? (
-          <p style={{ color: '#aaa' }}>Aucune page trouvee.</p>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>{['URL', 'Titre', 'Meta title', 'H1', 'Actions'].map(h => <th key={h} style={styles.th}>{h}</th>)}</tr>
-            </thead>
-            <tbody>
-              {filtered.map(p => (
-                <tr key={p.url}>
-                  <td style={styles.td}><code style={{ fontSize: '.85rem' }}>{p.url}</code></td>
-                  <td style={styles.td}>{p.title}</td>
-                  <td style={{ ...styles.td, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const, color: p.meta_title ? '#222' : '#ccc' }}>
-                    {p.meta_title || '—'}
-                  </td>
-                  <td style={{ ...styles.td, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const, color: p.h1 ? '#222' : '#ccc' }}>
-                    {p.h1 || '—'}
-                  </td>
-                  <td style={styles.td}>
-                    <button onClick={() => setEditing({ ...p })} style={{ ...styles.btn, ...styles.btnSm, marginRight: '.5rem' }}>Modifier</button>
-                    <button onClick={() => handleDelete(p.url)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>Supprimer</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {filtered.length === 0 ? (
+        <div style={styles.card}><p style={{ color: '#aaa' }}>Aucune page trouvee.</p></div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+          {filtered.map(p => {
+            const thumb = p.images?.[0];
+            const hasContent = (p.sections || []).length > 0;
+            const hasFaq = (p.faq || []).length > 0;
+            return (
+              <div key={p.url} style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,.06)', overflow: 'hidden', border: p.published === false ? '2px dashed #e0e0e0' : '1px solid #eee' }}>
+                {/* Thumb */}
+                <div style={{ height: 100, background: '#eee', position: 'relative' }}>
+                  {thumb?.url ? (
+                    <img src={thumb.url} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc', fontSize: '2rem' }}>⊞</div>
+                  )}
+                  {p.published === false && <div style={{ position: 'absolute', top: 6, right: 6, background: '#e74c3c', color: '#fff', fontSize: '.7rem', padding: '2px 8px', borderRadius: 10 }}>Brouillon</div>}
+                </div>
+                <div style={{ padding: '1rem' }}>
+                  <code style={{ fontSize: '.75rem', color: '#b08d6e' }}>{p.url}</code>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: '.3rem 0', color: '#222' }}>{p.title}</h3>
+                  <div style={{ display: 'flex', gap: '.3rem', flexWrap: 'wrap', marginBottom: '.6rem' }}>
+                    {hasContent && <span style={{ fontSize: '.7rem', padding: '2px 6px', borderRadius: 8, background: '#d4edda', color: '#155724' }}>Contenu</span>}
+                    {(p.images || []).length > 0 && <span style={{ fontSize: '.7rem', padding: '2px 6px', borderRadius: 8, background: '#cce5ff', color: '#004085' }}>{(p.images || []).length} photos</span>}
+                    {hasFaq && <span style={{ fontSize: '.7rem', padding: '2px 6px', borderRadius: 8, background: '#fff3cd', color: '#856404' }}>{(p.faq || []).length} FAQ</span>}
+                    {p.meta_title && <span style={{ fontSize: '.7rem', padding: '2px 6px', borderRadius: 8, background: '#e8e8e8', color: '#555' }}>SEO</span>}
+                  </div>
+                  <div style={{ display: 'flex', gap: '.4rem' }}>
+                    <button onClick={() => { setOriginalUrl(p.url); setEditing({ ...p }); setTab('texte'); }} style={{ ...styles.btn, ...styles.btnSm, flex: 1 }}>Modifier</button>
+                    <button onClick={() => handleDuplicate(p)} style={{ ...styles.btn, ...styles.btnSm, background: '#3498db' }}>Dupliquer</button>
+                    <button onClick={() => handleDelete(p.url)} style={{ ...styles.btn, ...styles.btnSm, ...styles.btnDanger }}>X</button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

@@ -36,6 +36,7 @@ const SEOGeoPage = React.lazy(() => import('./SEOGeoPage'));
 const EpilationPasserellePage = React.lazy(() => import('./EpilationPasserellePage'));
 const NotFoundPage = React.lazy(() => import('./NotFoundPage'));
 const AdminPage = React.lazy(() => import('./components/AdminPage'));
+const DynamicPage = React.lazy(() => import('./DynamicPage'));
 // Passerelles Massages
 const MassageRelaxantPage = React.lazy(() => import('./MassageRelaxantPage'));
 const MassageDosNuquePage = React.lazy(() => import('./MassageDosNuquePage'));
@@ -172,6 +173,8 @@ const appTree = (
           <Route path="/beaute-mariage-hyeres" element={<BeauteMariagePage />} />
           <Route path="/soins-peau-apres-soleil-hyeres" element={<SoinsApressoleilPage />} />
           <Route path="/preparer-peau-ete-hyeres" element={<PreparerPeauEtePage />} />
+          {/* Pages dynamiques creees depuis le back-office */}
+          <Route path="/p/:slug" element={<DynamicPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         </React.Suspense>
