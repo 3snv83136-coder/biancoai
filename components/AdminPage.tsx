@@ -483,76 +483,76 @@ const NewsletterPage: React.FC = () => {
 // ============================================================
 type PageTab = 'texte' | 'photos' | 'faq' | 'jsonld';
 
-// Catalogue complet de toutes les pages existantes du site
-const ALL_SITE_PAGES: { url: string; title: string; category: string }[] = [
+// Catalogue complet de toutes les pages du site avec contenu par defaut
+const ALL_SITE_PAGES: { url: string; title: string; category: string; h1?: string; subtitle?: string }[] = [
   // Pages principales
-  { url: '/', title: 'Accueil', category: 'Principales' },
-  { url: '/services', title: 'Nos services', category: 'Principales' },
-  { url: '/tarifs', title: 'Tarifs', category: 'Principales' },
-  { url: '/a-propos', title: "L'Institut", category: 'Principales' },
-  { url: '/blog', title: 'Blog', category: 'Principales' },
-  { url: '/head-spa-hyeres', title: 'Head Spa Hyeres', category: 'Principales' },
+  { url: '/', title: 'Accueil', category: 'Principales', h1: 'Votre bien-etre, tout simplement', subtitle: 'Maison de Beaute a Hyeres. L\'expertise du drainage lymphatique bresilien et l\'art du regard.' },
+  { url: '/services', title: 'Nos services', category: 'Principales', h1: 'Nos Prestations Sur-Mesure' },
+  { url: '/tarifs', title: 'Tarifs', category: 'Principales', h1: 'Nos Tarifs' },
+  { url: '/a-propos', title: "L'Institut", category: 'Principales', h1: 'L\'Institut Bianco', subtitle: 'Bianco Esthetique, c\'est avant tout l\'histoire de Salome. Diplomee Meilleure Apprentie de France, elle a fonde son institut a Hyeres pour offrir des soins d\'exception dans un cadre chaleureux.' },
+  { url: '/blog', title: 'Blog', category: 'Principales', h1: 'Le journal Bianco', subtitle: 'Articles courts, concrets et inspires de la cabine pour mieux comprendre nos soins a Hyeres.' },
+  { url: '/head-spa-hyeres', title: 'Head Spa Hyeres', category: 'Principales', h1: 'Head Spa a Hyeres', subtitle: 'Le Head Spa est un rituel japonais dedie au cuir chevelu qui associe massage cranien, soin capillaire et detente profonde.' },
   // SEO Prestations
-  { url: '/institut-beaute-hyeres', title: 'Institut beaute Hyeres', category: 'SEO Prestations' },
-  { url: '/soin-visage-hyeres', title: 'Soin visage Hyeres', category: 'SEO Prestations' },
-  { url: '/manucure-ongles-gel-hyeres', title: 'Manucure & ongles gel', category: 'SEO Prestations' },
-  { url: '/extensions-cils-hyeres', title: 'Extensions de cils', category: 'SEO Prestations' },
-  { url: '/massage-californien-hyeres', title: 'Massage californien', category: 'SEO Prestations' },
-  { url: '/callus-peeling-hyeres', title: 'Callus peeling & pieds', category: 'SEO Prestations' },
-  { url: '/soin-visage-toulon', title: 'Soin visage Toulon', category: 'SEO Prestations' },
-  { url: '/apres-epilation-soins-hyeres', title: 'Soins apres epilation', category: 'SEO Prestations' },
+  { url: '/institut-beaute-hyeres', title: 'Institut beaute Hyeres', category: 'SEO Prestations', h1: 'Institut de beaute a Hyeres' },
+  { url: '/soin-visage-hyeres', title: 'Soin visage Hyeres', category: 'SEO Prestations', h1: 'Soin du visage a Hyeres' },
+  { url: '/manucure-ongles-gel-hyeres', title: 'Manucure & ongles gel', category: 'SEO Prestations', h1: 'Manucure et ongles en gel a Hyeres' },
+  { url: '/extensions-cils-hyeres', title: 'Extensions de cils', category: 'SEO Prestations', h1: 'Extensions de cils a Hyeres' },
+  { url: '/massage-californien-hyeres', title: 'Massage californien', category: 'SEO Prestations', h1: 'Massage californien a Hyeres' },
+  { url: '/callus-peeling-hyeres', title: 'Callus peeling & pieds', category: 'SEO Prestations', h1: 'Callus peeling et soin des pieds a Hyeres' },
+  { url: '/soin-visage-toulon', title: 'Soin visage Toulon', category: 'SEO Prestations', h1: 'Soin du visage pres de Toulon' },
+  { url: '/apres-epilation-soins-hyeres', title: 'Soins apres epilation', category: 'SEO Prestations', h1: 'Apres l\'epilation : les soins essentiels a Hyeres', subtitle: 'L\'epilation, qu\'elle soit a la cire, au laser ou a la lumiere pulsee, sollicite la peau de facon intense.' },
   // Massages
-  { url: '/massage-relaxant-hyeres', title: 'Massage relaxant', category: 'Massages' },
-  { url: '/massage-dos-nuque-hyeres', title: 'Massage dos & nuque', category: 'Massages' },
-  { url: '/massage-bien-etre-hyeres', title: 'Massage bien-etre', category: 'Massages' },
-  { url: '/massage-kobido-hyeres', title: 'Massage Kobido', category: 'Massages' },
-  { url: '/massage-femme-enceinte-hyeres', title: 'Massage femme enceinte', category: 'Massages' },
+  { url: '/massage-relaxant-hyeres', title: 'Massage relaxant', category: 'Massages', h1: 'Le massage relaxant a Hyeres qui rend vraiment legere', subtitle: 'Le massage relaxant, c\'est l\'une de nos specialites chez Bianco. Que vous cherchiez a decompresser apres une semaine chargee...' },
+  { url: '/massage-dos-nuque-hyeres', title: 'Massage dos & nuque', category: 'Massages', h1: 'Massage dos et nuque a Hyeres : liberez vos tensions', subtitle: 'Tensions dans le haut du dos, nuque raide, epaules crispees... le massage cible dos-nuque est fait pour vous.' },
+  { url: '/massage-bien-etre-hyeres', title: 'Massage bien-etre', category: 'Massages', h1: 'Massage bien-etre a Hyeres : une pause pour le corps et l\'esprit', subtitle: 'Le massage bien-etre est une invitation a ralentir et a se reconnecter a soi.' },
+  { url: '/massage-kobido-hyeres', title: 'Massage Kobido', category: 'Massages', h1: 'Massage Kobido a Hyeres : le lifting naturel japonais', subtitle: 'Le Kobido est un massage ancestral japonais du visage qui stimule la circulation sanguine et raffermit la peau.' },
+  { url: '/massage-femme-enceinte-hyeres', title: 'Massage femme enceinte', category: 'Massages', h1: 'Massage femme enceinte a Hyeres : douceur et soulagement', subtitle: 'La grossesse met le corps a rude epreuve. Le massage prenatal est adapte pour soulager les douleurs lombaires, les jambes lourdes...' },
   // Drainage
-  { url: '/drainage-lymphatique-jambes-lourdes-hyeres', title: 'Drainage jambes lourdes', category: 'Drainage' },
-  { url: '/drainage-lymphatique-minceur-hyeres', title: 'Drainage minceur', category: 'Drainage' },
-  { url: '/drainage-lymphatique-apres-accouchement-hyeres', title: 'Drainage post-accouchement', category: 'Drainage' },
-  { url: '/drainage-lymphatique-prix-hyeres', title: 'Drainage prix', category: 'Drainage' },
-  { url: '/journee-beaute-hyeres', title: 'Journee beaute', category: 'Drainage' },
+  { url: '/drainage-lymphatique-jambes-lourdes-hyeres', title: 'Drainage jambes lourdes', category: 'Drainage', h1: 'Drainage lymphatique pour jambes lourdes a Hyeres', subtitle: 'Les jambes lourdes touchent des millions de personnes, surtout en periode de chaleur. Le drainage lymphatique bresilien est une solution naturelle...' },
+  { url: '/drainage-lymphatique-minceur-hyeres', title: 'Drainage minceur', category: 'Drainage', h1: 'Drainage lymphatique minceur a Hyeres', subtitle: 'Le drainage lymphatique bresilien est devenu un allie incontournable pour affiner la silhouette naturellement.' },
+  { url: '/drainage-lymphatique-apres-accouchement-hyeres', title: 'Drainage post-accouchement', category: 'Drainage', h1: 'Drainage lymphatique apres accouchement a Hyeres', subtitle: 'Apres l\'accouchement, le corps a besoin de temps pour retrouver son equilibre. Le drainage lymphatique aide a reduire la retention d\'eau...' },
+  { url: '/drainage-lymphatique-prix-hyeres', title: 'Drainage prix', category: 'Drainage', h1: 'Drainage lymphatique a Hyeres : tarifs et formules', subtitle: 'Retrouvez tous les tarifs du drainage lymphatique methode bresilienne chez Bianco Esthetique a Hyeres.' },
+  { url: '/journee-beaute-hyeres', title: 'Journee beaute', category: 'Occasions', h1: 'La journee beaute a Hyeres : composez votre programme chez Bianco', subtitle: 'La journee beaute, c\'est l\'idee simple que prendre soin de soi ne devrait pas etre une exception mais une habitude.' },
   // Soins visage
-  { url: '/soin-visage-anti-age-hyeres', title: 'Soin anti-age', category: 'Soins visage' },
-  { url: '/soin-visage-eclat-hyeres', title: 'Soin eclat', category: 'Soins visage' },
-  { url: '/soin-visage-peau-sensible-hyeres', title: 'Soin peau sensible', category: 'Soins visage' },
-  { url: '/soin-visage-homme-hyeres', title: 'Soin visage homme', category: 'Soins visage' },
-  { url: '/microdermabrasion-hyeres', title: 'Microdermabrasion', category: 'Soins visage' },
+  { url: '/soin-visage-anti-age-hyeres', title: 'Soin anti-age', category: 'Soins visage', h1: 'Soin visage anti-age a Hyeres', subtitle: 'Les signes du temps se manifestent differemment sur chaque peau. Un soin anti-age en institut permet de cibler rides, relachement et manque d\'eclat.' },
+  { url: '/soin-visage-eclat-hyeres', title: 'Soin eclat', category: 'Soins visage', h1: 'Soin visage eclat a Hyeres : retrouvez une peau lumineuse', subtitle: 'Teint terne, mine fatiguee, peau devitalisee... le soin eclat est concu pour redonner de la luminosite a votre peau.' },
+  { url: '/soin-visage-peau-sensible-hyeres', title: 'Soin peau sensible', category: 'Soins visage', h1: 'Soin visage peau sensible a Hyeres', subtitle: 'Rougeurs, tiraillements, reactions... les peaux sensibles demandent une attention particuliere et des produits adaptes.' },
+  { url: '/soin-visage-homme-hyeres', title: 'Soin visage homme', category: 'Soins visage', h1: 'Soin visage homme a Hyeres', subtitle: 'La peau masculine a ses propres besoins : plus epaisse, plus grasse, souvent irritee par le rasage. Un soin en institut fait la difference.' },
+  { url: '/microdermabrasion-hyeres', title: 'Microdermabrasion', category: 'Soins visage', h1: 'Microdermabrasion a Hyeres : peau lissee et eclat retrouve', subtitle: 'La microdermabrasion est une technique d\'exfoliation mecanique qui elimine les cellules mortes en surface pour reveler une peau plus lisse.' },
   // Head Spa
-  { url: '/head-spa-cadeau-hyeres', title: 'Head Spa cadeau', category: 'Head Spa' },
-  { url: '/head-spa-duo-hyeres', title: 'Head Spa duo', category: 'Head Spa' },
-  { url: '/head-spa-prix-hyeres', title: 'Head Spa prix', category: 'Head Spa' },
+  { url: '/head-spa-cadeau-hyeres', title: 'Head Spa cadeau', category: 'Head Spa', h1: 'Offrir un Head Spa a Hyeres : le cadeau bien-etre ideal', subtitle: 'Le Head Spa est l\'un des soins les plus apprecies a offrir. Un moment de detente absolue pour le cuir chevelu et l\'esprit.' },
+  { url: '/head-spa-duo-hyeres', title: 'Head Spa duo', category: 'Head Spa', h1: 'Head Spa duo a Hyeres : partagez un moment de detente', subtitle: 'Vivez l\'experience du Head Spa a deux : un rituel japonais a partager en couple, entre amies ou mere-fille.' },
+  { url: '/head-spa-prix-hyeres', title: 'Head Spa prix', category: 'Head Spa', h1: 'Head Spa a Hyeres : tarifs et formules', subtitle: 'Retrouvez tous les tarifs du Head Spa chez Bianco Esthetique a Hyeres.' },
   // Ongles & Regard
-  { url: '/pose-ongles-gel-hyeres', title: 'Pose ongles gel', category: 'Ongles & Regard' },
-  { url: '/nail-art-hyeres', title: 'Nail art', category: 'Ongles & Regard' },
-  { url: '/rehaussement-cils-hyeres', title: 'Rehaussement cils', category: 'Ongles & Regard' },
+  { url: '/pose-ongles-gel-hyeres', title: 'Pose ongles gel', category: 'Ongles & Regard', h1: 'Pose d\'ongles en gel a Hyeres', subtitle: 'La pose d\'ongles en gel est la solution pour des ongles parfaits et durables. Renforcee, protegee et embellie, votre manucure tient jusqu\'a 3 semaines.' },
+  { url: '/nail-art-hyeres', title: 'Nail art', category: 'Ongles & Regard', h1: 'Nail art a Hyeres : des ongles uniques et creatifs', subtitle: 'Le nail art, c\'est l\'expression de votre personnalite au bout des doigts. Motifs, paillettes, effets marbre, french revisitee...' },
+  { url: '/rehaussement-cils-hyeres', title: 'Rehaussement cils', category: 'Ongles & Regard', h1: 'Rehaussement de cils a Hyeres', subtitle: 'Le rehaussement de cils (ou lash lift) est l\'alternative naturelle aux extensions. Il courbe vos cils naturels pour un regard ouvert et magnifie.' },
   // Occasions
-  { url: '/cadeau-beaute-hyeres', title: 'Cadeau beaute', category: 'Occasions' },
-  { url: '/beaute-mariage-hyeres', title: 'Beaute mariage', category: 'Occasions' },
-  { url: '/soins-peau-apres-soleil-hyeres', title: 'Soins apres-soleil', category: 'Occasions' },
-  { url: '/preparer-peau-ete-hyeres', title: 'Preparer peau ete', category: 'Occasions' },
+  { url: '/cadeau-beaute-hyeres', title: 'Cadeau beaute', category: 'Occasions', h1: 'Offrir un cadeau beaute a Hyeres', subtitle: 'Un bon cadeau Bianco, c\'est l\'assurance d\'un cadeau qui fait vraiment plaisir. Composez un coffret sur-mesure ou choisissez un soin specifique.' },
+  { url: '/beaute-mariage-hyeres', title: 'Beaute mariage', category: 'Occasions', h1: 'Beaute et mariage a Hyeres : preparez votre grand jour', subtitle: 'Le jour de votre mariage merite une preparation beaute a la hauteur. Maquillage, soin visage, manucure, extensions de cils...' },
+  { url: '/soins-peau-apres-soleil-hyeres', title: 'Soins apres-soleil', category: 'Occasions', h1: 'Soins de la peau apres le soleil a Hyeres', subtitle: 'Le soleil du Var est genereux mais peut agresser la peau. Apres l\'ete, des soins cibles permettent de reparer et rehydrater.' },
+  { url: '/preparer-peau-ete-hyeres', title: 'Preparer peau ete', category: 'Occasions', h1: 'Preparer sa peau pour l\'ete a Hyeres', subtitle: 'Avant l\'ete, preparez votre peau pour le soleil avec des soins adaptes : gommage, hydratation, soin eclat...' },
   // SEO Geo
-  { url: '/institut-beaute-centre-ville-hyeres', title: 'Centre-ville Hyeres', category: 'SEO Geo' },
-  { url: '/institut-beaute-costebelle-hyeres', title: 'Costebelle Hyeres', category: 'SEO Geo' },
-  { url: '/institut-beaute-les-palmiers-hyeres', title: 'Les Palmiers Hyeres', category: 'SEO Geo' },
-  { url: '/institut-beaute-port-hyeres', title: 'Port Hyeres', category: 'SEO Geo' },
-  { url: '/institut-beaute-almanarre-hyeres', title: 'Almanarre Hyeres', category: 'SEO Geo' },
-  { url: '/institut-beaute-giens-hyeres', title: 'Giens Hyeres', category: 'SEO Geo' },
-  { url: '/institut-beaute-toulon', title: 'Toulon', category: 'SEO Geo' },
-  { url: '/institut-beaute-la-garde', title: 'La Garde', category: 'SEO Geo' },
-  { url: '/institut-beaute-carqueiranne', title: 'Carqueiranne', category: 'SEO Geo' },
-  { url: '/institut-beaute-le-pradet', title: 'Le Pradet', category: 'SEO Geo' },
-  { url: '/institut-beaute-la-crau', title: 'La Crau', category: 'SEO Geo' },
-  { url: '/institut-beaute-la-londe-les-maures', title: 'La Londe-les-Maures', category: 'SEO Geo' },
-  { url: '/institut-beaute-bormes-les-mimosas', title: 'Bormes-les-Mimosas', category: 'SEO Geo' },
-  { url: '/institut-beaute-la-valette-du-var', title: 'La Valette-du-Var', category: 'SEO Geo' },
-  { url: '/institut-beaute-sollies-pont', title: 'Sollies-Pont', category: 'SEO Geo' },
-  { url: '/institut-beaute-cuers', title: 'Cuers', category: 'SEO Geo' },
+  { url: '/institut-beaute-centre-ville-hyeres', title: 'Centre-ville Hyeres', category: 'SEO Geo', h1: 'Institut de beaute au centre-ville de Hyeres' },
+  { url: '/institut-beaute-costebelle-hyeres', title: 'Costebelle Hyeres', category: 'SEO Geo', h1: 'Institut de beaute pres de Costebelle a Hyeres' },
+  { url: '/institut-beaute-les-palmiers-hyeres', title: 'Les Palmiers Hyeres', category: 'SEO Geo', h1: 'Institut de beaute quartier Les Palmiers Hyeres' },
+  { url: '/institut-beaute-port-hyeres', title: 'Port Hyeres', category: 'SEO Geo', h1: 'Institut de beaute pres du Port de Hyeres' },
+  { url: '/institut-beaute-almanarre-hyeres', title: 'Almanarre Hyeres', category: 'SEO Geo', h1: 'Institut de beaute pres de l\'Almanarre a Hyeres' },
+  { url: '/institut-beaute-giens-hyeres', title: 'Giens Hyeres', category: 'SEO Geo', h1: 'Institut de beaute pres de la presqu\'ile de Giens' },
+  { url: '/institut-beaute-toulon', title: 'Toulon', category: 'SEO Geo', h1: 'Institut de beaute pres de Toulon' },
+  { url: '/institut-beaute-la-garde', title: 'La Garde', category: 'SEO Geo', h1: 'Institut de beaute pres de La Garde' },
+  { url: '/institut-beaute-carqueiranne', title: 'Carqueiranne', category: 'SEO Geo', h1: 'Institut de beaute pres de Carqueiranne' },
+  { url: '/institut-beaute-le-pradet', title: 'Le Pradet', category: 'SEO Geo', h1: 'Institut de beaute pres du Pradet' },
+  { url: '/institut-beaute-la-crau', title: 'La Crau', category: 'SEO Geo', h1: 'Institut de beaute pres de La Crau' },
+  { url: '/institut-beaute-la-londe-les-maures', title: 'La Londe-les-Maures', category: 'SEO Geo', h1: 'Institut de beaute pres de La Londe-les-Maures' },
+  { url: '/institut-beaute-bormes-les-mimosas', title: 'Bormes-les-Mimosas', category: 'SEO Geo', h1: 'Institut de beaute pres de Bormes-les-Mimosas' },
+  { url: '/institut-beaute-la-valette-du-var', title: 'La Valette-du-Var', category: 'SEO Geo', h1: 'Institut de beaute pres de La Valette-du-Var' },
+  { url: '/institut-beaute-sollies-pont', title: 'Sollies-Pont', category: 'SEO Geo', h1: 'Institut de beaute pres de Sollies-Pont' },
+  { url: '/institut-beaute-cuers', title: 'Cuers', category: 'SEO Geo', h1: 'Institut de beaute pres de Cuers' },
   // Legal
-  { url: '/mentions-legales', title: 'Mentions legales', category: 'Legal' },
-  { url: '/confidentialite', title: 'Confidentialite', category: 'Legal' },
-  { url: '/cookies', title: 'Cookies', category: 'Legal' },
+  { url: '/mentions-legales', title: 'Mentions legales', category: 'Legal', h1: 'Mentions legales' },
+  { url: '/confidentialite', title: 'Confidentialite', category: 'Legal', h1: 'Politique de confidentialite' },
+  { url: '/cookies', title: 'Cookies', category: 'Legal', h1: 'Politique de cookies' },
 ];
 
 const PagesEditor: React.FC = () => {
@@ -574,9 +574,10 @@ const PagesEditor: React.FC = () => {
       // Merge: start with all site pages, override with API data if exists
       const merged: any[] = ALL_SITE_PAGES.map(sp => {
         const apiMatch = apiPages.find(ap => ap.url === sp.url);
-        return apiMatch
-          ? { ...apiMatch, _category: sp.category, _fixed: true }
-          : { url: sp.url, title: sp.title, keywords: [], description: '', meta_title: '', h1: '', subtitle: '', sections: [], images: [], faq: [], published: true, _category: sp.category, _fixed: true };
+        if (apiMatch) {
+          return { ...apiMatch, h1: apiMatch.h1 || sp.h1 || '', subtitle: apiMatch.subtitle || sp.subtitle || '', _category: sp.category, _fixed: true };
+        }
+        return { url: sp.url, title: sp.title, keywords: [], description: '', meta_title: '', h1: sp.h1 || '', subtitle: sp.subtitle || '', sections: [], images: [], faq: [], published: true, _category: sp.category, _fixed: true };
       });
       // Add API-only pages (dynamic pages created in admin)
       for (const ap of apiPages) {
@@ -1411,9 +1412,17 @@ const PricesPage: React.FC = () => {
       <h1 style={styles.title}>Gestion des tarifs</h1>
       {msg && <div style={styles.success}>{msg}</div>}
 
-      {/* Quick add from catalog */}
+      {/* Explanation */}
       <div style={{ ...styles.card, background: '#f0f7ff', borderLeft: '3px solid #3498db', marginBottom: '1.5rem' }}>
-        <h3 style={{ marginBottom: '.8rem', color: '#444', fontWeight: 600, fontSize: '.95rem' }}>Ajouter une categorie depuis le catalogue Planity</h3>
+        <p style={{ fontSize: '.9rem', color: '#555', lineHeight: 1.6, margin: 0 }}>
+          <strong>Les tarifs Planity sont toujours affiches sur la page publique.</strong><br />
+          Ici, ajoutez des prestations supplementaires ou des nouvelles categories. Elles s'ajouteront a cote des tarifs Planity existants sans les remplacer.
+        </p>
+      </div>
+
+      {/* Quick add from catalog */}
+      <div style={{ ...styles.card, marginBottom: '1.5rem' }}>
+        <h3 style={{ marginBottom: '.8rem', color: '#444', fontWeight: 600, fontSize: '.95rem' }}>Ajouter dans une categorie existante</h3>
         <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
           {PLANITY_CATALOG.map(c => (
             <button key={c.cat} type="button" onClick={() => addSectionFromCatalog(c.cat)}
